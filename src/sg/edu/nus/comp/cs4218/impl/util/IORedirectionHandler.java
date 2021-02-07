@@ -3,6 +3,7 @@ package sg.edu.nus.comp.cs4218.impl.util;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
 
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.LinkedList;
@@ -77,7 +78,11 @@ public class IORedirectionHandler {
                 if (!outputStream.equals(origOutputStream)) { // Already have a stream
                     throw new ShellException(ERR_MULTIPLE_STREAMS);
                 }
-                outputStream = IOUtils.openOutputStream(file);
+                try {
+                    outputStream = IOUtils.openOutputStream(file);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }

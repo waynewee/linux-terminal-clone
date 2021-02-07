@@ -44,7 +44,7 @@ public final class IOUtils {
      * @return OutputStream of file opened.
      * @throws ShellException If file destination is inaccessible.
      */
-    public static OutputStream openOutputStream(String fileName) throws ShellException {
+    public static OutputStream openOutputStream(String fileName) throws ShellException, FileNotFoundException {
         String resolvedFileName = resolveFilePath(fileName).toString();
 
         FileOutputStream fileOutputStream;
