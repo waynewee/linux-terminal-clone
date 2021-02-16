@@ -1,5 +1,6 @@
 package sg.edu.nus.comp.cs4218.impl.app.args;
 
+import sg.edu.nus.comp.cs4218.exception.CatException;
 import sg.edu.nus.comp.cs4218.exception.WcException;
 
 import java.util.ArrayList;
@@ -9,18 +10,15 @@ import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_INVALID_FLAG;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_FLAG_PREFIX;
 
 
-public class WcArguments {
+public class CatArguments {
 
-    public static final char CHAR_BYTES_OPTION = 'c';
-    public static final char CHAR_LINES_OPTION = 'l';
-    public static final char CHAR_WORDS_OPTION = 'w';
+    public static final char CHAR_SHOW_LINES_OPTION = 'n';
+
     private final List<String> files;
-    private boolean lines, words, bytes;
+    private boolean lineNumber;
 
-    public WcArguments() {
-        this.lines = true;
-        this.words = true;
-        this.bytes = true;
+    public CatArguments() {
+        this.lineNumber = false;
         this.files = new ArrayList<>();
     }
 
@@ -29,8 +27,8 @@ public class WcArguments {
      *
      * @param args Array of arguments to parse
      */
-    public void parse(String... args) throws WcException {
-        boolean isLines = false, isWords = false, isBytes = false;
+    public void parse(String... args) throws CatException {
+        boolean lineNumber = false;
         // Parse arguments
         if (args != null && args.length > 0) {
             for (String arg : args) {
@@ -43,42 +41,22 @@ public class WcArguments {
                         if (c == CHAR_FLAG_PREFIX) {
                             continue;
                         }
-                        if (c == CHAR_BYTES_OPTION) {
-                            isBytes = true;
+                        if (c == CHAR_SHOW_LINES_OPTION) {
+                            lineNumber = true;
                             continue;
                         }
-                        if (c == CHAR_LINES_OPTION) {
-                            isLines = true;
-                            continue;
-                        }
-                        if (c == CHAR_WORDS_OPTION) {
-                            isWords = true;
-                            continue;
-                        }
-                        throw new WcException(ERR_INVALID_FLAG);
+                        throw new CatException(ERR_INVALID_FLAG);
                     }
                 } else {
                     this.files.add(arg.trim());
                 }
             }
         }
-        if (isLines || isWords || isBytes) {
-            this.lines = isLines;
-            this.words = isWords;
-            this.bytes = isBytes;
-        }
+        this.lineNumber = lineNumber;
     }
 
-    public boolean isLines() {
-        return lines;
-    }
-
-    public boolean isWords() {
-        return words;
-    }
-
-    public boolean isBytes() {
-        return bytes;
+    public boolean isLineNumber() {
+        return lineNumber;
     }
 
     public List<String> getFiles() {
