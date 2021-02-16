@@ -13,7 +13,6 @@ import sg.edu.nus.comp.cs4218.exception.ShellException;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Timeout;
 
 class ShellImplTest {
 
@@ -24,7 +23,8 @@ class ShellImplTest {
         testShell = new ShellImpl();
     }
 
-    // Reference for how to time out a test in JUnit5: https://stackoverflow.com/questions/57116801/how-to-fail-a-test-after-a-timeout-is-exceeded-in-junit-5
+    // Reference for how to time out a test in JUnit5:
+    // https://stackoverflow.com/questions/57116801/how-to-fail-a-test-after-a-timeout-is-exceeded-in-junit-5
     @Test
     public void testSingleInvalidCommand() throws AbstractApplicationException, ShellException, FileNotFoundException {
         assertTimeoutPreemptively(Duration.ofMillis(500), () -> {
