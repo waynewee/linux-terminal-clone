@@ -59,4 +59,20 @@ class CommandBuilderTest {
         List<String> argsList = callCommand.getArgsList();
         assertEquals(argsList.size(), 2);
     }
+
+    @Test
+    public void parseCommand_inputRedirection_isAnArgument() throws ShellException {
+        Command command = CommandBuilder.parseCommand("paste < siaoEh.txt", new ApplicationRunner());
+        CallCommand callCommand = (CallCommand) command;
+        List<String> argsList = callCommand.getArgsList();
+        assertEquals(argsList.get(1), "<");
+    }
+
+    @Test
+    public void parseCommand_outputRedirection_isAnArgument() throws ShellException {
+        Command command = CommandBuilder.parseCommand("echo chickenBurger > fishmonger.txt", new ApplicationRunner());
+        CallCommand callCommand = (CallCommand) command;
+        List<String> argsList = callCommand.getArgsList();
+        assertEquals(argsList.get(2), ">");
+    }
 }
