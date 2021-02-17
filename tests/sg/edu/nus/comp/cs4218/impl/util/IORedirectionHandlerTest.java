@@ -23,21 +23,25 @@ class IORedirectionHandlerTest {
 
     private static ArgumentResolver argumentResolver;
     private static ByteArrayOutputStream testStream;
+    private static String nonExistentFile = "someNonExistentFile.txt";
+    private static String trueFile = "trueFile.txt";
+    private static String anotherTrueFile = "anotherTrueFile.txt";
+
 
     @BeforeAll
     static void setUp() throws IOException {
         argumentResolver = new ArgumentResolver();
         testStream = new ByteArrayOutputStream();
-        Files.deleteIfExists(Path.of("someNonExistentFile.txt"));
-        Files.deleteIfExists(Path.of("trueFile.txt"));
-        Files.deleteIfExists(Path.of("anotherTrueFile.txt"));
+        Files.deleteIfExists(Path.of(nonExistentFile));
+        Files.deleteIfExists(Path.of(trueFile));
+        Files.deleteIfExists(Path.of(anotherTrueFile));
 
-        Files.createFile(Path.of("trueFile.txt"));
-        FileWriter trueFileWriter = new FileWriter("trueFile.txt");
+        Files.createFile(Path.of(trueFile));
+        FileWriter trueFileWriter = new FileWriter(trueFile);
         trueFileWriter.write("Mark of the true file");
         trueFileWriter.close();
 
-        Files.createFile(Path.of("anotherTrueFile.txt"));
+        Files.createFile(Path.of(anotherTrueFile));
     }
 
     @Test
@@ -45,8 +49,8 @@ class IORedirectionHandlerTest {
         List<String> argsList = new ArrayList<String>();
         argsList.add("paste");
         argsList.add("<");
-        argsList.add("trueFile.txt");
-        argsList.add("anotherTrueFile.txt");
+        argsList.add(trueFile);
+        argsList.add(anotherTrueFile);
         IORedirectionHandler redirHandler = new IORedirectionHandler(argsList, System.in, testStream, argumentResolver);
         assertThrows(ShellException.class, () -> redirHandler.extractRedirOptions());
     }
@@ -65,7 +69,7 @@ class IORedirectionHandlerTest {
         List<String> argsList = new ArrayList<String>();
         argsList.add("paste");
         argsList.add("<");
-        argsList.add("trueFile.txt");
+        argsList.add(trueFile);
         IORedirectionHandler redirHandler = new IORedirectionHandler(argsList, System.in, testStream, argumentResolver);
         assertDoesNotThrow(() -> redirHandler.extractRedirOptions());
 
@@ -83,7 +87,7 @@ class IORedirectionHandlerTest {
         argsList.add("echo");
         argsList.add("helloWorld");
         argsList.add(">");
-        argsList.add("trueFile.txt");
+        argsList.add(trueFile);
         IORedirectionHandler redirHandler = new IORedirectionHandler(argsList, System.in, testStream, argumentResolver);
         assertDoesNotThrow(() -> redirHandler.extractRedirOptions());
 
@@ -98,7 +102,7 @@ class IORedirectionHandlerTest {
         List<String> argsList = new ArrayList<String>();
         argsList.add("paste");
         argsList.add("<");
-        argsList.add("someNonExistentFile.txt");
+        argsList.add(nonExistentFile);
         IORedirectionHandler redirHandler = new IORedirectionHandler(argsList, System.in, testStream, argumentResolver);
         assertThrows(ShellException.class, () -> redirHandler.extractRedirOptions());
     }
@@ -110,9 +114,9 @@ class IORedirectionHandlerTest {
         argsList.add("echo");
         argsList.add("helloWorld");
         argsList.add(">");
-        argsList.add("someNonExistentFile.txt");
+        argsList.add(nonExistentFile);
         IORedirectionHandler redirHandler = new IORedirectionHandler(argsList, System.in, testStream, argumentResolver);
         assertDoesNotThrow(() -> redirHandler.extractRedirOptions());
-        assertEquals(true, new File("someNonExistentFile.txt").exists());
+        assertEquals(true, new File(nonExistentFile).exists());
     }
 }

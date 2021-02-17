@@ -17,12 +17,12 @@ import org.junit.jupiter.api.Test;
 
 class CdApplicationTest {
     static CdApplication cdApplication;
-    static String originalCurrentDirectory;
+    static String originalDir;
 
     @BeforeAll
     static void setUp() throws IOException {
         cdApplication = new CdApplication();
-        originalCurrentDirectory = Environment.currentDirectory;
+        originalDir = Environment.currentDirectory;
 
         Path testDirectoryPath = Paths.get("./.directoryForTesting");
         Files.deleteIfExists(testDirectoryPath);
@@ -31,19 +31,19 @@ class CdApplicationTest {
 
     @BeforeEach
     void setUpBeforeEachTest() throws CdException {
-        cdApplication.changeToDirectory(originalCurrentDirectory);
+        cdApplication.changeToDirectory(originalDir);
     }
 
 
     @Test
     void changeToDirectory_relativePathExisting_changesDirectory() {
         assertDoesNotThrow(() -> cdApplication.changeToDirectory("." + File.separator + ".directoryForTesting"));
-        assertEquals(Environment.currentDirectory, originalCurrentDirectory + File.separator + ".directoryForTesting");
+        assertEquals(Environment.currentDirectory, originalDir + File.separator + ".directoryForTesting");
     }
 
     @Test
     void changeToDirectory_absolutePathExisting_changesDirectory() {
-        String absolutePath = originalCurrentDirectory + File.separator + ".directoryForTesting";
+        String absolutePath = originalDir + File.separator + ".directoryForTesting";
         assertDoesNotThrow(() -> cdApplication.changeToDirectory(absolutePath));
         assertEquals(Environment.currentDirectory, absolutePath);
     }

@@ -22,12 +22,6 @@ import org.junit.jupiter.api.Timeout;
 
 class CommandBuilderTest {
 
-    private static Shell testShell;
-
-    @BeforeAll
-    static void setupShell() {
-    }
-
     @Test
     public void parseCommand_unquotedArg_isActuallyTwoArgs() throws ShellException {
         Command command = CommandBuilder.parseCommand("echo hello world", new ApplicationRunner());
