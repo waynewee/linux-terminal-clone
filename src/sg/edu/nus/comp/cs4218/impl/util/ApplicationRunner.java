@@ -50,17 +50,23 @@ public class ApplicationRunner {
                 break;
             case APP_EXIT:
                 application = new ExitApplication();
-            case APP_GREP:
+                break;
+        case APP_GREP:
                 application = new GrepApplication();
-            case APP_CD:
+                break;
+        case APP_CD:
                 application = new CdApplication();
                 break;
             case APP_CAT:
                 application = new CatApplication();
-            default:
+                break;
+        default:
                 throw new ShellException(app + ": " + ERR_INVALID_APP);
         }
-
-        application.run(argsArray, inputStream, outputStream);
+        try {
+            application.run(argsArray, inputStream, outputStream);
+        } catch (Exception e){
+            throw new ShellException(ERR_GENERAL);
+        }
     }
 }
