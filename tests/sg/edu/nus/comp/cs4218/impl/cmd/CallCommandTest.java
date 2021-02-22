@@ -77,7 +77,7 @@ class CallCommandTest {
     }
 
     @Test 
-    public void getArgsList_ReturnsListInstance() {
+    public void getArgsList_CallCommandInitialised_ReturnsListInstance() {
         // Add unimplemented command as token
         tokens.add("command1");
         tokens.add("command2");
