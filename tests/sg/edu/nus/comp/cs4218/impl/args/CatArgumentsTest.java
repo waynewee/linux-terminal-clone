@@ -11,6 +11,11 @@ import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_INVALID_FLAG;
 
 class CatArgumentsTest {
 
+    private static final String CAT_COMMAND = "cat";
+    private static final String FILE = "filename.txt";
+    private static final String FLAG_LINES = "-n";
+    private static final String FLAG_INVALID = "-x";
+
     private static CatArguments catArguments;
 
     @BeforeAll
@@ -18,38 +23,30 @@ class CatArgumentsTest {
         catArguments = new CatArguments();
     }
 
-    // TEMPLATE_BUG
     @Test
-    public void parse_WithShowLinesFlag_IsLinesShownReturnsTrue() throws CatException {
-
-        String[] args = {"cat", "filename.txt", "-n"};
-        catArguments.parse(args);
+    public void parse_LinesTrue_ReturnsIsLineNumberTrue() throws CatException {
+        catArguments.parse(CAT_COMMAND, FLAG_LINES, FILE);
         assertTrue(catArguments.isLineNumber());
-
     }
 
     @Test
-    public void parse_WithoutShowLinesFlag_IsLinesShownReturnsFalse() throws CatException {
-
-        String[] args = {"cat", "filename.txt"};
-        catArguments.parse(args);
+    public void parse_LinesFalse_ReturnsIsLineNumberFalse() throws CatException {
+        catArguments.parse(CAT_COMMAND, FILE);
         assertFalse(catArguments.isLineNumber());
-
     }
 
     @Test
-    public void parse_InvalidFlag_ThrowsException() throws CatException {
-
-        String[] args = {"cat", "filename.txt", "-x"};
-
+    public void parse_FlagInvalid_ThrowsInvalidFlagException() {
         CatException catException = assertThrows(CatException.class, () -> {
-            catArguments.parse(args);
+            catArguments.parse(CAT_COMMAND, FLAG_INVALID, FILE);
         });
-
         assertEquals(catException.getMessage(), new CatException(ERR_INVALID_FLAG).getMessage());
-
     }
 
-
+    @Test
+    public void parse_FlagAfterFile_ReturnsIsLineNumberFalse() throws CatException {
+        catArguments.parse(CAT_COMMAND, FILE, FLAG_LINES);
+        assertFalse(catArguments.isLineNumber());
+    }
 
 }

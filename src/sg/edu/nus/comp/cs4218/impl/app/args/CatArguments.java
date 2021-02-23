@@ -12,7 +12,7 @@ import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_FLAG_PREFIX;
 
 public class CatArguments {
 
-    public static final char CHAR_SHOW_LINES_OPTION = 'n';
+    public static final char CHAR_LINES_OPTION = 'n';
 
     private final List<String> files;
     private boolean lineNumber;
@@ -28,26 +28,22 @@ public class CatArguments {
      * @param args Array of arguments to parse
      */
     public void parse(String... args) throws CatException {
-        boolean lineNumber = false;
+        boolean parsingFLag = true, lineNumber = false, isFirstPass = true;
         // Parse arguments
         if (args != null && args.length > 0) {
             for (String arg : args) {
-                if (arg.isEmpty()) {
+                if (isFirstPass || arg.isEmpty()) {
+                    isFirstPass = false;
                     continue;
                 }
-                // `parsingFlag` is to ensure all flags come first, followed by files.
-                if (arg.charAt(0) == CHAR_FLAG_PREFIX) {
-                    for (char c : arg.toCharArray()) {
-                        if (c == CHAR_FLAG_PREFIX) {
-                            continue;
-                        }
-                        if (c == CHAR_SHOW_LINES_OPTION) {
-                            lineNumber = true;
-                            continue;
-                        }
-                        throw new CatException(ERR_INVALID_FLAG);
+                if (parsingFLag && arg.charAt(0) == CHAR_FLAG_PREFIX) {
+                    if (arg.equals(CHAR_FLAG_PREFIX + "" + CHAR_LINES_OPTION)) {
+                        lineNumber = true;
+                        continue;
                     }
+                    throw new CatException(ERR_INVALID_FLAG);
                 } else {
+                    parsingFLag = false;
                     this.files.add(arg.trim());
                 }
             }

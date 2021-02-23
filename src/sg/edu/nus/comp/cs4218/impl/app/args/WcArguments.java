@@ -1,11 +1,12 @@
 package sg.edu.nus.comp.cs4218.impl.app.args;
 
+import sg.edu.nus.comp.cs4218.exception.GrepException;
 import sg.edu.nus.comp.cs4218.exception.WcException;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_INVALID_FLAG;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_FLAG_PREFIX;
 
 
@@ -18,9 +19,9 @@ public class WcArguments {
     private boolean lines, words, bytes;
 
     public WcArguments() {
-        this.lines = true;
-        this.words = true;
-        this.bytes = true;
+        this.lines = false;
+        this.words = false;
+        this.bytes = false;
         this.files = new ArrayList<>();
     }
 
@@ -30,42 +31,64 @@ public class WcArguments {
      * @param args Array of arguments to parse
      */
     public void parse(String... args) throws WcException {
-        boolean isLines = false, isWords = false, isBytes = false;
-        // Parse arguments
-        if (args != null && args.length > 0) {
-            for (String arg : args) {
-                if (arg.isEmpty()) {
+        if (args == null) {
+            throw new WcException(ERR_NULL_ARGS);
+        }
+        if (args.length < 1) {
+            throw new WcException(ERR_NO_REGEX);
+        }
+
+        boolean parsingFlag = true, isFirstPass = true;
+        // Parse arguments=
+        for (String arg : args) {
+            if (isFirstPass || arg.isEmpty()) {
+                isFirstPass = false;
+                continue;
+            }
+            // `parsingFlag` is to ensure all flags come first, followed by files.
+            if (parsingFlag && arg.charAt(0) == CHAR_FLAG_PREFIX) {
+                if (arg.equals(CHAR_FLAG_PREFIX + "" + CHAR_BYTES_OPTION)) {
+                    this.bytes = true;
                     continue;
                 }
-                // `parsingFlag` is to ensure all flags come first, followed by files.
-                if (arg.charAt(0) == CHAR_FLAG_PREFIX) {
-                    for (char c : arg.toCharArray()) {
-                        if (c == CHAR_FLAG_PREFIX) {
-                            continue;
-                        }
-                        if (c == CHAR_BYTES_OPTION) {
-                            isBytes = true;
-                            continue;
-                        }
-                        if (c == CHAR_LINES_OPTION) {
-                            isLines = true;
-                            continue;
-                        }
-                        if (c == CHAR_WORDS_OPTION) {
-                            isWords = true;
-                            continue;
-                        }
-                        throw new WcException(ERR_INVALID_FLAG);
-                    }
-                } else {
-                    this.files.add(arg.trim());
+                if (arg.equals(CHAR_FLAG_PREFIX + "" + CHAR_WORDS_OPTION)) {
+                    this.words = true;
+                    continue;
                 }
+                if (arg.equals(CHAR_FLAG_PREFIX + "" + CHAR_LINES_OPTION)) {
+                    this.lines = true;
+                    continue;
+                }
+
+                boolean isValid = true;
+
+                for (int i = 1; i < arg.toCharArray().length; i++) {
+                    char argChar = arg.toCharArray()[i];
+                    if (argChar == CHAR_BYTES_OPTION) {
+                        this.bytes = true;
+                        continue;
+                    }
+                    if (argChar == CHAR_WORDS_OPTION) {
+                        this.words = true;
+                        continue;
+                    }
+                    if (argChar == CHAR_LINES_OPTION) {
+                        this.lines = true;
+                        continue;
+                    }
+
+                    isValid = false;
+                }
+
+                if (isValid) {
+                    continue;
+                }
+
+                throw new WcException(ERR_INVALID_FLAG);
+            } else {
+                parsingFlag = false;
+                this.files.add(arg.trim());
             }
-        }
-        if (isLines || isWords || isBytes) {
-            this.lines = isLines;
-            this.words = isWords;
-            this.bytes = isBytes;
         }
     }
 

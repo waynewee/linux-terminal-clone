@@ -4,22 +4,23 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import sg.edu.nus.comp.cs4218.exception.EchoException;
 
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-
 
 class EchoApplicationTest {
 
-    String[] argsHelloWorld = {"Hello", "World"};
+    private static final String[] ARGS = {"Hello"};
+    private static final String[] ARGS_MULTI = {"Hello", "World"};
+    private static final String[] ARGS_QUOTE = {"\"A*B*C\""};
+    private static final String[] ARGS_QUOTE_MULTI = {"ABC", "\"AB_C\"", "\"DEF\""};
+    private static final String[] ARGS_EMPTY = {};
 
-    String stringHelloWorld = "Hello World";
-    String stringCarriageReturnLineFeed = "\r\n";
+    private static final String TEXT_QUOTE = "'\"A*B*C\"'";
+    private static final String TEXT_QUOTE_MULTI = "ABC '\"AB_C\"' '\"DEF\"'";
 
     private static EchoApplication echoApplication;
 
@@ -29,44 +30,40 @@ class EchoApplicationTest {
     }
 
     @Test
-    public void constructResult_NonEmptyString_ReturnsSameString() throws EchoException {
-        String[] args = argsHelloWorld;
-        String result = echoApplication.constructResult(args);
-        assertEquals(result, stringHelloWorld);
-    }
-
-    @Test
-    public void constructResult_EmptyString_ReturnsCRLF() throws EchoException {
-        String[] args = {};
-        String result = echoApplication.constructResult(args);
-        assertEquals(result, stringCarriageReturnLineFeed);
-    }
-
-    @Test
-    public void constructResult_NullArgs_ThrowsException() throws EchoException {
-        EchoException echoException = assertThrows(EchoException.class, () -> {
+    public void constructResult_ArgumentsNone_ThrowsNullArgsException() {
+        Exception exception = assertThrows(Exception.class, ()->{
             echoApplication.constructResult(null);
         });
-
-        assertEquals(echoException.getMessage(), new EchoException((ERR_NULL_ARGS)).getMessage());
+        assertEquals(new EchoException(ERR_NULL_ARGS).getMessage(), exception.getMessage());
     }
 
     @Test
-    public void run_WorkingInputWorkingOutput_WritesToOutput() throws EchoException {
-        InputStream inputStream = null;
-        OutputStream outputStream = new ByteArrayOutputStream(1024);
-        echoApplication.run(argsHelloWorld, inputStream, outputStream);
-        assertEquals(stringHelloWorld, outputStream.toString());
+    public void constructResult_ArgumentsEmpty_ReturnsNewLine() throws EchoException {
+        String result = echoApplication.constructResult(ARGS_EMPTY);
+        assertEquals(STRING_NEWLINE, result);
     }
 
     @Test
-    public void run_NullOutputStream_ThrowsException() throws EchoException {
-        InputStream inputStream = null;
-        OutputStream outputStream = null;
-        EchoException echoException = assertThrows(EchoException.class, () -> {
-            echoApplication.run(argsHelloWorld, inputStream, outputStream);
-        });
+    public void constructResult_ArgumentsSingle_ReturnsArguments() throws EchoException {
+        String result = echoApplication.constructResult(ARGS);
+        assertEquals(ARGS[0], result);
+    }
 
-        assertEquals(echoException.getMessage(), new EchoException(ERR_NO_OSTREAM).getMessage() );
+    @Test
+    public void constructResult_ArgumentsMulti_ReturnsArguments() throws EchoException {
+        String result = echoApplication.constructResult(ARGS_MULTI);
+        assertEquals(ARGS_MULTI[0] + " " + ARGS_MULTI[1], result);
+    }
+
+    @Test
+    public void constructResult_ArgumentsQuoteSingle_ReturnsArguments() throws EchoException {
+        String result = echoApplication.constructResult(ARGS_QUOTE);
+        assertEquals(TEXT_QUOTE, result);
+    }
+
+    @Test
+    public void constructResult_ArgumentsQuoteMulti_ReturnsArguments() throws EchoException {
+        String result = echoApplication.constructResult(ARGS_QUOTE_MULTI);
+        assertEquals(TEXT_QUOTE_MULTI, result);
     }
 }
