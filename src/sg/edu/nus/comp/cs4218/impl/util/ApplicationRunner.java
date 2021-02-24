@@ -63,7 +63,6 @@ public class ApplicationRunner {
             default:
                 throw new ShellException(app + ": " + ERR_INVALID_APP);
         }
-
         try {
             application.run(argsArray, inputStream, outputStream);
         } catch (Exception e){
