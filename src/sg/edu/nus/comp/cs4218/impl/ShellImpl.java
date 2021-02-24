@@ -29,6 +29,7 @@ public class ShellImpl implements Shell {
             String currentDirectory = Environment.currentDirectory;
             String commandString;
             try {
+                System.out.print(String.format("%s> ", currentDirectory));
                 commandString = reader.readLine();
             } catch (IOException e) {
                 return; // Streams are closed, terminate process
