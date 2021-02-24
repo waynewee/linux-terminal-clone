@@ -52,10 +52,10 @@ public class ApplicationRunner {
             case APP_EXIT:
                 application = new ExitApplication();
                 break;
-        case APP_GREP:
+            case APP_GREP:
                 application = new GrepApplication();
                 break;
-        case APP_CD:
+            case APP_CD:
                 application = new CdApplication();
                 break;
             case APP_CAT:
@@ -64,7 +64,7 @@ public class ApplicationRunner {
             case APP_MV:
                 application = new MvApplication();
                 break;
-        default:
+            default:
                 throw new ShellException(app + ": " + ERR_INVALID_APP);
         }
         try {

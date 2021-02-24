@@ -30,7 +30,15 @@ public class EchoApplication implements EchoInterface {
         if (args.length == 0) {
             result = STRING_NEWLINE;
         } else {
-            result = String.join(" ", args);
+            StringBuilder stringBuilder = new StringBuilder();
+            for (String arg: args) {
+                String newArg = arg;
+                if (arg.charAt(0) == '"' && arg.charAt(arg.length()-1) == '"') {
+                    newArg = '\'' + arg + '\'';
+                }
+                stringBuilder.append(newArg).append(" ");
+            }
+            result = stringBuilder.toString().trim();
         }
 
         return result;

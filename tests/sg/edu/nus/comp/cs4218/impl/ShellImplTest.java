@@ -10,9 +10,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.time.Duration;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
-
 class ShellImplTest {
 
     private static Shell testShell;
