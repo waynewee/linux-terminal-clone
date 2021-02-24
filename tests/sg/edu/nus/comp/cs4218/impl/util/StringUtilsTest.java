@@ -102,7 +102,73 @@ class StringUtilsTest {
     }
 
     @Test
-    void tokenize() {
+    void tokenize_EmptyString_ReturnEmptyArray() {
+        assertTimeoutPreemptively(Duration.ofMillis(500), () -> {
+            String input = "";
+            String[] expected = {};
+            String[] result = StringUtils.tokenize(input);
+            assertArrayEquals(expected, result);
+        });
+    }
+
+    @Test
+    void tokenize_SingleWord_ReturnOneWordArray() {
+        assertTimeoutPreemptively(Duration.ofMillis(500), () -> {
+            String input = "Hello";
+            String[] expected = {"Hello"};
+            String[] result = StringUtils.tokenize(input);
+            assertArrayEquals(expected, result);
+        });
+    }
+
+    @Test
+    void tokenize_TwoWordSeparatedBySingleWhitespace_ReturnTwoWordsArray() {
+        assertTimeoutPreemptively(Duration.ofMillis(500), () -> {
+            String input = "Hello World";
+            String[] expected = {"Hello", "World"};
+            String[] result = StringUtils.tokenize(input);
+            assertArrayEquals(expected, result);
+        });
+    }
+
+    @Test
+    void tokenize_TwoWordSeparatedByMultipleWhitespace_ReturnTwoWordsArray() {
+        assertTimeoutPreemptively(Duration.ofMillis(500), () -> {
+            String input = "Hello   World";
+            String[] expected = {"Hello", "World"};
+            String[] result = StringUtils.tokenize(input);
+            assertArrayEquals(expected, result);
+        });
+    }
+
+    @Test
+    void tokenize_MultipleWordSeparatedBySingleWhitespace_ReturnMultipleWordsArray() {
+        assertTimeoutPreemptively(Duration.ofMillis(500), () -> {
+            String input = "Hello World John Doe";
+            String[] expected = {"Hello", "World", "John", "Doe"};
+            String[] result = StringUtils.tokenize(input);
+            assertArrayEquals(expected, result);
+        });
+    }
+
+    @Test
+    void tokenize_PipeAndQuoteSeparatedBySingleWhitespace_ReturnTwoStringArray() {
+        assertTimeoutPreemptively(Duration.ofMillis(500), () -> {
+            String input = "| \"";
+            String[] expected = {"|", "\""};
+            String[] result = StringUtils.tokenize(input);
+            assertArrayEquals(expected, result);
+        });
+    }
+
+    @Test
+    void tokenize_WordPipeWordSeparatedBySingleWhitespace_ReturnThreeStringArray() {
+        assertTimeoutPreemptively(Duration.ofMillis(500), () -> {
+            String input = "Hello | World";
+            String[] expected = {"Hello", "|", "World"};
+            String[] result = StringUtils.tokenize(input);
+            assertArrayEquals(expected, result);
+        });
     }
 
     @Test
