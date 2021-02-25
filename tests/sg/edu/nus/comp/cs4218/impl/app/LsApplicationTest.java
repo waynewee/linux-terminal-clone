@@ -10,6 +10,8 @@ import sg.edu.nus.comp.cs4218.exception.LsException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -18,6 +20,9 @@ import java.util.Objects;
 import static org.junit.jupiter.api.Assertions.*;
 import static sg.edu.nus.comp.cs4218.impl.parser.ArgsParser.ILLEGAL_FLAG_MSG;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
+
+import resources.impl.app.LsApplicationResources.Answers;
+import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
 class LsApplicationTest {
 
@@ -42,8 +47,7 @@ class LsApplicationTest {
         correctOutput = Objects.requireNonNull(new File(Environment.currentDirectory).listFiles()).length;
 
         lsApplication.run(new String[0], System.in, outputStream);
-        assertEquals(correctOutput, outputStream.toString().split("[\n|\r]").length);
-
+        assertEquals(correctOutput, outputStream.toString().split(StringUtils.STRING_NEWLINE).length);
     }
 
     // ls -d
@@ -58,7 +62,7 @@ class LsApplicationTest {
         args[0] = "-d";
 
         lsApplication.run(args, System.in, outputStream);
-        assertEquals(files.length, outputStream.toString().split("[\n|\r]").length);
+        assertEquals(files.length, outputStream.toString().split(StringUtils.STRING_NEWLINE).length);
 
     }
 
@@ -83,7 +87,6 @@ class LsApplicationTest {
         Collections.sort(filesWithoutExtensions);
         filesWithExtensions.sort(new ExtensionComparator());
         String expectedOutput = getFileNames(filesWithoutExtensions) + getFileNames(filesWithExtensions);
-
         // Prepare args
         String[] args = new String[1];
         args[0] = "-X";
@@ -93,7 +96,25 @@ class LsApplicationTest {
 
     }
 
-    // ls -a
+    // ls -R
+    @Test
+    public void run_LsCommandWithRecursiveOption_ListsOutputCorrectly() throws Exception {
+        // Prepare correct output
+        String correctOutput = Answers.testRecursive.replace("\n", StringUtils.STRING_NEWLINE);
+
+        // Prepare args
+        Path testsResourcesDir = Paths.get("tests", "resources", "impl", "app", "LsApplicationResources", "test_recursive");
+        String path = Paths.get(Environment.currentDirectory, testsResourcesDir.toString()).toString();
+        String[] args = new String[2];
+        args[0] = "-R";
+        args[1] = path;
+
+        lsApplication.run(args, System.in, outputStream);
+        String output = outputStream.toString();
+        assertEquals(correctOutput, output);
+    }
+
+    // Unknown arg: ls -a
     @Test
     public void run_GivenUnknownArgsWithHyphen_ThrowsLsException() {
         String[] args = new String[1];
@@ -105,7 +126,7 @@ class LsApplicationTest {
         assertEquals("ls: " + invalidArgsException.getMessage(), lsException.getMessage());
     }
 
-    // ls -b -h -e -g -f
+    // Unknown args: ls -b -h -e -g -f
     @Test
     public void run_GivenUnknownMultipleArgsWithHyphen_ThrowsLsException() {
         String[] args = new String[5];
@@ -153,7 +174,7 @@ class LsApplicationTest {
     private String getFileNames(ArrayList<File> filesWithoutExtensions) {
         StringBuilder output = new StringBuilder();
         for (File file: filesWithoutExtensions) {
-            output.append(file.getName()).append("\n");
+            output.append(file.getName()).append(StringUtils.STRING_NEWLINE);
         }
         return output.toString();
     }
