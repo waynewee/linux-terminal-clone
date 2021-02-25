@@ -96,7 +96,7 @@ class LsApplicationTest {
 
     }
 
-    // ls -R
+    // ls -R [specific folder]
     @Test
     public void run_LsCommandWithRecursiveOption_ListsOutputCorrectly() throws Exception {
         // Prepare correct output
@@ -113,6 +113,84 @@ class LsApplicationTest {
         String output = outputStream.toString();
         assertEquals(correctOutput, output);
     }
+
+    // ls -R -d [specific folder]
+    @Test
+    public void run_lsCommandWithRecursiveAndDirectoriesOption_ListsOutputCorrectly() throws Exception {
+        // Prepare correct output
+        String correctOutput = Answers.testRecursiveDirectories.replace("\n", StringUtils.STRING_NEWLINE);
+
+        // Prepare args
+        Path testsResourcesDir = Paths.get("tests", "resources", "impl", "app", "LsApplicationResources", "test_recursive_directories");
+        String path = Paths.get(Environment.currentDirectory, testsResourcesDir.toString()).toString();
+        String[] args = new String[3];
+        args[0] = "-R";
+        args[1] = "-d";
+        args[2] = path;
+
+        lsApplication.run(args, System.in, outputStream);
+        assertEquals(correctOutput, outputStream.toString());
+
+    }
+
+    // ls -R -X [specific folder]
+    @Test
+    public void run_lsCommandWithRecursiveAndSortOption_ListsOutputCorrectly() throws Exception {
+        // Prepare correct output
+        String correctOutput = Answers.testRecursiveSort.replace("\n", StringUtils.STRING_NEWLINE);
+
+        // Prepare args
+        Path testsResourcesDir = Paths.get("tests", "resources", "impl", "app", "LsApplicationResources", "test_recursive_sort");
+        String path = Paths.get(Environment.currentDirectory, testsResourcesDir.toString()).toString();
+        String[] args = new String[3];
+        args[0] = "-R";
+        args[1] = "-X";
+        args[2] = path;
+
+        lsApplication.run(args, System.in, outputStream);
+        assertEquals(correctOutput, outputStream.toString());
+
+    }
+
+    // ls -d -X [specific folder]
+    @Test
+    public void run_lsCommandWithFoldersOnlyAndSortOption_ListsOutputCorrectly() throws Exception {
+        // Prepare correct output
+        String correctOutput = Answers.testFoldersOnlySort.replace("\n", StringUtils.STRING_NEWLINE);
+
+        // Prepare args
+        Path testsResourcesDir = Paths.get("tests", "resources", "impl", "app", "LsApplicationResources", "test_folders_sort");
+        String path = Paths.get(Environment.currentDirectory, testsResourcesDir.toString()).toString();
+        String[] args = new String[3];
+        args[0] = "-d";
+        args[1] = "-X";
+        args[2] = path;
+
+        lsApplication.run(args, System.in, outputStream);
+        assertEquals(correctOutput, outputStream.toString());
+
+    }
+
+    // ls -d -X -R [specific folder]
+    @Test
+    public void run_lsCommandWithFoldersOnlyAndSortOptionAndRecursive_ListsOutputCorrectly() throws Exception {
+        // Prepare correct output
+        String correctOutput = Answers.testFolderOnlySortRecursive.replace("\n", StringUtils.STRING_NEWLINE);
+
+        // Prepare args
+        Path testsResourcesDir = Paths.get("tests", "resources", "impl", "app", "LsApplicationResources", "test_folders_sort_recursive");
+        String path = Paths.get(Environment.currentDirectory, testsResourcesDir.toString()).toString();
+        String[] args = new String[4];
+        args[0] = "-d";
+        args[1] = "-X";
+        args[2] = "-R";
+        args[3] = path;
+
+        lsApplication.run(args, System.in, outputStream);
+        assertEquals(correctOutput, outputStream.toString());
+    }
+
+
 
     // Unknown arg: ls -a
     @Test

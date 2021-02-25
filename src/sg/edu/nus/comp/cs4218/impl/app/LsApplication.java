@@ -119,6 +119,8 @@ public class LsApplication implements LsInterface {
                 if (!formatted.isEmpty()) {
                     // Empty directories should not have an additional new line
                     result.append(StringUtils.STRING_NEWLINE);
+                } else {
+                    result = new StringBuilder();
                 }
 
                 // RECURSE!
@@ -137,7 +139,6 @@ public class LsApplication implements LsInterface {
                             // Empty directories should not have an additional new line
                             result.append(StringUtils.STRING_NEWLINE);
                         }
-
                     }
                 }
             } catch (InvalidDirectoryException e) {
@@ -227,13 +228,11 @@ public class LsApplication implements LsInterface {
         List<Path> result = new ArrayList<>();
         File pwd = directory.toFile();
         for (File f : pwd.listFiles()) {
-            if (isFoldersOnly && !f.isDirectory()) {
+            if ((isFoldersOnly && !f.isDirectory()) || f.isHidden()) {
                 continue;
             }
 
-            if (!f.isHidden()) {
-                result.add(f.toPath());
-            }
+            result.add(f.toPath());
         }
 
         Collections.sort(result);
