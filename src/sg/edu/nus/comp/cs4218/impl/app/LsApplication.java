@@ -15,6 +15,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
@@ -157,6 +158,25 @@ public class LsApplication implements LsInterface {
             fileNames.add(path.getFileName().toString());
         }
 
+        List<String> filesNamesWithoutExtensions = new ArrayList<>();
+        List<String> filesNamesWithExtensions = new ArrayList<>();
+        for (String filename: fileNames) {
+            int indexOfLastDot = filename.lastIndexOf('.');
+            if (indexOfLastDot != -1) {
+                filesNamesWithExtensions.add(filename);
+            } else {
+                filesNamesWithoutExtensions.add(filename);
+            }
+        }
+
+        // Sort files without extensions
+        Collections.sort(filesNamesWithoutExtensions);
+        // Sort files with extensions
+        filesNamesWithExtensions.sort(new ExtensionComparator());
+        // Combine both the results
+        fileNames = new ArrayList<>(filesNamesWithoutExtensions);
+        fileNames.addAll(filesNamesWithExtensions);
+
         StringBuilder result = new StringBuilder();
         for (String fileName : fileNames) {
             result.append(fileName);
@@ -248,6 +268,15 @@ public class LsApplication implements LsInterface {
         InvalidDirectoryException(String directory, Throwable cause) {
             super(String.format("ls: cannot access '%s': No such file or directory", directory),
                     cause);
+        }
+    }
+
+    static class ExtensionComparator implements Comparator<String> {
+        @Override
+        public int compare(String f1, String f2) {
+            String ext1 = f1.substring(f1.lastIndexOf('.') + 1);
+            String ext2 = f2.substring(f2.lastIndexOf('.') + 1);
+            return ext1.compareTo(ext2);
         }
     }
 }
