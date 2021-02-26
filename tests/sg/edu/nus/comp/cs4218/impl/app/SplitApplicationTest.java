@@ -74,8 +74,8 @@ class SplitApplicationTest {
     @Test
     public void run_onNoArgumentsExceptFileName_splitsFileByLines() throws Exception {
         // Prepare args
-        Path testsResourcesDir = Paths.get("tests", "resources", "impl", "app", "SplitApplicationResources", "no_arguments_except_filename");
-        Path testFile = Paths.get("no_arguments_except_filename.txt");
+        Path testsResourcesDir = Paths.get("tests", "resources", "impl", "app", "SplitApplicationResources", "filename");
+        Path testFile = Paths.get("filename.txt");
         String path = Paths.get(Environment.currentDirectory, testsResourcesDir.toString(), testFile.toString()).toString();
 
         String[] args = new String[1];
@@ -180,13 +180,13 @@ class SplitApplicationTest {
     @Test
     public void run_onLineArgument_createsFileNamesWhichStartsWithZ() throws Exception {
         // Prepare args
-        Path testsResourcesDir = Paths.get("tests", "resources", "impl", "app", "SplitApplicationResources", "line_5_filename");
-        Path testFile = Paths.get("line_5_filename.txt");
+        Path testsResourcesDir = Paths.get("tests", "resources", "impl", "app", "SplitApplicationResources", "line_1_filename");
+        Path testFile = Paths.get("line_1_filename.txt");
         String path = Paths.get(Environment.currentDirectory, testsResourcesDir.toString(), testFile.toString()).toString();
 
         String[] args = new String[1];
         args[0] = "-l";
-        args[1] = "5";
+        args[1] = "1";
         args[2] = path;
 
         splitApplication.run(args, System.in, outputStream);
