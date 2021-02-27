@@ -65,6 +65,8 @@ public class ApplicationRunner {
         }
         try {
             application.run(argsArray, inputStream, outputStream);
+        } catch (AbstractApplicationException e){
+            throw e;
         } catch (Exception e){
             throw new ShellException(ERR_GENERAL);
         }
