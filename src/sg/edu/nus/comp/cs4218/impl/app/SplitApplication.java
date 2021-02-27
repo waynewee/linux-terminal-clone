@@ -1,5 +1,6 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
+import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.app.SplitInterface;
 import sg.edu.nus.comp.cs4218.exception.SplitException;
 import sg.edu.nus.comp.cs4218.impl.parser.SplitArgsParser;
@@ -8,7 +9,9 @@ import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 import static java.lang.Integer.parseInt;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
@@ -169,6 +172,24 @@ public class SplitApplication implements SplitInterface {
         System.out.println(prefix);
         System.out.println(linesPerFile);
 
+        Scanner sc = new Scanner(System.in);
+        String directoryPath = Paths.get(Environment.currentDirectory).toString();
+        FileWriter fileWriter = new FileWriter(Paths.get(directoryPath, getOutputFileName()).toString());
+
+        int counter = 0;
+
+        while (true) {
+            if (counter == linesPerFile) {
+                fileWriter.close();
+                fileWriter = new FileWriter(Paths.get(directoryPath, getOutputFileName()).toString());
+                counter = 0;
+            } else {
+                counter += 1;
+                String temp = sc.nextLine();
+                fileWriter.write(temp);
+                fileWriter.write(StringUtils.STRING_NEWLINE);
+            }
+        }
     }
 
     @Override
