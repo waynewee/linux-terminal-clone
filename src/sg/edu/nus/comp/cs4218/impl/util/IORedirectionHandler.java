@@ -54,6 +54,7 @@ public class IORedirectionHandler {
 
             // if current arg is < or >, fast-forward to the next arg to extract the specified file
             String file = argsIterator.next();
+            noRedirArgsList.add(file);
 
             if (isRedirOperator(file)) {
                 throw new ShellException(ERR_SYNTAX);
@@ -101,6 +102,6 @@ public class IORedirectionHandler {
     }
 
     private boolean isRedirOperator(String str) {
-        return str.equals(String.valueOf(CHAR_REDIR_INPUT));
+        return str.equals(String.valueOf(CHAR_REDIR_INPUT)) || str.equals(String.valueOf(CHAR_REDIR_OUTPUT));
     }
 }
