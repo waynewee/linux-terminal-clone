@@ -2,7 +2,6 @@ package sg.edu.nus.comp.cs4218.impl.util;
 
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
@@ -18,7 +17,6 @@ import sg.edu.nus.comp.cs4218.exception.ShellException;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Timeout;
 
 class CommandBuilderTest {
 
