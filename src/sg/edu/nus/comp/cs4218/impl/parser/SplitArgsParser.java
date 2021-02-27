@@ -81,6 +81,7 @@ public class SplitArgsParser extends ArgsParser{
         if (isSplitByBytes()) {
             if (temp.charAt(temp.length() - 1) == 'b' || temp.charAt(temp.length() - 1) == 'k'
                     || temp.charAt(temp.length() - 1) == 'm') {
+                System.out.println(temp);
                 splitSuffix = String.valueOf(temp.charAt(temp.length() - 1));
                 temp = temp.substring(0, temp.length() - 1);
             }
@@ -105,7 +106,6 @@ public class SplitArgsParser extends ArgsParser{
     }
 
     public void validateFileName(String rawFileName) throws InvalidArgsException {
-//        fileName = Paths.get(Environment.currentDirectory, fileName);
         // Validate filename
         if (Files.exists(Paths.get(rawFileName))) {
             fileName = Paths.get(rawFileName);
@@ -161,4 +161,5 @@ public class SplitArgsParser extends ArgsParser{
     public void updatePrefix() {
         prefix = "z";
     }
+
 }

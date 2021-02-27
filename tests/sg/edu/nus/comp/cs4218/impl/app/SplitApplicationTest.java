@@ -227,7 +227,9 @@ class SplitApplicationTest {
         args[2] = path;
 
         splitApplication.run(args, System.in, outputStream);
-        assert(Paths.get(Environment.currentDirectory, testsResourcesDir.toString(), Paths.get("zaa").toString()).toString() != null);
+        Path outputFilePath = Paths.get(Environment.currentDirectory, testsResourcesDir.toString(), "zaa");
+        assert(Files.exists(outputFilePath));
+
     }
 
     @Test
@@ -243,7 +245,8 @@ class SplitApplicationTest {
         args[2] = path;
 
         splitApplication.run(args, System.in, outputStream);
-        assert(Paths.get(Environment.currentDirectory, testsResourcesDir.toString(), Paths.get("zaa").toString()).toString() != null);
+        Path outputFilePath = Paths.get(Environment.currentDirectory, testsResourcesDir.toString(), "zaa");
+        assert(Files.exists(outputFilePath));
     }
 
     @Test
@@ -260,7 +263,8 @@ class SplitApplicationTest {
         args[3] = "vig";
 
         splitApplication.run(args, System.in, outputStream);
-        assert(Paths.get(Environment.currentDirectory, testsResourcesDir.toString(), Paths.get("vigaa").toString()).toString() != null);
+        Path outputFilePath = Paths.get(Environment.currentDirectory, testsResourcesDir.toString(), "vigaa");
+        assert(Files.exists(outputFilePath));
     }
 
     @Test
@@ -277,6 +281,7 @@ class SplitApplicationTest {
         args[3] = "vig";
 
         splitApplication.run(args, System.in, outputStream);
-        assert(Paths.get(Environment.currentDirectory, testsResourcesDir.toString(), Paths.get("vigaa").toString()).toString() != null);
+        Path outputFilePath = Paths.get(Environment.currentDirectory, testsResourcesDir.toString(), "vigaa");
+        assert(Files.exists(outputFilePath));
     }
 }
