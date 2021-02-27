@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -72,6 +73,14 @@ class RegexArgumentTest {
         testArg.appendAsterisk();
         testArg.merge("directory");
         testArg.appendAsterisk();
+        List<String> results = testArg.globFiles();
+        assertEquals(expected, results);
+    }
+    
+    @Test
+    void globFiles_NoFilesFound_ReturnsEmptyList() {
+        List<String> expected = new LinkedList<>();
+        testArg.append('z');
         List<String> results = testArg.globFiles();
         assertEquals(expected, results);
     }
