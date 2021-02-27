@@ -56,6 +56,7 @@ public class IORedirectionHandler {
             String file = argsIterator.next();
 
             if (isRedirOperator(file)) {
+                throw new ShellException(ERR_SYNTAX);
             }
 
             // handle quoting + globing + command substitution in file arg

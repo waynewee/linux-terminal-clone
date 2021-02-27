@@ -10,6 +10,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -27,6 +28,7 @@ class IORedirectionHandlerTest {
     private static String trueFile = "trueFile.txt";
     private static String anotherTrueFile = "anotherTrueFile.txt";
 
+    private static String[] MULTIPLE_IOREDIRECTION_TOKENS = {"paste", "<", "<", nonExistentFile};
 
     @BeforeAll
     static void setUp() throws IOException {
@@ -71,7 +73,7 @@ class IORedirectionHandlerTest {
         argsList.add("<");
         argsList.add(trueFile);
         IORedirectionHandler redirHandler = new IORedirectionHandler(argsList, System.in, testStream, argumentResolver);
-        assertDoesNotThrow(() -> redirHandler.extractRedirOptions());
+        assertDoesNotThrow(redirHandler::extractRedirOptions);
 
         List<String> noRedirArgsList = redirHandler.getNoRedirArgsList();
         assertEquals(noRedirArgsList.size(), 1);
@@ -117,6 +119,13 @@ class IORedirectionHandlerTest {
         argsList.add(nonExistentFile);
         IORedirectionHandler redirHandler = new IORedirectionHandler(argsList, System.in, testStream, argumentResolver);
         assertDoesNotThrow(() -> redirHandler.extractRedirOptions());
-        assertEquals(true, new File(nonExistentFile).exists());
+        assertEquals(false, new File(nonExistentFile).exists());
+    }
+
+    @Test
+    void extractRedirOptions_multipleIoRedirection_throwsShellException() {
+        List<String> argsList = new ArrayList<String>(Arrays.asList(MULTIPLE_IOREDIRECTION_TOKENS));
+        IORedirectionHandler redirHandler = new IORedirectionHandler(argsList, System.in, testStream, argumentResolver);
+        assertThrows(ShellException.class, () -> redirHandler.extractRedirOptions());
     }
 }
