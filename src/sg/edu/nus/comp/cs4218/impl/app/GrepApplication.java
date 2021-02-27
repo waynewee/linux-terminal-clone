@@ -4,21 +4,14 @@ import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.app.GrepInterface;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.GrepException;
-import sg.edu.nus.comp.cs4218.exception.InvalidArgsException;
-import sg.edu.nus.comp.cs4218.impl.parser.GrepArgsParser;
+import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.StringJoiner;
+import java.nio.Buffer;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_FILE_SEP;
@@ -26,10 +19,6 @@ import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_FLAG_PREFIX;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 public class GrepApplication implements GrepInterface {
-    public static final String INVALID_PATTERN = "Invalid pattern syntax";
-    public static final String EMPTY_PATTERN = "Pattern should not be empty.";
-    public static final String IS_DIRECTORY = "Is a directory";
-    public static final String NULL_POINTER = "Null Pointer Exception";
 
     private static final int NUM_ARGUMENTS = 3;
     private static final char CASE_INSEN_IDENT = 'i';
@@ -42,25 +31,31 @@ public class GrepApplication implements GrepInterface {
 
     @Override
     public String grepFromFiles(String pattern, Boolean isCaseInsensitive, Boolean isCountLines, Boolean isPrefixFileName, String... fileNames) throws Exception {
-        // TODO: To implement -H flag print file name with output lines
         if (fileNames == null || pattern == null) {
-            throw new GrepException(NULL_POINTER);
+            throw new GrepException(ERR_NULL_STREAMS);
         }
 
-        StringJoiner lineResults = new StringJoiner(STRING_NEWLINE);
-        StringJoiner countResults = new StringJoiner(STRING_NEWLINE);
+        boolean isSingleFile = fileNames.length == 1;
+        ArrayList<GrepResults> grepResultsList = grepResultsFromFiles(pattern, isCaseInsensitive, isPrefixFileName, fileNames);
+        StringJoiner stringJoiner = new StringJoiner(STRING_NEWLINE);
+        for (GrepResults grepResults : grepResultsList) {
 
-        grepResultsFromFiles(pattern, isCaseInsensitive, lineResults, countResults, fileNames);
+            if (!grepResults.exceptionMessages.isEmpty()) {
+                for (String exceptionMessage: grepResults.exceptionMessages) {
+                    stringJoiner.add(exceptionMessage);
+                }
+                continue;
+            }
 
-        String results = "";
-        if (isCountLines) {
-            results = countResults.toString() + STRING_NEWLINE;
-        } else {
-            if (!lineResults.toString().isEmpty()) {
-                results = lineResults.toString() + STRING_NEWLINE;
+            if (isCountLines) {
+                grepResults.getCount(isSingleFile, stringJoiner);
+            } else {
+                grepResults.getLines(isPrefixFileName, stringJoiner);
             }
         }
-        return results;
+
+        return stringJoiner.toString() + STRING_NEWLINE;
+
     }
 
     /**
@@ -69,62 +64,70 @@ public class GrepApplication implements GrepInterface {
      *
      * @param pattern           supplied by user
      * @param isCaseInsensitive supplied by user
-     * @param lineResults       a StringJoiner of the grep line results
-     * @param countResults      a StringJoiner of the grep line count results
      * @param fileNames         a String Array of file names supplied by user
      */
-    private void grepResultsFromFiles(String pattern, Boolean isCaseInsensitive, StringJoiner lineResults, StringJoiner countResults, String... fileNames) throws Exception {
-        int count;
-        boolean isSingleFile = (fileNames.length == 1);
+    private ArrayList<GrepResults> grepResultsFromFiles(String pattern, Boolean isCaseInsensitive, boolean isPrefixFileName, String... fileNames) throws Exception {
+
+        ArrayList<GrepResults> grepResultsList = new ArrayList<>();
+
         for (String f : fileNames) {
-            BufferedReader reader = null;
             try {
                 String path = convertToAbsolutePath(f);
                 File file = new File(path);
+
+                GrepResults grepResults = new GrepResults();
+
                 if (!file.exists()) {
-                    lineResults.add(f + ": " + ERR_FILE_NOT_FOUND);
-                    countResults.add(f + ": " + ERR_FILE_NOT_FOUND);
+                    String exceptionMessage = new GrepException(file.getName() + ": " + ERR_FILE_NOT_FOUND).getMessage();
+                    grepResults.exceptionMessages.add(exceptionMessage);
+                    grepResultsList.add(grepResults);
                     continue;
                 }
                 if (file.isDirectory()) { // ignore if it's a directory
-                    lineResults.add(f + ": " + IS_DIRECTORY);
-                    countResults.add(f + ": " + IS_DIRECTORY);
+                    String exceptionMessage = new GrepException(file.getName() + ": " + ERR_IS_DIR).getMessage();
+                    grepResults.exceptionMessages.add(exceptionMessage);
+                    grepResultsList.add(grepResults);
                     continue;
                 }
-                reader = new BufferedReader(new FileReader(path));
-                String line;
-                Pattern compiledPattern;
-                if (isCaseInsensitive) {
-                    compiledPattern = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
-                } else {
-                    compiledPattern = Pattern.compile(pattern);
-                }
-                count = 0;
-                while ((line = reader.readLine()) != null) {
-                    Matcher matcher = compiledPattern.matcher(line);
-                    if (matcher.find()) { // match
-                        if (isSingleFile) {
-                            lineResults.add(line);
-                        } else {
-                            lineResults.add(f + ": " + line);
-                        }
-                        count++;
-                    }
-                }
-                if (isSingleFile) {
-                    countResults.add("" + count);
-                } else {
-                    countResults.add(f + ": " + count);
-                }
-                reader.close();
+
+                InputStream inputStream = IOUtils.openInputStream(path);
+                grepResults = grepResults(pattern, isCaseInsensitive, inputStream);
+                grepResults.file = file.getName();
+                grepResultsList.add(grepResults);
             } catch (PatternSyntaxException pse) {
                 throw new GrepException(ERR_INVALID_REGEX);
-            } finally {
-                if (reader != null) {
-                    reader.close();
-                }
             }
         }
+
+        return grepResultsList;
+    }
+
+    private GrepResults grepResults(String pattern, boolean isCaseInsensitive, InputStream stdin) throws Exception {
+
+        GrepResults grepResults = new GrepResults();
+
+        try{
+            BufferedReader reader = new BufferedReader(new InputStreamReader(stdin));
+            String line;
+            Pattern compiledPattern;
+            if (isCaseInsensitive) {
+                compiledPattern = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
+            } else {
+                compiledPattern = Pattern.compile(pattern);
+            }
+            while ((line = reader.readLine()) != null) {
+                Matcher matcher = compiledPattern.matcher(line);
+                if (matcher.find()) { // match
+                    grepResults.lines.add(line);
+                }
+            }
+            reader.close();
+        } catch (PatternSyntaxException pse) {
+            throw new GrepException(ERR_INVALID_REGEX);
+        }
+
+        return grepResults;
+
     }
 
     /**
@@ -168,42 +171,24 @@ public class GrepApplication implements GrepInterface {
 
     @Override
     public String grepFromStdin(String pattern, Boolean isCaseInsensitive, Boolean isCountLines, Boolean isPrefixFileName, InputStream stdin) throws Exception {
-        // TODO: To implement -H flag print file name with output lines
-        int count = 0;
+        if (pattern == null) {
+            throw new GrepException(ERR_NULL_STREAMS);
+        }
+        if (stdin == null) {
+            throw new GrepException(ERR_NULL_STREAMS);
+        }
+
+        GrepResults grepResults = grepResults(pattern, isCaseInsensitive, stdin);
+
         StringJoiner stringJoiner = new StringJoiner(STRING_NEWLINE);
 
-        try {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(stdin));
-            String line;
-            Pattern compiledPattern;
-            if (isCaseInsensitive) {
-                compiledPattern = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
-            } else {
-                compiledPattern = Pattern.compile(pattern);
-            }
-            while ((line = reader.readLine()) != null) {
-                Matcher matcher = compiledPattern.matcher(line);
-                if (matcher.find()) { // match
-                    stringJoiner.add(line);
-                    count++;
-                }
-            }
-            reader.close();
-        } catch (PatternSyntaxException pse) {
-            throw new GrepException(ERR_INVALID_REGEX);
-        } catch (NullPointerException npe) {
-            throw new GrepException(ERR_FILE_NOT_FOUND);
+        if (isCountLines) {
+            grepResults.getCount(true, stringJoiner);
+        } else {
+            grepResults.getLines(isPrefixFileName, stringJoiner);
         }
 
-        String results = "";
-        if (isCountLines) {
-            results = count + STRING_NEWLINE;
-        } else {
-            if (!stringJoiner.toString().isEmpty()) {
-                results = stringJoiner.toString() + STRING_NEWLINE;
-            }
-        }
-        return results;
+        return stringJoiner.toString() + STRING_NEWLINE;
     }
 
     @Override
@@ -222,7 +207,7 @@ public class GrepApplication implements GrepInterface {
             }
 
             if (pattern.isEmpty()) {
-                throw new Exception(EMPTY_PATTERN);
+                throw new Exception(ERR_EMPTY_REGEX);
             } else {
                 if (inputFiles.isEmpty()) {
                     result = grepFromStdin(pattern, grepFlags[CASE_INSEN_IDX], grepFlags[COUNT_INDEX], grepFlags[PREFIX_FN_IDX], stdin);
@@ -286,7 +271,66 @@ public class GrepApplication implements GrepInterface {
 
     @Override
     public String grepFromFileAndStdin(String pattern, Boolean isCaseInsensitive, Boolean isCountLines, Boolean isPrefixFileName, InputStream stdin, String... fileNames) throws Exception {
-        // TODO: To implement
-        return null;
+        if (fileNames == null || pattern == null) {
+            throw new GrepException(ERR_NULL_STREAMS);
+        }
+        if (stdin == null) {
+            throw new GrepException(ERR_NULL_STREAMS);
+        }
+        ArrayList<GrepResults> fileGrepResultsList = grepResultsFromFiles(pattern, isCaseInsensitive, isPrefixFileName, fileNames);
+        GrepResults stdinGrepResults = grepResults(pattern, isCaseInsensitive, stdin);
+        ArrayList<GrepResults> grepResultsList = new ArrayList<>(fileGrepResultsList);
+        grepResultsList.add(stdinGrepResults);
+        StringJoiner stringJoiner = new StringJoiner(STRING_NEWLINE);
+        for (GrepResults grepResults : grepResultsList) {
+            if (!grepResults.exceptionMessages.isEmpty()) {
+                for (String exceptionMessage: grepResults.exceptionMessages) {
+                    stringJoiner.add(exceptionMessage);
+                }
+                continue;
+            }
+
+            if (isCountLines) {
+                grepResults.getCount(false, stringJoiner);
+            } else {
+                grepResults.getLines(isPrefixFileName, stringJoiner);
+            }
+        }
+
+        return stringJoiner.toString() + STRING_NEWLINE;
+
+    }
+
+    static class GrepResults {
+        protected String file;
+        protected ArrayList<String> lines = new ArrayList<>();
+        protected ArrayList<String> exceptionMessages = new ArrayList<>();
+
+        public void getCount(boolean isSingleFile, StringJoiner stringJoiner) {
+            String count = Integer.toString(lines.size());
+            if (!isSingleFile){
+                if (file == null) {
+                    stringJoiner.add("stdin: " + count);
+                } else {
+                    stringJoiner.add(file + ": " + count);
+                }
+            } else {
+                stringJoiner.add(count);
+            }
+        }
+
+        public void getLines(boolean isPrefixFileName, StringJoiner stringJoiner) {
+            for (String line: lines) {
+                if (isPrefixFileName) {
+                    if (file == null) {
+                        stringJoiner.add("stdin: " + line);
+                    } else {
+                        stringJoiner.add(file + ": " + line);
+                    }
+                } else {
+                    stringJoiner.add(line);
+                }
+            }
+        }
     }
 }

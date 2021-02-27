@@ -21,6 +21,7 @@ public class ErrorConstants {
     public static final String ERR_TOO_MANY_ARGS = "Too many arguments";
     public static final String ERR_INVALID_FLAG = "Invalid flag option supplied";
     public static final String ERR_BAD_REGEX = "Invalid pattern";
+    public static final String ERR_INVALID_ARG = "Invalid argument";
 
     // Files and folders related
     public static final String ERR_FILE_NOT_FOUND = "No such file or directory";
@@ -52,6 +53,12 @@ public class ErrorConstants {
     public static final String ERR_NO_FOLDERS = "No folder names are supplied";
     public static final String ERR_FILE_EXISTS = "File or directory already exists";
     public static final String ERR_TOP_LEVEL_MISSING = "Top level folders do not exist";
+
+    // `mv` related
+    public static final String ERR_MV_GENERIC = "Move failed";
+    public static final String ERR_SOURCE_NOT_FOUND = "Source file does not exists";
+    public static final String ERR_TARGET_EXISTS = "Target file already exists";
+    public static final String ERR_SOURCE_NOT_FILE = "Source is not a file";
 
     // General constants
     public static final String ERR_INVALID_APP = "Invalid app";

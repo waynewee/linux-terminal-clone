@@ -1,5 +1,7 @@
 package sg.edu.nus.comp.cs4218.impl.app.args;
 
+import sg.edu.nus.comp.cs4218.exception.GrepException;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -12,28 +14,30 @@ public class GrepArguments {
 
     public static final char CHAR_CASE_IGNORE = 'i';
     public static final char CHAR_COUNT_LINES = 'c';
+    public static final char CHAR_PREFIX_FILE = 'H';
     private final List<String> files;
     private String pattern;
-    private boolean caseInsensitive, countOfLinesOnly;
+    private boolean caseInsensitive, countOfLinesOnly, prefixFileName;
 
     public GrepArguments() {
         this.pattern = null;
         this.caseInsensitive = false;
         this.countOfLinesOnly = false;
+        this.prefixFileName = false;
         this.files = new ArrayList<>();
     }
 
-    public static void validate(String pattern) throws Exception {
+    public static void validate(String pattern) throws GrepException {
         if (pattern == null) {
-            throw new Exception(ERR_NULL_ARGS);
+            throw new GrepException(ERR_NULL_ARGS);
         }
         if (pattern.isEmpty()) {
-            throw new Exception(ERR_EMPTY_REGEX);
+            throw new GrepException(ERR_EMPTY_REGEX);
         }
         try {
             Pattern.compile(pattern); // Test if valid regex
         } catch (PatternSyntaxException e) {
-            throw new Exception(ERR_INVALID_REGEX);//NOPMD
+            throw new GrepException(ERR_INVALID_REGEX);//NOPMD
         }
     }
 
@@ -43,30 +47,36 @@ public class GrepArguments {
      * @param args Array of arguments to parse
      * @throws Exception
      */
-    public void parse(String... args) throws Exception {
+    public void parse(String... args) throws GrepException {
         if (args == null) {
-            throw new Exception(ERR_NULL_ARGS);
+            throw new GrepException(ERR_NULL_ARGS);
         }
         if (args.length < 1) {
-            throw new Exception(ERR_NO_REGEX);
+            throw new GrepException(ERR_NO_REGEX);
         }
 
-        boolean parsingFlag = true;
+        boolean parsingFlag = true, isFirstPass = true;
         for (String arg : args) {
-            if (arg.isEmpty()) {
+            // skip keyword
+            if (isFirstPass || arg.isEmpty()) {
+                isFirstPass = false;
                 continue;
             }
             // `parsingFlag` is to ensure all flags come first, followed by files.
             if (parsingFlag && arg.charAt(0) == CHAR_FLAG_PREFIX) {
+                if (arg.equals(CHAR_FLAG_PREFIX + "" + CHAR_PREFIX_FILE)) {
+                    this.prefixFileName = true;
+                    continue;
+                }
                 if (arg.equals(CHAR_FLAG_PREFIX + "" + CHAR_CASE_IGNORE)) {
                     this.caseInsensitive = true;
-                } else if (arg.equals(CHAR_FLAG_PREFIX + "" + CHAR_COUNT_LINES)) {
-                    this.countOfLinesOnly = true;
-                } else {
-                    // If we are in here, it must be that pattern is null.
-                    parsingFlag = false;
-                    this.pattern = arg.trim();
+                    continue;
                 }
+                if (arg.equals(CHAR_FLAG_PREFIX + "" + CHAR_COUNT_LINES)) {
+                    this.countOfLinesOnly = true;
+                    continue;
+                }
+                throw new GrepException(ERR_INVALID_FLAG);
             } else {
                 parsingFlag = false;
                 if (this.pattern == null) {
@@ -85,6 +95,10 @@ public class GrepArguments {
 
     public String getPattern() {
         return pattern;
+    }
+
+    public boolean isPrefixFileName() {
+        return prefixFileName;
     }
 
     public boolean isCaseInsensitive() {
