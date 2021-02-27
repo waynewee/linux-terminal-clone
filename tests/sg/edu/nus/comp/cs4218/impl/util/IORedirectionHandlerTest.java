@@ -14,6 +14,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -51,6 +53,17 @@ class IORedirectionHandlerTest {
         trueFileWriter.close();
 
         Files.createFile(Path.of(anotherTrueFile));
+    }
+
+    @AfterEach
+    void tearDownAfterEachTest() throws IOException {
+        Files.deleteIfExists(Path.of(nonExistentFile));
+    }
+
+    @AfterAll
+    static void tearDownAfterAllTests() throws IOException {
+        Files.deleteIfExists(Path.of(trueFile));
+        Files.deleteIfExists(Path.of(anotherTrueFile));
     }
 
     @Test

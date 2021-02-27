@@ -10,8 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_MULTIPLE_STREAMS;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_SYNTAX;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_REDIR_INPUT;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_REDIR_OUTPUT;
 
@@ -56,8 +55,14 @@ public class IORedirectionHandler {
             String file = argsIterator.next();
             noRedirArgsList.add(file);
 
+            // redir operator cannot be adjacent to each other
             if (isRedirOperator(file)) {
                 throw new ShellException(ERR_SYNTAX);
+            }
+
+            // if multiple input files provided, throw error
+            if (argsIterator.hasNext() && !isRedirOperator(argsIterator.next())) {
+                throw new ShellException(ERR_TOO_MANY_ARGS);
             }
 
             // handle quoting + globing + command substitution in file arg
