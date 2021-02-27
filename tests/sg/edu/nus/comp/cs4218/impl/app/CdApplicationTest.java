@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import org.junit.jupiter.api.AfterAll;
 import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.CdException;
 
@@ -27,6 +28,11 @@ class CdApplicationTest {
         Path testDirectoryPath = Paths.get("./.directoryForTesting");
         Files.deleteIfExists(testDirectoryPath);
         Files.createDirectory(testDirectoryPath);
+    }
+
+    @AfterAll
+    static void tearDown() throws CdException {
+        cdApplication.changeToDirectory(originalDir);
     }
 
     @BeforeEach
