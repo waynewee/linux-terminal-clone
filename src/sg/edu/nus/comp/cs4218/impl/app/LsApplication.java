@@ -15,6 +15,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
@@ -71,7 +72,6 @@ public class LsApplication implements LsInterface {
 
         try {
             stdout.write(result.getBytes());
-            stdout.write(StringUtils.STRING_NEWLINE.getBytes());
         } catch (Exception e) {
             throw new LsException(ERR_WRITE_STREAM);
         }
@@ -113,18 +113,33 @@ public class LsApplication implements LsInterface {
                 String formatted = formatContents(contents, isSortByExt);
                 String relativePath = getRelativeToCwd(path).toString();
                 result.append(StringUtils.isBlank(relativePath) ? PATH_CURR_DIR : relativePath);
-                result.append(":\n");
+                result.append(":" + StringUtils.STRING_NEWLINE);
                 result.append(formatted);
 
                 if (!formatted.isEmpty()) {
                     // Empty directories should not have an additional new line
                     result.append(StringUtils.STRING_NEWLINE);
+                } else {
+                    result = new StringBuilder();
                 }
-                result.append(StringUtils.STRING_NEWLINE);
 
                 // RECURSE!
                 if (isRecursive) {
-                    result.append(buildResult(contents, isFoldersOnly, isRecursive, isSortByExt));
+                    boolean containsFolders = false;
+                    for (Path filepath: contents) {
+                        if (filepath.toFile().isDirectory()) {
+                            containsFolders = true;
+                            break;
+                        }
+                    }
+                    if (containsFolders) {
+                        String recursive_result = buildResult(contents, isFoldersOnly, isRecursive, isSortByExt);
+                        result.append(recursive_result);
+                        if (!recursive_result.equals("")) {
+                            // Empty directories should not have an additional new line
+                            result.append(StringUtils.STRING_NEWLINE);
+                        }
+                    }
                 }
             } catch (InvalidDirectoryException e) {
                 // NOTE: This is pretty hackish IMO - we should find a way to change this
@@ -135,12 +150,15 @@ public class LsApplication implements LsInterface {
                 // do we do then?
                 if (!isRecursive) {
                     result.append(e.getMessage());
-                    result.append('\n');
+                    result.append(StringUtils.STRING_NEWLINE);
                 }
             }
         }
-
-        return result.toString().trim();
+        if (result.length() == 0) {
+            return "";
+        } else {
+            return result.toString().trim() + StringUtils.STRING_NEWLINE;
+        }
     }
 
     /**
@@ -157,13 +175,38 @@ public class LsApplication implements LsInterface {
             fileNames.add(path.getFileName().toString());
         }
 
+        if (isSortByExt) {
+            List<String> filesNamesWithoutExtensions = new ArrayList<>();
+            List<String> filesNamesWithExtensions = new ArrayList<>();
+            for (String filename: fileNames) {
+                int indexOfLastDot = filename.lastIndexOf('.');
+                if (indexOfLastDot != -1) {
+                    filesNamesWithExtensions.add(filename);
+                } else {
+                    filesNamesWithoutExtensions.add(filename);
+                }
+            }
+
+            // Sort files without extensions
+            Collections.sort(filesNamesWithoutExtensions);
+            // Sort files with extensions
+            filesNamesWithExtensions.sort(new ExtensionComparator());
+            // Combine both the results
+            fileNames = new ArrayList<>(filesNamesWithoutExtensions);
+            fileNames.addAll(filesNamesWithExtensions);
+        }
+
         StringBuilder result = new StringBuilder();
         for (String fileName : fileNames) {
             result.append(fileName);
-            result.append('\n');
+            result.append(StringUtils.STRING_NEWLINE);
         }
 
-        return result.toString().trim();
+        if (result.length() == 0) {
+            return "";
+        } else {
+            return result.toString().trim() + StringUtils.STRING_NEWLINE;
+        }
     }
 
     /**
@@ -185,13 +228,11 @@ public class LsApplication implements LsInterface {
         List<Path> result = new ArrayList<>();
         File pwd = directory.toFile();
         for (File f : pwd.listFiles()) {
-            if (isFoldersOnly && !f.isDirectory()) {
+            if ((isFoldersOnly && !f.isDirectory()) || f.isHidden()) {
                 continue;
             }
 
-            if (!f.isHidden()) {
-                result.add(f.toPath());
-            }
+            result.add(f.toPath());
         }
 
         Collections.sort(result);
@@ -222,7 +263,8 @@ public class LsApplication implements LsInterface {
      * @return
      */
     private Path resolvePath(String directory) {
-        if (directory.charAt(0) == '/') {
+
+        if (new File(directory).isAbsolute()) {
             // This is an absolute path
             return Paths.get(directory).normalize();
         }
@@ -248,6 +290,16 @@ public class LsApplication implements LsInterface {
         InvalidDirectoryException(String directory, Throwable cause) {
             super(String.format("ls: cannot access '%s': No such file or directory", directory),
                     cause);
+        }
+    }
+
+    // Utils
+    static class ExtensionComparator implements Comparator<String> {
+        @Override
+        public int compare(String f1, String f2) {
+            String ext1 = f1.substring(f1.lastIndexOf('.') + 1);
+            String ext2 = f2.substring(f2.lastIndexOf('.') + 1);
+            return ext1.compareTo(ext2);
         }
     }
 }
