@@ -89,6 +89,11 @@ public final class RegexArgument {
 
             Collections.sort(globbedFiles);
         }
+
+        if (globbedFiles.isEmpty()) {
+            globbedFiles.add(plaintext.toString());
+        }
+
         return globbedFiles;
     }
 
@@ -139,35 +144,3 @@ public final class RegexArgument {
         return plaintext.toString();
     }
 }
-
-/*
-Pattern regexPattern = Pattern.compile(regex.toString());
-globbedFiles.add("");
-String tokens[] = plaintext.toString().replaceAll("\\\\", "/").split("/");
-
-for (String token : tokens) {
-    LinkedList<String> tmp = new LinkedList<>();
-    while (globbedFiles.size() > 0) {
-        String currPath = globbedFiles.poll();
-        if (token.equals("*")) {
-            // Glob
-            File currentDir = Paths.get(currPath).toFile();
-            for (String candidate : Objects.requireNonNull(currentDir.list())) {
-                if (regexPattern.matcher(candidate).matches()) {
-                    globbedFiles.add(currPath + candidate);
-                }
-            }
-
-        } else {
-            // Check if path exists
-            String nextPath = currPath + StringUtils.fileSeparator() + token;
-            File next = Paths.get(nextPath).toFile();
-            if (next.exists()) {
-            tmp.add(nextPath);
-            }
-        }
-
-}
-globbedFiles = tmp;
-}
-*/
