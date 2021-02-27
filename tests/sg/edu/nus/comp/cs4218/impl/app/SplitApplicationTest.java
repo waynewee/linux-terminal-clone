@@ -128,6 +128,8 @@ class SplitApplicationTest {
         List<String> originalFileContents = Files.readAllLines(new File(path).toPath());
 
         assertEquals(outputFileContents, originalFileContents);
+
+        removeOutputFiles(testsResourcesDir);
     }
 
     @Test
@@ -151,6 +153,8 @@ class SplitApplicationTest {
         List<String> outputFile2Lines = Files.readAllLines(outputFile2.toPath());
         assertEquals(1000, outputFile1Lines.size());
         assertEquals(3, outputFile2Lines.size());
+
+        removeOutputFiles(testsResourcesDir);
     }
 
     @Test
@@ -174,8 +178,11 @@ class SplitApplicationTest {
 
         List<String> outputFile1Lines = Files.readAllLines(outputFile1.toPath());
         List<String> outputFile2Lines = Files.readAllLines(outputFile2.toPath());
+
         assertEquals(50, outputFile1Lines.size());
         assertEquals(50, outputFile2Lines.size());
+
+        removeOutputFiles(testsResourcesDir);
     }
 
     @Test
@@ -196,6 +203,8 @@ class SplitApplicationTest {
         File outputFile1 = new File(outputFilePath1);
 
         assertEquals(50, Files.readAllBytes(outputFile1.toPath()).length);
+
+        removeOutputFiles(testsResourcesDir);
     }
 
     @Test
@@ -230,6 +239,7 @@ class SplitApplicationTest {
         Path outputFilePath = Paths.get(Environment.currentDirectory, testsResourcesDir.toString(), "zaa");
         assert(Files.exists(outputFilePath));
 
+        removeOutputFiles(testsResourcesDir);
     }
 
     @Test
@@ -247,6 +257,8 @@ class SplitApplicationTest {
         splitApplication.run(args, System.in, outputStream);
         Path outputFilePath = Paths.get(Environment.currentDirectory, testsResourcesDir.toString(), "zaa");
         assert(Files.exists(outputFilePath));
+
+        removeOutputFiles(testsResourcesDir);
     }
 
     @Test
@@ -265,6 +277,8 @@ class SplitApplicationTest {
         splitApplication.run(args, System.in, outputStream);
         Path outputFilePath = Paths.get(Environment.currentDirectory, testsResourcesDir.toString(), "vigaa");
         assert(Files.exists(outputFilePath));
+
+        removeOutputFiles(testsResourcesDir);
     }
 
     @Test
@@ -283,5 +297,17 @@ class SplitApplicationTest {
         splitApplication.run(args, System.in, outputStream);
         Path outputFilePath = Paths.get(Environment.currentDirectory, testsResourcesDir.toString(), "vigaa");
         assert(Files.exists(outputFilePath));
+
+        removeOutputFiles(testsResourcesDir);
+    }
+
+    // Helper methods
+    private void removeOutputFiles(Path testsResourcesDir) {
+        File dir = testsResourcesDir.toFile();
+        for (File file: dir.listFiles()) {
+            if (!file.getName().endsWith("txt")) {
+                file.delete();
+            }
+        }
     }
 }

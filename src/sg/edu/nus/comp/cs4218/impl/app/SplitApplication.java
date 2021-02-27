@@ -88,13 +88,13 @@ public class SplitApplication implements SplitInterface {
             return;
         }
 
-        FileWriter fileWriter = new FileWriter(Paths.get(directoryPath, prefix + getOutputFileName()).toString());
+        FileWriter fileWriter = new FileWriter(Paths.get(directoryPath, getOutputFileName()).toString());
         int counter = 0;
         for (String line: lines) {
             if (counter == linesPerFile) {
                 counter = 0;
                 fileWriter.close();
-                fileWriter = new FileWriter(Paths.get(directoryPath, prefix + getOutputFileName()).toString());
+                fileWriter = new FileWriter(Paths.get(directoryPath, getOutputFileName()).toString());
             }
             counter += 1;
             fileWriter.write(line);
@@ -126,13 +126,13 @@ public class SplitApplication implements SplitInterface {
             return;
         }
 
-        FileWriter fileWriter = new FileWriter(Paths.get(directoryPath, prefix + getOutputFileName()).toString());
+        FileWriter fileWriter = new FileWriter(Paths.get(directoryPath, getOutputFileName()).toString());
         int counter = 0;
         for (Byte single_byte: lines) {
             if (counter == splitSize) {
                 counter = 0;
                 fileWriter.close();
-                fileWriter = new FileWriter(Paths.get(directoryPath, prefix + getOutputFileName()).toString());
+                fileWriter = new FileWriter(Paths.get(directoryPath, getOutputFileName()).toString());
             }
             counter += 1;
             fileWriter.write(single_byte);
@@ -181,17 +181,17 @@ public class SplitApplication implements SplitInterface {
     // Helper functions
     private String getOutputFileName() {
         asciiSecondLetter += 1;
-        if (asciiSecondLetter == 124) {
+        if (asciiSecondLetter == 123) {
             asciiFirstLetter += 1;
             asciiSecondLetter = 97;
         }
 
-        if (asciiFirstLetter == 124) {
-            parser.updatePrefix();
+        if (asciiFirstLetter == 123) {
+            prefix = "z";
             asciiFirstLetter = 97;
         }
 
-        return (char) asciiFirstLetter + Character.toString((char) asciiSecondLetter);
+        return prefix + (char) asciiFirstLetter + (char) asciiSecondLetter;
     }
 
     private void resetOutputFileName() {

@@ -157,9 +157,4 @@ public class SplitArgsParser extends ArgsParser{
             return null;
         }
     }
-
-    public void updatePrefix() {
-        prefix = "z";
-    }
-
 }
