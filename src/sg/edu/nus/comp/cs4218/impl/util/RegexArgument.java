@@ -75,24 +75,20 @@ public final class RegexArgument {
             String dir = "";
             String tokens[] = plaintext.toString().replaceAll("\\\\", "/").split("/");
             for (int i = 0; i < tokens.length - 1; i++) {
-                dir += tokens[i] + File.separator;
+                dir += tokens[i] + "/";
             }
 
-            File currentDir = Paths.get(Environment.currentDirectory + File.separator + dir).toFile();
+            File currentDir = Paths.get(dir).toFile();
 
             for (String candidate : currentDir.list()) {
-                if (regexPattern.matcher(candidate).matches()) {
+                String path = dir + candidate;
+                if (regexPattern.matcher(path).matches()) {
                     globbedFiles.add(dir + candidate);
                 }
             }
 
             Collections.sort(globbedFiles);
         }
-
-        if (globbedFiles.isEmpty()) {
-            globbedFiles.add(plaintext.toString());
-        }
-
         return globbedFiles;
     }
 
@@ -143,3 +139,35 @@ public final class RegexArgument {
         return plaintext.toString();
     }
 }
+
+/*
+Pattern regexPattern = Pattern.compile(regex.toString());
+globbedFiles.add("");
+String tokens[] = plaintext.toString().replaceAll("\\\\", "/").split("/");
+
+for (String token : tokens) {
+    LinkedList<String> tmp = new LinkedList<>();
+    while (globbedFiles.size() > 0) {
+        String currPath = globbedFiles.poll();
+        if (token.equals("*")) {
+            // Glob
+            File currentDir = Paths.get(currPath).toFile();
+            for (String candidate : Objects.requireNonNull(currentDir.list())) {
+                if (regexPattern.matcher(candidate).matches()) {
+                    globbedFiles.add(currPath + candidate);
+                }
+            }
+
+        } else {
+            // Check if path exists
+            String nextPath = currPath + StringUtils.fileSeparator() + token;
+            File next = Paths.get(nextPath).toFile();
+            if (next.exists()) {
+            tmp.add(nextPath);
+            }
+        }
+
+}
+globbedFiles = tmp;
+}
+*/
