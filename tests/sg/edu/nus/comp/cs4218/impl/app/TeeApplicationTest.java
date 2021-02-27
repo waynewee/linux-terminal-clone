@@ -59,7 +59,7 @@ class TeeApplicationTest {
         InputStream inputStream = streamFromString("hello");
         String[] fileNames = {emptyFilePath};
         teeApplication.teeFromStdin(true, inputStream, fileNames);
-        assertEquals("hello", Files.readString(Path.of(emptyFilePath)));
+        assertEquals("hello" + System.lineSeparator(), Files.readString(Path.of(emptyFilePath)));
     }
 
     @Test
@@ -67,7 +67,7 @@ class TeeApplicationTest {
         InputStream inputStream = streamFromString("helloAgain");
         String[] fileNames = {existingFilePath};
         teeApplication.teeFromStdin(true, inputStream, fileNames);
-        assertEquals("hello" + "helloAgain", Files.readString(Path.of(existingFilePath)));
+        assertEquals("hello" + "helloAgain" + System.lineSeparator(), Files.readString(Path.of(existingFilePath)));
     }
 
     @Test
@@ -75,6 +75,8 @@ class TeeApplicationTest {
         InputStream inputStream = streamFromString("helloAgain");
         String[] fileNames = {existingFilePath};
         teeApplication.teeFromStdin(false, inputStream, fileNames);
-        assertEquals("helloAgain", Files.readString(Path.of(existingFilePath)));
+        assertEquals("helloAgain" + System.lineSeparator(), Files.readString(Path.of(existingFilePath)));
     }
+
+    // TODO: add tests for pipe, input redirection, output redirection (integation tests)
 }
