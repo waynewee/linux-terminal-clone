@@ -1,10 +1,10 @@
-package sg.edu.nus.comp.cs4218.impl.app;
+package main.java.sg.edu.nus.comp.cs4218.impl.app;
 
 import sg.edu.nus.comp.cs4218.app.MvInterface;
 import sg.edu.nus.comp.cs4218.exception.InvalidArgsException;
-import sg.edu.nus.comp.cs4218.exception.MvException;
-import sg.edu.nus.comp.cs4218.impl.app.args.MvArguments;
-import sg.edu.nus.comp.cs4218.impl.parser.MvArgsParser;
+import main.java.sg.edu.nus.comp.cs4218.exception.MvException;
+import main.java.sg.edu.nus.comp.cs4218.impl.app.args.MvArguments;
+import main.java.sg.edu.nus.comp.cs4218.impl.parser.MvArgsParser;
 import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
 import java.io.File;

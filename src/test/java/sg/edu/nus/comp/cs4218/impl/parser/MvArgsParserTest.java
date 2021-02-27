@@ -1,9 +1,10 @@
 package sg.edu.nus.comp.cs4218.impl.parser;
 
+import main.java.sg.edu.nus.comp.cs4218.impl.parser.MvArgsParser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import sg.edu.nus.comp.cs4218.exception.InvalidArgsException;
-import sg.edu.nus.comp.cs4218.impl.app.args.MvArguments;
+import main.java.sg.edu.nus.comp.cs4218.impl.app.args.MvArguments;
 
 import static org.junit.jupiter.api.Assertions.*;
 

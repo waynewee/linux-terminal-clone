@@ -1,5 +1,6 @@
 package sg.edu.nus.comp.cs4218.impl.util;
 
+import main.java.sg.edu.nus.comp.cs4218.impl.app.MvApplication;
 import sg.edu.nus.comp.cs4218.Application;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;

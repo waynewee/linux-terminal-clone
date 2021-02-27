@@ -1,8 +1,9 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
+import main.java.sg.edu.nus.comp.cs4218.impl.app.MvApplication;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import sg.edu.nus.comp.cs4218.exception.MvException;
+import main.java.sg.edu.nus.comp.cs4218.exception.MvException;
 
 import java.io.IOException;
 import java.nio.file.Files;

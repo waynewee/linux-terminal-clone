@@ -6,9 +6,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.time.Duration;
 
-import sg.edu.nus.comp.cs4218.impl.ShellImpl;
+import sg.edu.nus.comp.cs4218.Shell;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 
 class ShellImplTest {
 
@@ -25,8 +28,8 @@ class ShellImplTest {
     public void testSingleInvalidCommand() throws AbstractApplicationException, ShellException, FileNotFoundException {
         assertTimeoutPreemptively(Duration.ofMillis(500), () -> {
             ByteArrayOutputStream testStream = new ByteArrayOutputStream();
+            // Expect Exception
             testShell.parseAndEvaluate("invalidCommand", testStream);
-            assertEquals("Invalid command", testStream.toString());
         });
     }
 }

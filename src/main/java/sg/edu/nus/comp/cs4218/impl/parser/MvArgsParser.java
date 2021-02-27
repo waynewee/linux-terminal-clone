@@ -1,7 +1,8 @@
-package sg.edu.nus.comp.cs4218.impl.parser;
+package main.java.sg.edu.nus.comp.cs4218.impl.parser;
 
 import sg.edu.nus.comp.cs4218.exception.InvalidArgsException;
-import sg.edu.nus.comp.cs4218.impl.app.args.MvArguments;
+import main.java.sg.edu.nus.comp.cs4218.impl.app.args.MvArguments;
+import sg.edu.nus.comp.cs4218.impl.parser.ArgsParser;
 
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NO_ARGS;
 

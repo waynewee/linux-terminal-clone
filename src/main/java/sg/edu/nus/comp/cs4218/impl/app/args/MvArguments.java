@@ -1,4 +1,4 @@
-package sg.edu.nus.comp.cs4218.impl.app.args;
+package main.java.sg.edu.nus.comp.cs4218.impl.app.args;
 
 import java.util.Arrays;
 
