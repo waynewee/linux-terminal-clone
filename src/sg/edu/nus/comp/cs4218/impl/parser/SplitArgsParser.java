@@ -14,10 +14,11 @@ public class SplitArgsParser extends ArgsParser{
     private final static char FLAG_IS_SPLIT_BY_LINE = 'l';
     private final static char FLAG_IS_SPLIT_BY_BYTES = 'b';
 
-    private int splitSize = -1;
+    private int splitSize = 1000;
+    private String splitSuffix = "";
 
     private Path fileName = null;
-    private String prefix = null;
+    private String prefix = "x";
     private boolean standardInput = false;
 
     public SplitArgsParser() {
@@ -33,49 +34,89 @@ public class SplitArgsParser extends ArgsParser{
 
         if (noFlagsGiven()) {
             if (nonFlagArgs.isEmpty()) {
-                standardInput = true;
                 flags.add(FLAG_IS_SPLIT_BY_LINE);
-                splitSize = 1000;
-                return;
+                standardInput = true;
             } else if (nonFlagArgs.size() == 1) {
-                fileName = Paths.get(Environment.currentDirectory, nonFlagArgs.get(0));
+                extractFileName(0);
             } else if (nonFlagArgs.size() == 2) {
-                fileName = Paths.get(Environment.currentDirectory, nonFlagArgs.get(0));
-                prefix = nonFlagArgs.get(1);
+                extractFileName(0);
+                extractPrefix(1);
             }
         } else if (isSplitByBytes() || isSplitByLines()) {
             if (nonFlagArgs.isEmpty()) {
                 throw new InvalidArgsException(ERR_MISSING_ARG);
             } else {
-                try {
-                    splitSize = parseInt(nonFlagArgs.get(0));
-                } catch (NumberFormatException numberFormatException) {
-                    throw new InvalidArgsException(ERR_INVALID_ARG);
-                }
+                extractSplitSize(0);
 
                 if (nonFlagArgs.size() == 1) {
                     standardInput = true;
                 }
 
                 if (nonFlagArgs.size() >= 2) {
-                    fileName = Paths.get(Environment.currentDirectory, nonFlagArgs.get(1));
+                    extractFileName(1);
                 }
 
                 if (nonFlagArgs.size() >= 3) {
-                    prefix = nonFlagArgs.get(2);
+                    extractPrefix(2);
                 }
             }
         }
+    }
 
-        // Validate filename
-        if (fileName!= null && !Files.exists(fileName)) {
-            throw new InvalidArgsException(ERR_FILE_NOT_FOUND);
+    private void extractPrefix(int pos) throws InvalidArgsException {
+        prefix = nonFlagArgs.get(pos);
+        validatePrefix();
+    }
+
+    private void extractFileName(int pos) throws InvalidArgsException {
+        if (nonFlagArgs.get(pos).equals("-")) {
+            flags.add(FLAG_IS_SPLIT_BY_LINE);
+            standardInput = true;
+        } else {
+            fileName = Paths.get(Environment.currentDirectory, nonFlagArgs.get(pos));
+            validateFileName();
         }
+    }
 
-        // Validate prefix
-        if (prefixPresent() && prefix.charAt(0) == '/') {
+    private void extractSplitSize(int pos) throws InvalidArgsException {
+        String temp = nonFlagArgs.get(pos);
+        if (isSplitByBytes()) {
+            if (temp.charAt(temp.length() - 1) == 'b' || temp.charAt(temp.length() - 1) == 'k'
+                    || temp.charAt(temp.length() - 1) == 'm') {
+                splitSuffix = String.valueOf(temp.charAt(temp.length() - 1));
+                temp = temp.substring(0, temp.length() - 1);
+            }
+        }
+        validateSplitSize(temp);
+    }
+
+    private void validateSplitSize(String temp) throws InvalidArgsException {
+        // Validate split size
+        try {
+            splitSize = parseInt(temp);
+        } catch (NumberFormatException numberFormatException) {
             throw new InvalidArgsException(ERR_INVALID_ARG);
         }
+    }
+
+    private void validatePrefix() throws InvalidArgsException {
+        // Validate prefix
+        if (prefix.charAt(0) == '/') {
+            throw new InvalidArgsException(ERR_INVALID_ARG);
+        }
+    }
+
+    public void validateFileName() throws InvalidArgsException {
+        // Validate filename
+        if (fileName == null) {
+            return;
+        }
+
+        if (Files.exists(fileName)) {
+            return;
+        }
+
+        throw new InvalidArgsException(ERR_FILE_NOT_FOUND);
     }
 
     public boolean splitByBothBytesAndLines() {
@@ -98,12 +139,12 @@ public class SplitArgsParser extends ArgsParser{
         return splitSize;
     }
 
-    public boolean prefixPresent() {
-        return prefix != null;
-    }
-
     public String getPrefix() {
         return prefix;
+    }
+
+    public String getSplitSuffix() {
+        return splitSuffix;
     }
 
     public boolean fileInput() {
@@ -116,5 +157,9 @@ public class SplitArgsParser extends ArgsParser{
         } else {
             return null;
         }
+    }
+
+    public void updatePrefix() {
+        prefix = "z";
     }
 }
