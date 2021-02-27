@@ -18,6 +18,7 @@ class EchoApplicationTest {
     private static final String[] ARGS_QUOTE = {"\"A*B*C\""};
     private static final String[] ARGS_QUOTE_MULTI = {"ABC", "\"AB_C\"", "\"DEF\""};
     private static final String[] ARGS_EMPTY = {};
+    private static final String[] ARGS_SPACE = {" "};
 
     private static final String TEXT_QUOTE = "'\"A*B*C\"'";
     private static final String TEXT_QUOTE_MULTI = "ABC '\"AB_C\"' '\"DEF\"'";
@@ -65,5 +66,11 @@ class EchoApplicationTest {
     public void constructResult_ArgumentsQuoteMulti_ReturnsArguments() throws EchoException {
         String result = echoApplication.constructResult(ARGS_QUOTE_MULTI);
         assertEquals(TEXT_QUOTE_MULTI, result);
+    }
+
+    @Test
+    public void constructResult_singleSpaceArgument_ReturnsSingleSpace() throws EchoException {
+        String result = echoApplication.constructResult(ARGS_SPACE);
+        assertEquals(ARGS_SPACE[0], result);
     }
 }

@@ -20,15 +20,4 @@ class ShellImplTest {
     static void setupShell() {
         testShell = new ShellImpl();
     }
-
-    // Reference for how to time out a test in JUnit5:
-    // https://stackoverflow.com/questions/57116801/how-to-fail-a-test-after-a-timeout-is-exceeded-in-junit-5
-    @Test
-    public void testSingleInvalidCommand() throws AbstractApplicationException, ShellException, FileNotFoundException {
-        assertTimeoutPreemptively(Duration.ofMillis(500), () -> {
-            ByteArrayOutputStream testStream = new ByteArrayOutputStream();
-            testShell.parseAndEvaluate("invalidCommand", testStream);
-            assertEquals("Invalid command", testStream.toString());
-        });
-    }
 }
