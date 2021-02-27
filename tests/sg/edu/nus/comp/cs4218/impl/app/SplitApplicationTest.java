@@ -5,7 +5,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import sg.edu.nus.comp.cs4218.Application;
 import sg.edu.nus.comp.cs4218.Environment;
+import sg.edu.nus.comp.cs4218.exception.InvalidArgsException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
+import sg.edu.nus.comp.cs4218.exception.SplitException;
 import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
 import java.io.ByteArrayOutputStream;
@@ -31,6 +33,24 @@ class SplitApplicationTest {
         outputStream = new ByteArrayOutputStream();
     }
 
+    // Null args
+    @Test
+    public void run_GivenNullForArgsParameter_ThrowsLsException() {
+        // Assert right exception thrown
+        SplitException splitException = assertThrows(SplitException.class, () -> splitApplication.run(null, System.in, outputStream));
+        // Assert right message in exception
+        assertEquals(new SplitException(ERR_NULL_ARGS).getMessage(), splitException.getMessage());
+    }
+
+    // Null outputstream
+    @Test
+    public void run_GivenNullForOutputStreamParameter_ThrowsLsException() {
+        // Assert right exception thrown
+        SplitException splitException = assertThrows(SplitException.class, () -> splitApplication.run(new String[0], System.in, null));
+        // Assert right message in exception
+        assertEquals(new SplitException(ERR_NO_OSTREAM).getMessage(), splitException.getMessage());
+    }
+
     @Test
     public void run_onWrongFlags_ThrowsException() {
         // Prepare args
@@ -54,15 +74,41 @@ class SplitApplicationTest {
     }
 
     @Test
+    public void run_onOnlyLineFlag_ThrowsException() {
+        // Prepare args
+        String[] args = new String[1];
+        args[0] = "-l";
+
+        // Assert right exception thrown
+        ShellException shellException = assertThrows(ShellException.class, () -> splitApplication.run(args, System.in, outputStream));
+        // Assert right message in exception
+        assertEquals(new ShellException(ERR_MISSING_ARG).getMessage(), shellException.getMessage());
+
+    }
+
+    @Test
+    public void run_onOnlyByteFlag_ThrowsException() {
+        // Prepare args
+        String[] args = new String[1];
+        args[0] = "-b";
+
+        // Assert right exception thrown
+        ShellException shellException = assertThrows(ShellException.class, () -> splitApplication.run(args, System.in, outputStream));
+        // Assert right message in exception
+        assertEquals(new ShellException(ERR_MISSING_ARG).getMessage(), shellException.getMessage());
+    }
+
+    @Test
     public void run_onLineArgumentInvalidFile_ThrowsException() {
         // Prepare args
-        Path testsResourcesDir = Paths.get("tests", "resources", "impl", "app", "SplitApplicationResources", "wrong_arguments");
+        Path testsResourcesDir = Paths.get("tests", "resources", "impl", "app", "SplitApplicationResources", "random_invalid_file");
         Path testFile = Paths.get("random_invalid_file");
         String path = Paths.get(Environment.currentDirectory, testsResourcesDir.toString(), testFile.toString()).toString();
 
-        String[] args = new String[2];
+        String[] args = new String[3];
         args[0] = "-l";
-        args[1] = path;
+        args[1] = "50";
+        args[2] = path;
 
         // Assert right exception thrown
         ShellException shellException = assertThrows(ShellException.class, () -> splitApplication.run(args, System.in, outputStream));
@@ -93,13 +139,12 @@ class SplitApplicationTest {
     @Test
     public void run_onLineArgument_splitsFileByDefaultOneThousandLines() throws Exception {
         // Prepare args
-        Path testsResourcesDir = Paths.get("tests", "resources", "impl", "app", "SplitApplicationResources", "no_arguments_except_filename");
-        Path testFile = Paths.get("no_arguments_except_filename.txt");
+        Path testsResourcesDir = Paths.get("tests", "resources", "impl", "app", "SplitApplicationResources", "one_thousand_lines");
+        Path testFile = Paths.get("one_thousand_lines.txt");
         String path = Paths.get(Environment.currentDirectory, testsResourcesDir.toString(), testFile.toString()).toString();
 
-        String[] args = new String[2];
-        args[0] = "-l";
-        args[1] = path;
+        String[] args = new String[1];
+        args[0] = path;
 
         splitApplication.run(args, System.in, outputStream);
         String outputFilePath1 = Paths.get(Environment.currentDirectory, Paths.get("xaa").toString()).toString();
@@ -184,7 +229,7 @@ class SplitApplicationTest {
         Path testFile = Paths.get("line_1_filename.txt");
         String path = Paths.get(Environment.currentDirectory, testsResourcesDir.toString(), testFile.toString()).toString();
 
-        String[] args = new String[1];
+        String[] args = new String[3];
         args[0] = "-l";
         args[1] = "1";
         args[2] = path;
