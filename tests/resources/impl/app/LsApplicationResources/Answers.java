@@ -76,7 +76,7 @@ public class Answers {
             "tests\\resources\\impl\\app\\LsApplicationResources\\test_folders_sort_recursive:\n" +
             "folder1\n" +
             "folder2\n" +
-            "fsd2\n" +
+            "folder3\n" +
             "guys\n" +
             "\n" +
             "tests\\resources\\impl\\app\\LsApplicationResources\\test_folders_sort_recursive\\guys:\n" +
