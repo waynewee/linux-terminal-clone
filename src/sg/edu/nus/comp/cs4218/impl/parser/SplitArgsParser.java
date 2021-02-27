@@ -33,8 +33,8 @@ public class SplitArgsParser extends ArgsParser{
         }
 
         if (noFlagsGiven()) {
+            flags.add(FLAG_IS_SPLIT_BY_LINE);
             if (nonFlagArgs.isEmpty()) {
-                flags.add(FLAG_IS_SPLIT_BY_LINE);
                 standardInput = true;
             } else if (nonFlagArgs.size() == 1) {
                 extractFileName(0);
@@ -70,11 +70,9 @@ public class SplitArgsParser extends ArgsParser{
 
     private void extractFileName(int pos) throws InvalidArgsException {
         if (nonFlagArgs.get(pos).equals("-")) {
-            flags.add(FLAG_IS_SPLIT_BY_LINE);
             standardInput = true;
         } else {
-            fileName = Paths.get(Environment.currentDirectory, nonFlagArgs.get(pos));
-            validateFileName();
+            validateFileName(nonFlagArgs.get(pos));
         }
     }
 
@@ -106,13 +104,14 @@ public class SplitArgsParser extends ArgsParser{
         }
     }
 
-    public void validateFileName() throws InvalidArgsException {
+    public void validateFileName(String rawFileName) throws InvalidArgsException {
+//        fileName = Paths.get(Environment.currentDirectory, fileName);
         // Validate filename
-        if (fileName == null) {
+        if (Files.exists(Paths.get(rawFileName))) {
+            fileName = Paths.get(rawFileName);
             return;
-        }
-
-        if (Files.exists(fileName)) {
+        } else if (Files.exists(Paths.get(Environment.currentDirectory, rawFileName))) {
+            fileName = Paths.get(Environment.currentDirectory, rawFileName);
             return;
         }
 

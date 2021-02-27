@@ -9,6 +9,7 @@ import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Paths;
 import java.util.List;
 
@@ -40,7 +41,7 @@ public class SplitApplication implements SplitInterface {
         try {
             parser.parse(args);
             parser.processArguments();
-        } catch (InvalidArgsException e) {
+        } catch (Exception e) {
             throw new SplitException(e.getMessage());
         }
 
@@ -75,19 +76,25 @@ public class SplitApplication implements SplitInterface {
         System.out.println(linesPerFile);
 
         File file = new File(fileName);
+        String directoryPath = file.getParent();
+
+        if (directoryPath == null) {
+            directoryPath = "";
+        }
+
         List<String> lines = Files.readAllLines(file.toPath());
 
         if (lines.isEmpty()) {
             return;
         }
 
-        FileWriter fileWriter = new FileWriter(Paths.get(Environment.currentDirectory, prefix + getOutputFileName()).toString());
+        FileWriter fileWriter = new FileWriter(Paths.get(directoryPath, prefix + getOutputFileName()).toString());
         int counter = 0;
         for (String line: lines) {
             if (counter == linesPerFile) {
                 counter = 0;
                 fileWriter.close();
-                fileWriter = new FileWriter(Paths.get(Environment.currentDirectory, prefix + getOutputFileName()).toString());
+                fileWriter = new FileWriter(Paths.get(directoryPath, prefix + getOutputFileName()).toString());
             }
             counter += 1;
             fileWriter.write(line);

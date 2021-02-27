@@ -5,16 +5,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import sg.edu.nus.comp.cs4218.Application;
 import sg.edu.nus.comp.cs4218.Environment;
-import sg.edu.nus.comp.cs4218.exception.InvalidArgsException;
-import sg.edu.nus.comp.cs4218.exception.ShellException;
 import sg.edu.nus.comp.cs4218.exception.SplitException;
-import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
@@ -35,7 +33,7 @@ class SplitApplicationTest {
 
     // Null args
     @Test
-    public void run_GivenNullForArgsParameter_ThrowsLsException() {
+    public void run_GivenNullForArgsParameter_ThrowsSplitException() {
         // Assert right exception thrown
         SplitException splitException = assertThrows(SplitException.class, () -> splitApplication.run(null, System.in, outputStream));
         // Assert right message in exception
@@ -44,7 +42,7 @@ class SplitApplicationTest {
 
     // Null outputstream
     @Test
-    public void run_GivenNullForOutputStreamParameter_ThrowsLsException() {
+    public void run_GivenNullForOutputStreamParameter_ThrowsSplitException() {
         // Assert right exception thrown
         SplitException splitException = assertThrows(SplitException.class, () -> splitApplication.run(new String[0], System.in, null));
         // Assert right message in exception
@@ -63,9 +61,9 @@ class SplitApplicationTest {
         args[1] = path;
 
         // Assert right exception thrown
-        ShellException shellException = assertThrows(ShellException.class, () -> splitApplication.run(args, System.in, outputStream));
+        SplitException splitException = assertThrows(SplitException.class, () -> splitApplication.run(args, System.in, outputStream));
         // Assert right message in exception
-        assertEquals(new ShellException(ERR_INVALID_FLAG).getMessage(), shellException.getMessage());
+        assertEquals(new SplitException("illegal option -- d").getMessage(), splitException.getMessage());
     }
 
     @Test
@@ -80,10 +78,9 @@ class SplitApplicationTest {
         args[0] = "-l";
 
         // Assert right exception thrown
-        ShellException shellException = assertThrows(ShellException.class, () -> splitApplication.run(args, System.in, outputStream));
+        SplitException splitException = assertThrows(SplitException.class, () -> splitApplication.run(args, System.in, outputStream));
         // Assert right message in exception
-        assertEquals(new ShellException(ERR_MISSING_ARG).getMessage(), shellException.getMessage());
-
+        assertEquals(new SplitException(ERR_MISSING_ARG).getMessage(), splitException.getMessage());
     }
 
     @Test
@@ -93,9 +90,9 @@ class SplitApplicationTest {
         args[0] = "-b";
 
         // Assert right exception thrown
-        ShellException shellException = assertThrows(ShellException.class, () -> splitApplication.run(args, System.in, outputStream));
+        SplitException splitException = assertThrows(SplitException.class, () -> splitApplication.run(args, System.in, outputStream));
         // Assert right message in exception
-        assertEquals(new ShellException(ERR_MISSING_ARG).getMessage(), shellException.getMessage());
+        assertEquals(new SplitException(ERR_MISSING_ARG).getMessage(), splitException.getMessage());
     }
 
     @Test
@@ -111,10 +108,7 @@ class SplitApplicationTest {
         args[2] = path;
 
         // Assert right exception thrown
-        ShellException shellException = assertThrows(ShellException.class, () -> splitApplication.run(args, System.in, outputStream));
-        // Assert right message in exception
-        assertEquals(new ShellException(ERR_FILE_NOT_FOUND).getMessage(), shellException.getMessage());
-
+        assertThrows(SplitException.class, () -> splitApplication.run(args, System.in, outputStream));
     }
 
     @Test
@@ -128,12 +122,12 @@ class SplitApplicationTest {
         args[0] = path;
 
         splitApplication.run(args, System.in, outputStream);
-        String outputFilePath = Paths.get(Environment.currentDirectory, Paths.get("xaa").toString()).toString();
+        String outputFilePath = Paths.get(Environment.currentDirectory, testsResourcesDir.toString(), "xaa").toString();
 
-        File outputFile = new File(outputFilePath);
-        File originalFile = new File(path);
+        List<String> outputFileContents = Files.readAllLines(new File(outputFilePath).toPath());
+        List<String> originalFileContents = Files.readAllLines(new File(path).toPath());
 
-        assertEquals(outputFile.toString(), originalFile.toString());
+        assertEquals(outputFileContents, originalFileContents);
     }
 
     @Test
@@ -147,16 +141,16 @@ class SplitApplicationTest {
         args[0] = path;
 
         splitApplication.run(args, System.in, outputStream);
-        String outputFilePath1 = Paths.get(Environment.currentDirectory, Paths.get("xaa").toString()).toString();
-        String outputFilePath2 = Paths.get(Environment.currentDirectory, Paths.get("xab").toString()).toString();
+        String outputFilePath1 = Paths.get(Environment.currentDirectory, testsResourcesDir.toString(), Paths.get("xaa").toString()).toString();
+        String outputFilePath2 = Paths.get(Environment.currentDirectory, testsResourcesDir.toString(), Paths.get("xab").toString()).toString();
 
         File outputFile1 = new File(outputFilePath1);
         File outputFile2 = new File(outputFilePath2);
 
-        String[] outputFile1Lines = outputFile1.toString().split(StringUtils.STRING_NEWLINE);
-        assertEquals(1000, outputFile1Lines.length);
-        String[] outputFile2Lines = outputFile2.toString().split(StringUtils.STRING_NEWLINE);
-        assertEquals(10, outputFile2Lines.length);
+        List<String> outputFile1Lines = Files.readAllLines(outputFile1.toPath());
+        List<String> outputFile2Lines = Files.readAllLines(outputFile2.toPath());
+        assertEquals(1000, outputFile1Lines.size());
+        assertEquals(3, outputFile2Lines.size());
     }
 
     @Test
@@ -172,16 +166,16 @@ class SplitApplicationTest {
         args[2] = path;
 
         splitApplication.run(args, System.in, outputStream);
-        String outputFilePath1 = Paths.get(Environment.currentDirectory, Paths.get("xaa").toString()).toString();
-        String outputFilePath2 = Paths.get(Environment.currentDirectory, Paths.get("xab").toString()).toString();
+        String outputFilePath1 = Paths.get(Environment.currentDirectory, testsResourcesDir.toString(), Paths.get("xaa").toString()).toString();
+        String outputFilePath2 = Paths.get(Environment.currentDirectory, testsResourcesDir.toString(), Paths.get("xab").toString()).toString();
 
         File outputFile1 = new File(outputFilePath1);
         File outputFile2 = new File(outputFilePath2);
 
-        String[] outputFile1Lines = outputFile1.toString().split(StringUtils.STRING_NEWLINE);
-        assertEquals(50, outputFile1Lines.length);
-        String[] outputFile2Lines = outputFile2.toString().split(StringUtils.STRING_NEWLINE);
-        assertEquals(50, outputFile2Lines.length);
+        List<String> outputFile1Lines = Files.readAllLines(outputFile1.toPath());
+        List<String> outputFile2Lines = Files.readAllLines(outputFile2.toPath());
+        assertEquals(50, outputFile1Lines.size());
+        assertEquals(50, outputFile2Lines.size());
     }
 
     @Test
@@ -197,7 +191,7 @@ class SplitApplicationTest {
         args[2] = path;
 
         splitApplication.run(args, System.in, outputStream);
-        String outputFilePath1 = Paths.get(Environment.currentDirectory, Paths.get("xaa").toString()).toString();
+        String outputFilePath1 = Paths.get(Environment.currentDirectory, testsResourcesDir.toString(), Paths.get("xaa").toString()).toString();
 
         File outputFile1 = new File(outputFilePath1);
 
@@ -217,9 +211,7 @@ class SplitApplicationTest {
         args[1] = path;
 
         // Assert right exception thrown
-        ShellException shellException = assertThrows(ShellException.class, () -> splitApplication.run(args, System.in, outputStream));
-        // Assert right message in exception
-        assertEquals(new ShellException("split: invalid number of lines: ‘-b’").getMessage(), shellException.getMessage());
+        SplitException splitException = assertThrows(SplitException.class, () -> splitApplication.run(args, System.in, outputStream));
     }
 
     @Test
@@ -235,7 +227,7 @@ class SplitApplicationTest {
         args[2] = path;
 
         splitApplication.run(args, System.in, outputStream);
-        assert(Paths.get(Environment.currentDirectory, Paths.get("zaa").toString()).toString() != null);
+        assert(Paths.get(Environment.currentDirectory, testsResourcesDir.toString(), Paths.get("zaa").toString()).toString() != null);
     }
 
     @Test
@@ -245,13 +237,13 @@ class SplitApplicationTest {
         Path testFile = Paths.get("bytes_5_filename.txt");
         String path = Paths.get(Environment.currentDirectory, testsResourcesDir.toString(), testFile.toString()).toString();
 
-        String[] args = new String[1];
+        String[] args = new String[3];
         args[0] = "-b";
         args[1] = "5";
         args[2] = path;
 
         splitApplication.run(args, System.in, outputStream);
-        assert(Paths.get(Environment.currentDirectory, Paths.get("zaa").toString()).toString() != null);
+        assert(Paths.get(Environment.currentDirectory, testsResourcesDir.toString(), Paths.get("zaa").toString()).toString() != null);
     }
 
     @Test
@@ -261,14 +253,14 @@ class SplitApplicationTest {
         Path testFile = Paths.get("line_5_filename_prefix.txt");
         String path = Paths.get(Environment.currentDirectory, testsResourcesDir.toString(), testFile.toString()).toString();
 
-        String[] args = new String[1];
+        String[] args = new String[4];
         args[0] = "-l";
         args[1] = "5";
         args[2] = path;
         args[3] = "vig";
 
         splitApplication.run(args, System.in, outputStream);
-        assert(Paths.get(Environment.currentDirectory, Paths.get("vigaa").toString()).toString() != null);
+        assert(Paths.get(Environment.currentDirectory, testsResourcesDir.toString(), Paths.get("vigaa").toString()).toString() != null);
     }
 
     @Test
@@ -278,13 +270,13 @@ class SplitApplicationTest {
         Path testFile = Paths.get("bytes_5_filename_prefix.txt");
         String path = Paths.get(Environment.currentDirectory, testsResourcesDir.toString(), testFile.toString()).toString();
 
-        String[] args = new String[1];
+        String[] args = new String[4];
         args[0] = "-b";
         args[1] = "5";
         args[2] = path;
         args[3] = "vig";
 
         splitApplication.run(args, System.in, outputStream);
-        assert(Paths.get(Environment.currentDirectory, Paths.get("vigaa").toString()).toString() != null);
+        assert(Paths.get(Environment.currentDirectory, testsResourcesDir.toString(), Paths.get("vigaa").toString()).toString() != null);
     }
 }
