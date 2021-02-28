@@ -17,7 +17,7 @@ folder has been moved. Test cases can be found in src/test/java.
 mark src/main/java as Sources Root folder and src/test/java as Tests Sources Root. If build failed due to test cases in
 the unimpl folder, mark it as excluded.
 
-## Running tests
+### Running tests
 To run all the test cases, right click on src/test/java folder, and select "Run 'All Tests'".
 
 
