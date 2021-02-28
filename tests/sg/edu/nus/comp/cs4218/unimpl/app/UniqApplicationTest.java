@@ -2,15 +2,12 @@ package sg.edu.nus.comp.cs4218.unimpl.app;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import sg.edu.nus.comp.cs4218.exception.EchoException;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 
@@ -147,33 +144,20 @@ class UniqApplicationTest {
 
     @Test
     public void uniq_NoAdjacentInputPrefixLines_Returns() {
-        String result = uniqApplication.uniq(true, false, false, STDIN_NO_DUP);
+        String result = uniqApplication.uniq(true, false, false, STDIN_NO_ADJ);
         assertEquals("", result);
     }
 
     @Test
     public void uniq_NoAdjacentInputGroupDuplicate_Returns() {
-
+        String result = uniqApplication.uniq(false, true, false, STDIN_NO_ADJ);
+        assertEquals("", result);
     }
 
     @Test
     public void uniq_NoAdjacentInputAllDuplicate_Returns() {
-
-    }
-
-    @Test
-    public void uniq_DuplicateAdjacentInputPrefixLines_Returns() {
-
-    }
-
-    @Test
-    public void uniq_DuplicateAdjacentInputGroupDuplicate_Returns() {
-
-    }
-
-    @Test
-    public void uniq_DuplicateAdjacentInputAllDuplicate_Returns() {
-
+        String result = uniqApplication.uniq(false, false, true, STDIN_NO_ADJ);
+        assertEquals("", result);
     }
 
     private String readOutputFile() {
