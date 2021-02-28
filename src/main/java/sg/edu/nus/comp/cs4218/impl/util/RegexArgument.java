@@ -4,10 +4,7 @@ import sg.edu.nus.comp.cs4218.Environment;
 
 import java.io.File;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_ASTERISK;
@@ -80,17 +77,14 @@ public final class RegexArgument {
 
             File currentDir = Paths.get(dir).toFile();
 
-            for (String candidate : currentDir.list()) {
+            for (String candidate : Objects.requireNonNull(currentDir.list())) {
                 String path = dir + candidate;
                 if (regexPattern.matcher(path).matches()) {
                     globbedFiles.add(dir + candidate);
                 }
             }
-
             Collections.sort(globbedFiles);
-        }
-
-        if (globbedFiles.isEmpty()) {
+        } else {
             globbedFiles.add(plaintext.toString());
         }
 
