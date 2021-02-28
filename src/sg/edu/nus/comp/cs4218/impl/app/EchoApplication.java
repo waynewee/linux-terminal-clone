@@ -38,7 +38,8 @@ public class EchoApplication implements EchoInterface {
                 }
                 stringBuilder.append(newArg).append(" ");
             }
-            result = stringBuilder.toString().trim();
+            result = stringBuilder.toString();
+            result = result.substring(0, result.length() - 1);
         }
 
         return result;
