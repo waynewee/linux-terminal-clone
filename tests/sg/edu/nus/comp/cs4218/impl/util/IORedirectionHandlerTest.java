@@ -87,10 +87,10 @@ class IORedirectionHandlerTest {
     }
 
     @Test
-    void getNoRedirArgsList_outputRedirectionOneExistingFile_noRedirArgsListHasNoOutputRedirectionArg() {
+    void getNoRedirArgsList_outputRedirectionOneExistingFile_noRedirArgsListHasNoOutputRedirectionArg() throws AbstractApplicationException, ShellException {
         List<String> argsList = new ArrayList<String>(Arrays.asList(OUTPUT_REDIRECTION_ONE_EXISTING_FILE));
         IORedirectionHandler redirHandler = new IORedirectionHandler(argsList, System.in, testStream, argumentResolver);
-
+        assertDoesNotThrow(redirHandler::extractRedirOptions);
         List<String> noRedirArgsList = redirHandler.getNoRedirArgsList();
         assertEquals(argsList.size() - 1, noRedirArgsList.size());
     }
