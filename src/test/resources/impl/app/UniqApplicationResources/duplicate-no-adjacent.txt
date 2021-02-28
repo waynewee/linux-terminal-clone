@@ -1,0 +1,6 @@
+This file contains duplicate lines
+But none of them are adjacent
+This file contains duplicate lines
+But none of them are adjacent
+This file contains duplicate lines
+But none of them are adjacent
