@@ -1,6 +1,5 @@
 package sg.edu.nus.comp.cs4218.impl.app.args;
 
-import main.java.sg.edu.nus.comp.cs4218.impl.app.args.MvArguments;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;

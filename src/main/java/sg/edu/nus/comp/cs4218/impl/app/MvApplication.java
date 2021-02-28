@@ -1,10 +1,10 @@
-package main.java.sg.edu.nus.comp.cs4218.impl.app;
+package sg.edu.nus.comp.cs4218.impl.app;
 
 import sg.edu.nus.comp.cs4218.app.MvInterface;
 import sg.edu.nus.comp.cs4218.exception.InvalidArgsException;
-import main.java.sg.edu.nus.comp.cs4218.exception.MvException;
-import main.java.sg.edu.nus.comp.cs4218.impl.app.args.MvArguments;
-import main.java.sg.edu.nus.comp.cs4218.impl.parser.MvArgsParser;
+import sg.edu.nus.comp.cs4218.impl.app.args.MvArguments;
+import sg.edu.nus.comp.cs4218.impl.parser.MvArgsParser;
+import sg.edu.nus.comp.cs4218.exception.MvException;
 import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
 import java.io.File;
@@ -32,7 +32,7 @@ public class MvApplication implements MvInterface {
      *                      destination path when the do not overwrite flag is used or any IO errors.
      */
     @Override
-    public void run(String[] args, InputStream stdin, OutputStream stdout) throws MvException{
+    public void run(String[] args, InputStream stdin, OutputStream stdout) throws MvException {
 
         MvArgsParser parser = new MvArgsParser();
 
