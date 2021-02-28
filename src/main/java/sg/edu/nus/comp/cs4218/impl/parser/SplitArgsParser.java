@@ -78,12 +78,10 @@ public class SplitArgsParser extends ArgsParser{
 
     private void extractSplitSize(int pos) throws InvalidArgsException {
         String temp = nonFlagArgs.get(pos);
-        if (isSplitByBytes()) {
-            if (temp.charAt(temp.length() - 1) == 'b' || temp.charAt(temp.length() - 1) == 'k'
-                    || temp.charAt(temp.length() - 1) == 'm') {
-                splitSuffix = String.valueOf(temp.charAt(temp.length() - 1));
-                temp = temp.substring(0, temp.length() - 1);
-            }
+        if (isSplitByBytes() && temp.charAt(temp.length() - 1) == 'b' || temp.charAt(temp.length() - 1) == 'k'
+                || temp.charAt(temp.length() - 1) == 'm') {
+            splitSuffix = String.valueOf(temp.charAt(temp.length() - 1));
+            temp = temp.substring(0, temp.length() - 1);
         }
         validateSplitSize(temp);
     }
@@ -149,7 +147,7 @@ public class SplitArgsParser extends ArgsParser{
         return !standardInput;
     }
 
-    public String fileName() {
+    public String getFileName() {
         if (fileName != null) {
             return fileName.toString();
         } else {

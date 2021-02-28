@@ -9,7 +9,6 @@ import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
@@ -21,9 +20,6 @@ public class SplitApplication implements SplitInterface {
 
     private SplitArgsParser parser;
 
-    private int splitSize;
-    private boolean isSplitByBytes;
-    private boolean isSplitByLines;
     private String prefix;
     private String suffix;
     private int asciiFirstLetter = 97;
@@ -48,17 +44,17 @@ public class SplitApplication implements SplitInterface {
             throw new SplitException(e.getMessage());
         }
 
-        isSplitByBytes = parser.isSplitByBytes();
-        isSplitByLines = parser.isSplitByLines();
-        splitSize = parser.getSplitSize();
+        boolean isSplitByBytes = parser.isSplitByBytes();
+        boolean isSplitByLines = parser.isSplitByLines();
+        int splitSize = parser.getSplitSize();
         prefix = parser.getPrefix();
         suffix = parser.getSplitSuffix();
 
         if (parser.fileInput()) {
             if (isSplitByLines) {
-                splitFileByLines(parser.fileName(), prefix, parser.getSplitSize());
+                splitFileByLines(parser.getFileName(), prefix, parser.getSplitSize());
             } else if (isSplitByBytes) {
-                splitFileByBytes(parser.fileName(), prefix, String.valueOf(parser.getSplitSize()));
+                splitFileByBytes(parser.getFileName(), prefix, String.valueOf(parser.getSplitSize()));
             }
         } else {
             if (isSplitByLines) {
@@ -120,14 +116,14 @@ public class SplitApplication implements SplitInterface {
 
         FileWriter fileWriter = new FileWriter(Paths.get(directoryPath, getOutputFileName()).toString());
         int counter = 0;
-        for (Byte single_byte: lines) {
+        for (Byte singleByte: lines) {
             if (counter == splitSize) {
                 counter = 0;
                 fileWriter.close();
                 fileWriter = new FileWriter(Paths.get(directoryPath, getOutputFileName()).toString());
             }
             counter += 1;
-            fileWriter.write(single_byte);
+            fileWriter.write(singleByte);
         }
         fileWriter.close();
         resetOutputFileName();
@@ -229,7 +225,9 @@ public class SplitApplication implements SplitInterface {
             case "m":
                 splitSize *= 1048576;
                 break;
-
+            default:
+                splitSize *= 1;
+                break;
         }
         return splitSize;
     }
