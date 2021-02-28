@@ -55,11 +55,10 @@ public class GrepArguments {
             throw new GrepException(ERR_NO_REGEX);
         }
 
-        boolean parsingFlag = true, isFirstPass = true;
+        boolean parsingFlag = true;
         for (String arg : args) {
             // skip keyword
-            if (isFirstPass || arg.isEmpty()) {
-                isFirstPass = false;
+            if (arg.isEmpty()) {
                 continue;
             }
             // `parsingFlag` is to ensure all flags come first, followed by files.

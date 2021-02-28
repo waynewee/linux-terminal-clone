@@ -1,0 +1,10 @@
+This file contains multiple duplicate lines
+This file contains multiple duplicate lines
+This file does contain duplicates
+And they are adjacent
+And they are adjacent
+And they are adjacent
+This file does contain duplicates
+This file does contain duplicates
+And they are adjacent
+And they are adjacent

@@ -28,12 +28,11 @@ public class CatArguments {
      * @param args Array of arguments to parse
      */
     public void parse(String... args) throws CatException {
-        boolean parsingFLag = true, lineNumber = false, isFirstPass = true;
+        boolean parsingFLag = true, lineNumber = false;
         // Parse arguments
         if (args != null && args.length > 0) {
             for (String arg : args) {
-                if (isFirstPass || arg.isEmpty()) {
-                    isFirstPass = false;
+                if (arg.isEmpty()) {
                     continue;
                 }
                 if (parsingFLag && arg.charAt(0) == CHAR_FLAG_PREFIX) {

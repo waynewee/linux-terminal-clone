@@ -38,11 +38,10 @@ public class WcArguments {
             throw new WcException(ERR_NO_REGEX);
         }
 
-        boolean parsingFlag = true, isFirstPass = true;
+        boolean parsingFlag = true;
         // Parse arguments=
         for (String arg : args) {
-            if (isFirstPass || arg.isEmpty()) {
-                isFirstPass = false;
+            if (arg.isEmpty()) {
                 continue;
             }
             // `parsingFlag` is to ensure all flags come first, followed by files.
