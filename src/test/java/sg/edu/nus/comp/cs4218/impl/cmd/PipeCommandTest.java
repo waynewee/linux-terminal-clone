@@ -38,14 +38,14 @@ class PipeCommandTest {
     void evaluate_KnownCommandPipeKnownCommand_ProducesCorrectOutput() throws AbstractApplicationException, ShellException {
         // Expected output
         String expectedOutput =
-                "tests\\resources\\impl\\app\\PipeCommandResources:\n" +
+                "src\\test\\resources\\impl\\app\\PipeCommandResources:\n" +
                 "test1.txt\n" +
                 "testtest2.txt\n";
         expectedOutput = expectedOutput.replace("\n", StringUtils.STRING_NEWLINE);
 
         // Add 'ls' command as token
         List<String> tokens1 = new LinkedList<>();
-        Path testsResourcesDir = Paths.get("tests", "resources", "impl", "app", "PipeCommandResources");
+        Path testsResourcesDir = Paths.get("src", "test", "resources", "impl", "app", "PipeCommandResources");
         tokens1.add("ls");
         tokens1.add(Paths.get(Environment.currentDirectory, testsResourcesDir.toString()).toString());
 
@@ -76,7 +76,7 @@ class PipeCommandTest {
 
         // Add 'cat' command as token
         List<String> tokens1 = new LinkedList<>();
-        Path testsResourcesDir = Paths.get("tests", "resources", "impl", "app", "PipeCommandResources");
+        Path testsResourcesDir = Paths.get("src", "test", "resources", "impl", "app", "PipeCommandResources");
         tokens1.add("cat");
         tokens1.add(Paths.get(Environment.currentDirectory, testsResourcesDir.toString(), "git1.txt").toString());
         // Initialise 'grep' command as token

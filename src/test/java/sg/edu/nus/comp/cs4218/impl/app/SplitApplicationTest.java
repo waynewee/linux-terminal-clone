@@ -54,7 +54,7 @@ class SplitApplicationTest {
     @Test
     public void run_onWrongFlags_ThrowsException() {
         // Prepare args
-        Path testsResourcesDir = Paths.get("src", "test", "resources", "impl", "app", "SplitApplicationResources", "wrong_arguments");
+        Path testsResourcesDir = getTestsResourcesDir("wrong_arguments");
         Path testFile = Paths.get("wrong_arguments.txt");
         String path = Paths.get(Environment.currentDirectory, testsResourcesDir.toString(), testFile.toString()).toString();
 
@@ -68,10 +68,6 @@ class SplitApplicationTest {
         assertEquals(new SplitException("illegal option -- d").getMessage(), splitException.getMessage());
     }
 
-    @Test
-    public void run_onNoArguments_WaitsForInput() {
-
-    }
 
     @Test
     public void run_onOnlyLineFlag_ThrowsException() {
@@ -100,7 +96,7 @@ class SplitApplicationTest {
     @Test
     public void run_onLineArgumentInvalidFile_ThrowsException() {
         // Prepare args
-        Path testsResourcesDir = Paths.get("src", "test", "resources", "impl", "app", "SplitApplicationResources", "random_invalid_file");
+        Path testsResourcesDir = getTestsResourcesDir("random_invalid_file");
         Path testFile = Paths.get("random_invalid_file");
         String path = Paths.get(Environment.currentDirectory, testsResourcesDir.toString(), testFile.toString()).toString();
 
@@ -116,7 +112,7 @@ class SplitApplicationTest {
     @Test
     public void run_onNoArgumentsExceptFileName_splitsFileByLines() throws Exception {
         // Prepare args
-        Path testsResourcesDir = Paths.get("src", "test", "resources", "impl", "app", "SplitApplicationResources", "filename");
+        Path testsResourcesDir = getTestsResourcesDir("filename");
         Path testFile = Paths.get("filename.txt");
         String path = Paths.get(Environment.currentDirectory, testsResourcesDir.toString(), testFile.toString()).toString();
 
@@ -137,7 +133,7 @@ class SplitApplicationTest {
     @Test
     public void run_onLineArgument_splitsFileByDefaultOneThousandLines() throws Exception {
         // Prepare args
-        Path testsResourcesDir = Paths.get("src", "test", "resources", "impl", "app", "SplitApplicationResources", "one_thousand_lines");
+        Path testsResourcesDir = getTestsResourcesDir("one_thousand_lines");
         Path testFile = Paths.get("one_thousand_lines.txt");
         String path = Paths.get(Environment.currentDirectory, testsResourcesDir.toString(), testFile.toString()).toString();
 
@@ -162,7 +158,7 @@ class SplitApplicationTest {
     @Test
     public void run_onLineArgumentWithValueArgument_splitsFileBySpecifiedValue() throws Exception {
         // Prepare args
-        Path testsResourcesDir = Paths.get("src", "test", "resources", "impl", "app", "SplitApplicationResources", "line_50_filename");
+        Path testsResourcesDir = getTestsResourcesDir("line_50_filename");
         Path testFile = Paths.get("line_50_filename.txt");
         String path = Paths.get(Environment.currentDirectory, testsResourcesDir.toString(), testFile.toString()).toString();
 
@@ -190,7 +186,7 @@ class SplitApplicationTest {
     @Test
     public void run_onBytesArgumentWithValueArgument_splitsFileBySpecifiedValue() throws Exception {
         // Prepare args
-        Path testsResourcesDir = Paths.get("src", "test", "resources", "impl", "app", "SplitApplicationResources", "bytes_50_filename");
+        Path testsResourcesDir = getTestsResourcesDir("bytes_50_filename");
         Path testFile = Paths.get("bytes_50_filename.txt");
         String path = Paths.get(Environment.currentDirectory, testsResourcesDir.toString(), testFile.toString()).toString();
 
@@ -212,7 +208,7 @@ class SplitApplicationTest {
     @Test
     public void run_onTwoArguments_ThrowsException() {
         // Prepare args
-        Path testsResourcesDir = Paths.get("src", "test", "resources", "impl", "app", "SplitApplicationResources", "line_bytes_filename");
+        Path testsResourcesDir = getTestsResourcesDir("line_bytes_filename");
         Path testFile = Paths.get("line_bytes_filename.txt");
         String path = Paths.get(Environment.currentDirectory, testsResourcesDir.toString(), testFile.toString()).toString();
 
@@ -228,7 +224,7 @@ class SplitApplicationTest {
     @Test
     public void run_onLineArgument_createsFileNamesWhichStartsWithZ() throws Exception {
         // Prepare args
-        Path testsResourcesDir = Paths.get("src", "test", "resources", "impl", "app", "SplitApplicationResources", "line_1_filename");
+        Path testsResourcesDir = getTestsResourcesDir("line_1_filename");
         Path testFile = Paths.get("line_1_filename.txt");
         String path = Paths.get(Environment.currentDirectory, testsResourcesDir.toString(), testFile.toString()).toString();
 
@@ -247,7 +243,7 @@ class SplitApplicationTest {
     @Test
     public void run_onBytesArgument_createsFileNamesWhichStartsWithZ() throws Exception {
         // Prepare args
-        Path testsResourcesDir = Paths.get("src", "test", "resources", "impl", "app", "SplitApplicationResources", "bytes_5_filename");
+        Path testsResourcesDir = getTestsResourcesDir("bytes_5_filename");
         Path testFile = Paths.get("bytes_5_filename.txt");
         String path = Paths.get(Environment.currentDirectory, testsResourcesDir.toString(), testFile.toString()).toString();
 
@@ -266,7 +262,7 @@ class SplitApplicationTest {
     @Test
     public void run_onLineArgumentWithPrefix_createsFileNamesStartingWithThatPrefix() throws Exception {
         // Prepare args
-        Path testsResourcesDir = Paths.get("src", "test", "resources", "impl", "app", "SplitApplicationResources", "line_5_filename_prefix");
+        Path testsResourcesDir = getTestsResourcesDir("line_5_filename_prefix");
         Path testFile = Paths.get("line_5_filename_prefix.txt");
         String path = Paths.get(Environment.currentDirectory, testsResourcesDir.toString(), testFile.toString()).toString();
 
@@ -286,7 +282,7 @@ class SplitApplicationTest {
     @Test
     public void run_onByteArgumentWithPrefix_createsFileNamesStartingWithThatPrefix() throws Exception {
         // Prepare args
-        Path testsResourcesDir = Paths.get("src", "test", "resources", "impl", "app", "SplitApplicationResources", "bytes_5_filename_prefix");
+        Path testsResourcesDir = getTestsResourcesDir("bytes_5_filename_prefix");
         Path testFile = Paths.get("bytes_5_filename_prefix.txt");
         String path = Paths.get(Environment.currentDirectory, testsResourcesDir.toString(), testFile.toString()).toString();
 
@@ -349,5 +345,9 @@ class SplitApplicationTest {
                 file.delete();
             }
         }
+    }
+
+    private Path getTestsResourcesDir(String argument) {
+        return Paths.get("src", "test", "resources", "impl", "app", "SplitApplicationResources", argument);
     }
 }

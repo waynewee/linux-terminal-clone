@@ -156,8 +156,7 @@ class LsApplicationTest {
 
         for (File file: files) {
             String filename = file.getName();
-            int indexOfLastDot = filename.lastIndexOf('.');
-            if (indexOfLastDot != -1) {
+            if (filename.contains(".")) {
                 filesWithExtensions.add(file);
             } else {
                 filesWithoutExtensions.add(file);
@@ -183,7 +182,7 @@ class LsApplicationTest {
         String correctOutput = testRecursive.replace("\n", StringUtils.STRING_NEWLINE);
 
         // Prepare args
-        Path testsResourcesDir = Paths.get("src", "test", "resources", "impl", "app", "LsApplicationResources", "test_recursive");
+        Path testsResourcesDir = getTestsResourcesDir("test_recursive");
         String path = Paths.get(Environment.currentDirectory, testsResourcesDir.toString()).toString();
         String[] args = new String[2];
         args[0] = "-R";
@@ -201,7 +200,7 @@ class LsApplicationTest {
         String correctOutput = testRecursiveDirectories.replace("\n", StringUtils.STRING_NEWLINE);
 
         // Prepare args
-        Path testsResourcesDir = Paths.get("src", "test", "resources", "impl", "app", "LsApplicationResources", "test_recursive_directories");
+        Path testsResourcesDir = getTestsResourcesDir("test_recursive_directories");
         String path = Paths.get(Environment.currentDirectory, testsResourcesDir.toString()).toString();
         String[] args = new String[3];
         args[0] = "-R";
@@ -220,7 +219,7 @@ class LsApplicationTest {
         String correctOutput = testRecursiveSort.replace("\n", StringUtils.STRING_NEWLINE);
 
         // Prepare args
-        Path testsResourcesDir = Paths.get("src", "test", "resources", "impl", "app", "LsApplicationResources", "test_recursive_sort");
+        Path testsResourcesDir = getTestsResourcesDir("test_recursive_sort");
         String path = Paths.get(Environment.currentDirectory, testsResourcesDir.toString()).toString();
         String[] args = new String[3];
         args[0] = "-R";
@@ -239,7 +238,7 @@ class LsApplicationTest {
         String correctOutput = testFoldersOnlySort.replace("\n", StringUtils.STRING_NEWLINE);
 
         // Prepare args
-        Path testsResourcesDir = Paths.get("src", "test", "resources", "impl", "app", "LsApplicationResources", "test_folders_sort");
+        Path testsResourcesDir = getTestsResourcesDir("test_folders_sort");
         String path = Paths.get(Environment.currentDirectory, testsResourcesDir.toString()).toString();
         String[] args = new String[3];
         args[0] = "-d";
@@ -258,7 +257,7 @@ class LsApplicationTest {
         String correctOutput = testFolderOnlySortRecursive.replace("\n", StringUtils.STRING_NEWLINE);
 
         // Prepare args
-        Path testsResourcesDir = Paths.get("src", "test", "resources", "impl", "app", "LsApplicationResources", "test_folders_sort_recursive");
+        Path testsResourcesDir = getTestsResourcesDir("test_folders_sort_recursive");
         String path = Paths.get(Environment.currentDirectory, testsResourcesDir.toString()).toString();
         String[] args = new String[4];
         args[0] = "-d";
@@ -269,8 +268,6 @@ class LsApplicationTest {
         lsApplication.run(args, System.in, outputStream);
         assertEquals(correctOutput, outputStream.toString());
     }
-
-
 
     // Unknown arg: ls -a
     @Test
@@ -321,19 +318,23 @@ class LsApplicationTest {
 
     // Utils
     static class ExtensionComparator implements Comparator<File> {
+
         @Override
-        public int compare(File f1, File f2) {
-            String ext1 = f1.toString().substring(f1.toString().lastIndexOf('.') + 1);
-            String ext2 = f2.toString().substring(f2.toString().lastIndexOf('.') + 1);
+        public int compare(File file1, File file2) {
+            String ext1 = file1.toString().substring(file1.toString().lastIndexOf('.') + 1);
+            String ext2 = file2.toString().substring(file2.toString().lastIndexOf('.') + 1);
             return ext1.compareTo(ext2);
         }
     }
-
     private String getFileNames(ArrayList<File> filesWithoutExtensions) {
         StringBuilder output = new StringBuilder();
         for (File file: filesWithoutExtensions) {
             output.append(file.getName()).append(StringUtils.STRING_NEWLINE);
         }
         return output.toString();
+    }
+
+    private Path getTestsResourcesDir(String fileName) {
+        return Paths.get("src", "test", "resources", "impl", "app", "LsApplicationResources", fileName);
     }
 }
