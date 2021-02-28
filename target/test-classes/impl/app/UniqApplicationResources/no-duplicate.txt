@@ -1,0 +1,3 @@
+This test file does not contain any duplicate text
+This file test doesn't contain duplicate lines.
+This test files doesn't have duplicate lines.
