@@ -55,14 +55,12 @@ public class SplitApplication implements SplitInterface {
         suffix = parser.getSplitSuffix();
 
         if (parser.fileInput()) {
-            System.out.println("file input");
             if (isSplitByLines) {
                 splitFileByLines(parser.fileName(), prefix, parser.getSplitSize());
             } else if (isSplitByBytes) {
                 splitFileByBytes(parser.fileName(), prefix, String.valueOf(parser.getSplitSize()));
             }
         } else {
-            System.out.println("standard input");
             if (isSplitByLines) {
                 splitStdinByLines(stdin, prefix, parser.getSplitSize());
             } else if (isSplitByBytes) {
@@ -74,11 +72,6 @@ public class SplitApplication implements SplitInterface {
 
     @Override
     public void splitFileByLines(String fileName, String prefix, int linesPerFile) throws Exception {
-        System.out.println("splitFileByLines");
-        System.out.println(fileName);
-        System.out.println(prefix);
-        System.out.println(linesPerFile);
-
         File file = new File(fileName);
         String directoryPath = file.getParent();
 
@@ -110,11 +103,6 @@ public class SplitApplication implements SplitInterface {
 
     @Override
     public void splitFileByBytes(String fileName, String prefix, String bytesPerFile) throws Exception {
-        System.out.println("splitFileByBytes");
-        System.out.println(fileName);
-        System.out.println(prefix);
-        System.out.println(bytesPerFile);
-
         File file = new File(fileName);
         String directoryPath = file.getParent();
 
@@ -147,10 +135,6 @@ public class SplitApplication implements SplitInterface {
 
     @Override
     public void splitStdinByLines(InputStream stdin, String prefix, int linesPerFile) throws Exception {
-        System.out.println("splitStdinByLines");
-        System.out.println(prefix);
-        System.out.println(linesPerFile);
-
         Scanner sc = new Scanner(System.in);
         String directoryPath = Paths.get(Environment.currentDirectory).toString();
         FileWriter fileWriter = new FileWriter(Paths.get(directoryPath, getOutputFileName()).toString());
@@ -164,19 +148,21 @@ public class SplitApplication implements SplitInterface {
                 counter = 0;
             } else {
                 counter += 1;
-                String temp = sc.nextLine();
+                String temp;
+                try {
+                    temp = sc.nextLine();
+                } catch (Exception e) {
+                    break;
+                }
                 fileWriter.write(temp);
                 fileWriter.write(StringUtils.STRING_NEWLINE);
             }
         }
+        resetOutputFileName();
     }
 
     @Override
     public void splitStdinByBytes(InputStream stdin, String prefix, String bytesPerFile) throws Exception {
-        System.out.println("splitStdinByBytes");
-        System.out.println(prefix);
-        System.out.println(bytesPerFile);
-
         FileWriter fileWriter;
         Scanner sc = new Scanner(System.in);
         String directoryPath = Paths.get(Environment.currentDirectory).toString();
@@ -185,7 +171,11 @@ public class SplitApplication implements SplitInterface {
 
         String inputString = "";
         while (true) {
-            inputString += sc.nextLine();
+            try {
+                inputString += sc.nextLine();
+            } catch (Exception e) {
+                break;
+            }
 
             byte[] byteArray = inputString.getBytes();
             while (byteArray.length >= splitSize) {
@@ -198,6 +188,7 @@ public class SplitApplication implements SplitInterface {
             }
             inputString = new String(byteArray);
         }
+        resetOutputFileName();
     }
 
     // Helper functions

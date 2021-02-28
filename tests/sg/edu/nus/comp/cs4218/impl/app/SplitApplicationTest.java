@@ -6,7 +6,9 @@ import org.junit.jupiter.api.Test;
 import sg.edu.nus.comp.cs4218.Application;
 import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.SplitException;
+import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.nio.file.Files;
@@ -301,11 +303,49 @@ class SplitApplicationTest {
         removeOutputFiles(testsResourcesDir);
     }
 
+    @Test
+    public void run_onByteFlagWithStandardInput_SplitsInputIntoFiles() throws Exception {
+        // Prepare Args
+        String path = Paths.get(Environment.currentDirectory).toString();
+        String[] args = new String[2];
+        args[0] = "-b";
+        args[1] = "5";
+
+        // Prepare input stream
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(("testshouldgiveme" + StringUtils.STRING_NEWLINE).getBytes());
+        System.setIn(inputStream);
+
+        splitApplication.run(args, inputStream, outputStream);
+        inputStream.close();
+
+        Path outputFilePath1 = Paths.get(Environment.currentDirectory, "xaa");
+        Path outputFilePath2 = Paths.get(Environment.currentDirectory, "xab");
+        Path outputFilePath3 = Paths.get(Environment.currentDirectory, "xac");
+
+        assert(Files.exists(outputFilePath1));
+        assert(Files.exists(outputFilePath2));
+        assert(Files.exists(outputFilePath3));
+
+        // Restore System.in
+        System.setIn(System.in);
+
+        // Remove output files in current directory
+        removeOutputFilesInCurrentDirectory();
+    }
+
     // Helper methods
     private void removeOutputFiles(Path testsResourcesDir) {
         File dir = testsResourcesDir.toFile();
         for (File file: dir.listFiles()) {
             if (!file.getName().endsWith("txt")) {
+                file.delete();
+            }
+        }
+    }
+    private void removeOutputFilesInCurrentDirectory() {
+        File dir = Paths.get(Environment.currentDirectory).toFile();
+        for (File file : dir.listFiles()) {
+            if (file.getName().equals("xaa") || file.getName().equals("xab") || file.getName().equals("xac")) {
                 file.delete();
             }
         }

@@ -81,7 +81,6 @@ public class SplitArgsParser extends ArgsParser{
         if (isSplitByBytes()) {
             if (temp.charAt(temp.length() - 1) == 'b' || temp.charAt(temp.length() - 1) == 'k'
                     || temp.charAt(temp.length() - 1) == 'm') {
-                System.out.println(temp);
                 splitSuffix = String.valueOf(temp.charAt(temp.length() - 1));
                 temp = temp.substring(0, temp.length() - 1);
             }
