@@ -55,7 +55,7 @@ class CdApplicationTest {
     }
 
     @Test
-    void changeToDirectory_relativePathNonExistant_changesDirectory() {
+    void changeToDirectory_relativePathNonExistant_throwsCdException() {
         assertThrows(CdException.class, () -> cdApplication.changeToDirectory("." + File.separator + ".nonExistantDirectory"));
     }
 }

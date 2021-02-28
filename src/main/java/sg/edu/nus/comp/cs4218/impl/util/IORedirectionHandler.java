@@ -53,7 +53,6 @@ public class IORedirectionHandler {
 
             // if current arg is < or >, fast-forward to the next arg to extract the specified file
             String file = argsIterator.next();
-            noRedirArgsList.add(file);
 
             // redir operator cannot be adjacent to each other
             if (isRedirOperator(file)) {
