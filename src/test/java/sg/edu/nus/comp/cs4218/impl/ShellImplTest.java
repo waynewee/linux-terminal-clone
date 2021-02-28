@@ -72,9 +72,10 @@ class ShellImplTest {
     }
 
 
+    // Tee + Pipe + Cat Integration tests
     @Test
-    void tee_pipeFromEcho_fileGetsWritten() throws AbstractApplicationException, ShellException, IOException {
-        testShell.parseAndEvaluate(String.format("echo %s | tee %s", expectedString, tempFilePath), mockOutputStream);
+    void tee_pipeFromCat_fileGetsWritten() throws AbstractApplicationException, ShellException, IOException {
+        testShell.parseAndEvaluate(String.format("cat %s | tee %s", existingFilePath, tempFilePath), mockOutputStream);
         assertEquals(expectedString + System.lineSeparator(), Files.readString(Path.of(tempFilePath)));
     }
 
