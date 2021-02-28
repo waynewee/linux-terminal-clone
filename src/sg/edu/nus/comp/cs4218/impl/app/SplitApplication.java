@@ -10,6 +10,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
@@ -144,28 +145,6 @@ public class SplitApplication implements SplitInterface {
         resetOutputFileName();
     }
 
-    private int extractSplitSize(String bytesPerFile) {
-        int splitSize = bytesPerFile.equals("") ? 0 : parseInt(bytesPerFile);
-
-        if (suffix.equals("")) {
-            return splitSize;
-        }
-
-        switch (parser.getSplitSuffix()) {
-            case "b":
-                splitSize *= 512;
-                break;
-            case "k":
-                splitSize *= 1024;
-                break;
-            case "m":
-                splitSize *= 1048576;
-                break;
-
-        }
-        return splitSize;
-    }
-
     @Override
     public void splitStdinByLines(InputStream stdin, String prefix, int linesPerFile) throws Exception {
         System.out.println("splitStdinByLines");
@@ -197,6 +176,28 @@ public class SplitApplication implements SplitInterface {
         System.out.println("splitStdinByBytes");
         System.out.println(prefix);
         System.out.println(bytesPerFile);
+
+        FileWriter fileWriter;
+        Scanner sc = new Scanner(System.in);
+        String directoryPath = Paths.get(Environment.currentDirectory).toString();
+
+        int splitSize = extractSplitSize(bytesPerFile);
+
+        String inputString = "";
+        while (true) {
+            inputString += sc.nextLine();
+
+            byte[] byteArray = inputString.getBytes();
+            while (byteArray.length >= splitSize) {
+                byte[] temp = Arrays.copyOfRange(byteArray, 0, splitSize);
+                byteArray = Arrays.copyOfRange(byteArray, splitSize, byteArray.length);
+
+                fileWriter = new FileWriter(Paths.get(directoryPath, getOutputFileName()).toString());
+                fileWriter.write(new String(temp));
+                fileWriter.close();
+            }
+            inputString = new String(byteArray);
+        }
     }
 
     // Helper functions
@@ -218,5 +219,27 @@ public class SplitApplication implements SplitInterface {
     private void resetOutputFileName() {
         asciiFirstLetter = 97;
         asciiSecondLetter = 96;
+    }
+
+    private int extractSplitSize(String bytesPerFile) {
+        int splitSize = bytesPerFile.equals("") ? 0 : parseInt(bytesPerFile);
+
+        if (suffix.equals("")) {
+            return splitSize;
+        }
+
+        switch (parser.getSplitSuffix()) {
+            case "b":
+                splitSize *= 512;
+                break;
+            case "k":
+                splitSize *= 1024;
+                break;
+            case "m":
+                splitSize *= 1048576;
+                break;
+
+        }
+        return splitSize;
     }
 }
