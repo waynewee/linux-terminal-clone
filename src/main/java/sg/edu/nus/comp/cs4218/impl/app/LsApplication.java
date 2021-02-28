@@ -133,9 +133,9 @@ public class LsApplication implements LsInterface {
                         }
                     }
                     if (containsFolders) {
-                        String recursive_result = buildResult(contents, isFoldersOnly, isRecursive, isSortByExt);
-                        result.append(recursive_result);
-                        if (!recursive_result.equals("")) {
+                        String recursiveResult = buildResult(contents, isFoldersOnly, isRecursive, isSortByExt);
+                        result.append(recursiveResult);
+                        if (!recursiveResult.equals("")) {
                             // Empty directories should not have an additional new line
                             result.append(StringUtils.STRING_NEWLINE);
                         }
@@ -179,8 +179,7 @@ public class LsApplication implements LsInterface {
             List<String> filesNamesWithoutExtensions = new ArrayList<>();
             List<String> filesNamesWithExtensions = new ArrayList<>();
             for (String filename: fileNames) {
-                int indexOfLastDot = filename.lastIndexOf('.');
-                if (indexOfLastDot != -1) {
+                if (filename.contains(".")) {
                     filesNamesWithExtensions.add(filename);
                 } else {
                     filesNamesWithoutExtensions.add(filename);
@@ -296,9 +295,9 @@ public class LsApplication implements LsInterface {
     // Utils
     static class ExtensionComparator implements Comparator<String> {
         @Override
-        public int compare(String f1, String f2) {
-            String ext1 = f1.substring(f1.lastIndexOf('.') + 1);
-            String ext2 = f2.substring(f2.lastIndexOf('.') + 1);
+        public int compare(String file1, String file2) {
+            String ext1 = file1.substring(file1.lastIndexOf('.') + 1);
+            String ext2 = file2.substring(file2.lastIndexOf('.') + 1);
             return ext1.compareTo(ext2);
         }
     }
