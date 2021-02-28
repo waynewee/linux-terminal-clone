@@ -2,7 +2,6 @@ package sg.edu.nus.comp.cs4218.impl.cmd;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import sg.edu.nus.comp.cs4218.Application;
 import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
@@ -10,14 +9,11 @@ import sg.edu.nus.comp.cs4218.impl.util.ApplicationRunner;
 import sg.edu.nus.comp.cs4218.impl.util.ArgumentResolver;
 import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.nio.channels.Pipe;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -75,7 +71,7 @@ class PipeCommandTest {
     void evaluate_KnownCommandPipeKnownCommandPipeKnownCommand_ProducesCorrectOutput() throws AbstractApplicationException, ShellException {
         // Expected output
         String expectedOutput =
-                "";
+                "this is hopefully a nice 2 test\n";
         expectedOutput = expectedOutput.replace("\n", StringUtils.STRING_NEWLINE);
 
         // Add 'cat' command as token
@@ -101,13 +97,12 @@ class PipeCommandTest {
         CallCommand callCommand3 = new CallCommand(tokens3, new ApplicationRunner(), new ArgumentResolver());
 
         callCommands.add(callCommand1);
-//        callCommands.add(callCommand2);
-//        callCommands.add(callCommand3);
+        callCommands.add(callCommand2);
+        callCommands.add(callCommand3);
 
         PipeCommand pipeCommand = new PipeCommand(callCommands);
         pipeCommand.evaluate(System.in, outputStream);
-        System.out.println(outputStream.toString());
-//        assertEquals(expectedOutput, outputStream.toString());
+        assertEquals(expectedOutput, outputStream.toString());
     }
 
     @Test
@@ -134,7 +129,7 @@ class PipeCommandTest {
     }
 
     @Test
-    void evaluate_KnownCommandPipeUnKnownCommand_ThrowsException() {
+    void evaluate_KnownCommandPipeUnknownCommand_ThrowsException() {
         // Add 'lsa' command as token
         List<String> tokens1 = new LinkedList<>();
         tokens1.add("ls");
