@@ -17,7 +17,6 @@ import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_INVALID_FLAG;
 
 class WcArgumentsTest {
 
-    private static final String GREP_COMMAND = "wc";
     private static final String FILE = "filename.txt";
     private static final String FLAG_BYTES = "-c";
     private static final String FLAG_LINES = "-l";
@@ -39,7 +38,7 @@ class WcArgumentsTest {
 
     @Test
     public void parse_LinesTrueWordsTrueBytesTrue_ReturnsMatching() throws Exception {
-        wcArguments.parse(GREP_COMMAND, FLAG_BYTES, FLAG_LINES, FLAG_WORDS, FILE);
+        wcArguments.parse(FLAG_BYTES, FLAG_LINES, FLAG_WORDS, FILE);
         assertTrue(wcArguments.isWords());
         assertTrue(wcArguments.isBytes());
         assertTrue(wcArguments.isLines());
@@ -47,7 +46,7 @@ class WcArgumentsTest {
 
     @Test
     public void parse_LinesTrueWordsFalseBytesFalse_ReturnsMatching() throws Exception {
-        wcArguments.parse(GREP_COMMAND, FLAG_LINES, FILE);
+        wcArguments.parse(FLAG_LINES, FILE);
         assertFalse(wcArguments.isWords());
         assertFalse(wcArguments.isBytes());
         assertTrue(wcArguments.isLines());
@@ -55,7 +54,7 @@ class WcArgumentsTest {
 
     @Test
     public void parse_LinesFalseWordsFalseBytesTrue_ReturnsMatching() throws Exception {
-        wcArguments.parse(GREP_COMMAND, FLAG_BYTES, FLAG_LINES, FLAG_WORDS, FILE);
+        wcArguments.parse(FLAG_BYTES, FLAG_LINES, FLAG_WORDS, FILE);
         assertTrue(wcArguments.isWords());
         assertTrue(wcArguments.isBytes());
         assertTrue(wcArguments.isLines());
@@ -63,7 +62,7 @@ class WcArgumentsTest {
 
     @Test
     public void parse_CombinedWordsTrueLinesTrue_ReturnsMatching() throws Exception {
-        wcArguments.parse(GREP_COMMAND, FLAG_WORDS_LINES, FILE);
+        wcArguments.parse(FLAG_WORDS_LINES, FILE);
         assertTrue(wcArguments.isWords());
         assertFalse(wcArguments.isBytes());
         assertTrue(wcArguments.isLines());
@@ -71,7 +70,7 @@ class WcArgumentsTest {
 
     @Test
     public void parse_CombinedBytesTrueLinesTrue_ReturnsMatching() throws Exception {
-        wcArguments.parse(GREP_COMMAND, FLAG_BYTES_LINES, FILE);
+        wcArguments.parse(FLAG_BYTES_LINES, FILE);
         assertFalse(wcArguments.isWords());
         assertTrue(wcArguments.isBytes());
         assertTrue(wcArguments.isLines());
@@ -79,7 +78,7 @@ class WcArgumentsTest {
 
     @Test
     public void parse_CombinedBytesTrueWordsTrue_ReturnsMatching() throws Exception {
-        wcArguments.parse(GREP_COMMAND, FLAG_BYTES_WORDS, FILE);
+        wcArguments.parse(FLAG_BYTES_WORDS, FILE);
         assertTrue(wcArguments.isWords());
         assertTrue(wcArguments.isBytes());
         assertFalse(wcArguments.isLines());
@@ -87,7 +86,7 @@ class WcArgumentsTest {
 
     @Test
     public void parse_FlagsAllAfterFile_ReturnsMatching() throws Exception {
-        wcArguments.parse(GREP_COMMAND, FILE, FLAG_BYTES, FLAG_LINES, FLAG_WORDS);
+        wcArguments.parse(FILE, FLAG_BYTES, FLAG_LINES, FLAG_WORDS);
         assertFalse(wcArguments.isWords());
         assertFalse(wcArguments.isBytes());
         assertFalse(wcArguments.isLines());
@@ -95,7 +94,7 @@ class WcArgumentsTest {
 
     @Test
     public void parse_FlagsOneBeforeFileRestAfterFile_ReturnsMatching() throws Exception {
-        wcArguments.parse(GREP_COMMAND, FLAG_BYTES, FILE, FLAG_LINES, FLAG_WORDS);
+        wcArguments.parse(FLAG_BYTES, FILE, FLAG_LINES, FLAG_WORDS);
         assertFalse(wcArguments.isWords());
         assertTrue(wcArguments.isBytes());
         assertFalse(wcArguments.isLines());
@@ -104,7 +103,7 @@ class WcArgumentsTest {
     @Test
     public void parse_FlagInvalid_ThrowsInvalidFlagException() {
         WcException wcException = assertThrows(WcException.class, () -> {
-            wcArguments.parse(GREP_COMMAND, FLAG_INVALID, FILE);
+            wcArguments.parse(FLAG_INVALID, FILE);
         });
         assertEquals(wcException.getMessage(), new WcException(ERR_INVALID_FLAG).getMessage());
     }
