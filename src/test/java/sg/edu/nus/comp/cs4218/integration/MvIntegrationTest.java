@@ -1,4 +1,4 @@
-package sg.edu.nus.comp.cs4218.impl.integration;
+package sg.edu.nus.comp.cs4218.integration;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
