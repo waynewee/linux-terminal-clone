@@ -31,14 +31,11 @@ public class CopyApplicationTest {
     @Test
     public void run_InvalidFile_ThrowsException() {
         // Prepare args
-        Path source_folder = Paths.get("tests", "resources", "impl", "app", "CopyApplicationResources", "invalid_file", "source_folder");
-        source_folder = Paths.get(Environment.currentDirectory, source_folder.toString());
+        Path sourceFolder = getFolderPath(Environment.currentDirectory, "invalid_file", "sourceFolder");
+        Path destinationFolder = getFolderPath(Environment.currentDirectory, "invalid_file", "destinationFolder");
 
-        Path destination_folder = Paths.get("tests", "resources", "impl", "app", "CopyApplicationResources", "invalid_file", "destination_folder");
-        destination_folder = Paths.get(Environment.currentDirectory, destination_folder.toString());
-
-        Path sourceTestFile = Paths.get(source_folder.toString(), "test1.txt");
-        Path destinationTestFile = Paths.get(destination_folder.toString(), "test1.txt");
+        Path sourceTestFile = Paths.get(sourceFolder.toString(), "test1.txt");
+        Path destinationTestFile = Paths.get(destinationFolder.toString(), "test1.txt");
 
 
         String[] args = new String[2];
@@ -50,18 +47,19 @@ public class CopyApplicationTest {
 
     }
 
+    private Path getFolderPath(String environmentDirectory, String invalidFile, String folderLocation) {
+        return Paths.get(environmentDirectory, "tests", "resources", "impl", "app", "CopyApplicationResources", invalidFile, folderLocation);
+    }
+
     @Test
     public void run_InvalidFolder_ThrowsException() {
         // Prepare args
-        Path source_folder = Paths.get("tests", "resources", "impl", "app", "CopyApplicationResources", "invalid_folder", "source_folder");
-        source_folder = Paths.get(Environment.currentDirectory, source_folder.toString());
-
-        Path destination_folder = Paths.get("tests", "resources", "impl", "app", "CopyApplicationResources", "invalid_folder", "destination_folder");
-        destination_folder = Paths.get(Environment.currentDirectory, destination_folder.toString());
+        Path sourceFolder = getFolderPath(Environment.currentDirectory, "invalid_folder", "sourceFolder");
+        Path destinationFolder = getFolderPath(Environment.currentDirectory, "invalid_folder", "destinationFolder");
 
         String[] args = new String[2];
-        args[0] = source_folder.toString();
-        args[1] = destination_folder.toString();
+        args[0] = sourceFolder.toString();
+        args[1] = destinationFolder.toString();
 
         // Assert right exception thrown
         CopyException copyException = assertThrows(CopyException.class, () -> copyException.run(args, System.in, outputStream));
@@ -70,14 +68,11 @@ public class CopyApplicationTest {
     @Test
     public void run_ValidFile_CopiesToDestination() {
         // Prepare args
-        Path source_folder = Paths.get("tests", "resources", "impl", "app", "CopyApplicationResources", "valid_file", "source_folder");
-        source_folder = Paths.get(Environment.currentDirectory, source_folder.toString());
+        Path sourceFolder = getFolderPath(Environment.currentDirectory, "valid_file", "sourceFolder");
+        Path destinationFolder = getFolderPath(Environment.currentDirectory, "valid_file", "destinationFolder");
 
-        Path destination_folder = Paths.get("tests", "resources", "impl", "app", "CopyApplicationResources", "valid_file", "destination_folder");
-        destination_folder = Paths.get(Environment.currentDirectory, destination_folder.toString());
-
-        Path sourceTestFile = Paths.get(source_folder.toString(), "test1.txt");
-        Path destinationTestFile = Paths.get(destination_folder.toString(), "test1.txt");
+        Path sourceTestFile = Paths.get(sourceFolder.toString(), "test1.txt");
+        Path destinationTestFile = Paths.get(destinationFolder.toString(), "test1.txt");
 
         String[] args = new String[2];
         args[0] = sourceTestFile.toString();
@@ -92,37 +87,32 @@ public class CopyApplicationTest {
     @Test
     public void run_ValidDirectory_CopiesToDestination() {
         // Prepare args
-        Path source_folder = Paths.get("tests", "resources", "impl", "app", "CopyApplicationResources", "valid_directory", "source_folder");
-        source_folder = Paths.get(Environment.currentDirectory, source_folder.toString());
-
-        Path destination_folder = Paths.get("tests", "resources", "impl", "app", "CopyApplicationResources", "valid_directory", "destination_folder");
-        destination_folder = Paths.get(Environment.currentDirectory, destination_folder.toString());
+        Path sourceFolder = getFolderPath(Environment.currentDirectory, "valid_directory", "sourceFolder");
+        Path destinationFolder = getFolderPath(Environment.currentDirectory, "valid_directory", "destinationFolder");
 
         String[] args = new String[2];
-        args[0] = source_folder.toString();
-        args[1] = destination_folder.toString();
+        args[0] = sourceFolder.toString();
+        args[1] = destinationFolder.toString();
 
         copyException.run(args, System.in, outputStream);
 
-        assert(!Files.exists(source_folder));
-        assert(Files.exists(destination_folder));
+        assert(!Files.exists(sourceFolder));
+        assert(Files.exists(destinationFolder));
     }
 
     @Test
     public void run_GivenRecursiveFlag_CopiesFoldersToDestinationRecursively() {
         // Prepare args
-        Path source_folder = Paths.get("tests", "resources", "impl", "app", "CopyApplicationResources", "recursive_valid_folder", "source_folder");
-        source_folder = Paths.get(Environment.currentDirectory, source_folder.toString());
-        int fileCountInSource = getFileCount(source_folder);
+        Path sourceFolder = getFolderPath(Environment.currentDirectory, "recursive_valid_folder", "sourceFolder");
+        Path destinationFolder = getFolderPath(Environment.currentDirectory, "recursive_valid_folder", "destinationFolder");
 
-        Path destination_folder = Paths.get("tests", "resources", "impl", "app", "CopyApplicationResources", "recursive_valid_folder", "destination_folder");
-        destination_folder = Paths.get(Environment.currentDirectory, destination_folder.toString());
-        int fileCountInDestination = getFileCount(source_folder);
+        int fileCountInSource = getFileCount(sourceFolder);
+        int fileCountInDestination = getFileCount(sourceFolder);
 
         String[] args = new String[3];
         args[0] = "-R";
-        args[1] = source_folder.toString();
-        args[2] = destination_folder.toString();
+        args[1] = sourceFolder.toString();
+        args[2] = destinationFolder.toString();
 
         copyException.run(args, System.in, outputStream);
 
@@ -132,18 +122,16 @@ public class CopyApplicationTest {
     @Test
     public void run_GivenSmallLetterRecursiveFlag_CopiesFoldersToDestinationRecursively() {
         // Prepare args
-        Path source_folder = Paths.get("tests", "resources", "impl", "app", "CopyApplicationResources", "recursive_valid_folder", "source_folder");
-        source_folder = Paths.get(Environment.currentDirectory, source_folder.toString());
-        int fileCountInSource = getFileCount(source_folder);
+        Path sourceFolder = getFolderPath(Environment.currentDirectory, "recursive_valid_folder", "sourceFolder");
+        Path destinationFolder = getFolderPath(Environment.currentDirectory, "recursive_valid_folder", "destinationFolder");
 
-        Path destination_folder = Paths.get("tests", "resources", "impl", "app", "CopyApplicationResources", "recursive_valid_folder", "destination_folder");
-        destination_folder = Paths.get(Environment.currentDirectory, destination_folder.toString());
-        int fileCountInDestination = getFileCount(source_folder);
+        int fileCountInSource = getFileCount(sourceFolder);
+        int fileCountInDestination = getFileCount(sourceFolder);
 
         String[] args = new String[3];
         args[0] = "-r";
-        args[1] = source_folder.toString();
-        args[2] = destination_folder.toString();
+        args[1] = sourceFolder.toString();
+        args[2] = destinationFolder.toString();
 
         copyException.run(args, System.in, outputStream);
 
@@ -154,12 +142,13 @@ public class CopyApplicationTest {
     public static int getFileCount(Path file) {
         File[] files = new File(file.toString()).listFiles();
         int count = 0;
-        for (File f : files)
-            if (f.isDirectory())
+        for (File f : files) {
+            if (f.isDirectory()) {
                 count += getFileCount(f.toPath());
-            else
+            } else {
                 count += 1;
-
+            }
+        }
         return count;
     }
 }
