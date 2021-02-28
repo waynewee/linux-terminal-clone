@@ -1,6 +1,5 @@
 package sg.edu.nus.comp.cs4218.exception;
 
-import main.java.sg.edu.nus.comp.cs4218.exception.MvException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
