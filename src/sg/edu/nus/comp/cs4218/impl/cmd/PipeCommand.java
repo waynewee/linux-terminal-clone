@@ -42,12 +42,13 @@ public class PipeCommand implements Command {
 
             try {
                 nextOutputStream = new ByteArrayOutputStream();
-                if (i == callCommands.size() ) {
+                if (i == callCommands.size() - 1) {
                     nextOutputStream = stdout;
                 }
                 callCommand.evaluate(nextInputStream, nextOutputStream);
-                if (i != callCommands.size() ) {
-                    nextInputStream = new ByteArrayInputStream(((ByteArrayOutputStream) nextOutputStream).toByteArray());
+                if (!nextOutputStream.equals(stdout)) {
+                    byte[] byteArray = ((ByteArrayOutputStream) nextOutputStream).toByteArray();
+                    nextInputStream = new ByteArrayInputStream(byteArray);
                 }
             } catch (AbstractApplicationException e) {
                 absAppException = e;
