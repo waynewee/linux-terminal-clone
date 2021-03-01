@@ -41,6 +41,12 @@ class IORedirectionHandlerTest {
     static void setUp() throws IOException {
         argumentResolver = new ArgumentResolver();
         testStream = new ByteArrayOutputStream();
+
+        File nonExistentFile = new File(nonExistentFilePath);
+        nonExistentFile.delete();
+
+        File anotherNonExistentFile = new File(anotherNonExistentFilePath);
+        anotherNonExistentFile.delete();
     }
 
     @BeforeEach
