@@ -7,8 +7,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -23,16 +21,20 @@ class IORedirectionHandlerTest {
 
     private static ArgumentResolver argumentResolver;
     private static ByteArrayOutputStream testStream;
-    private static String nonExistentFile = "someNonExistentFile.txt";
-    private static String trueFile = "trueFile.txt";
-    private static String anotherTrueFile = "anotherTrueFile.txt";
+    private static String nonExistentFilePath = "someNonExistentFile.txt";
+    private static String trueFilePath = "trueFile.txt";
+    private static String anotherTrueFilePath = "anotherTrueFile.txt";
 
-    private static String[] TWO_INPUT_REDIRECTION_FILES = {"paste", "<", trueFile, anotherTrueFile};
-    private static String[] MULTIPLE_IOREDIRECTION_TOKENS = {"paste", "<", "<", nonExistentFile};
-    private static String[] OUTPUT_REDIRECTION_ONE_EXISTING_FILE = {"echo", "helloWorld", ">", trueFile};
-    private static String[] INPUT_REDIRECTION_ONE_EXISTING_FILE = {"paste", "<", trueFile};
-    private static String[] INPUT_REDIRECTION_ONE_NONEXISTENT_FILE = {"paste", "<", nonExistentFile};
-    private static String[] OUTPUT_REDIRECTION_ONE_NONEXISTENT_FILE = {"echo", "helloWorld", ">", nonExistentFile};
+    private static File nonExistentFile;
+    private static File trueFile;
+    private static File anotherTrueFile;
+
+    private static String[] TWO_INPUT_REDIRECTION_FILES = {"paste", "<", trueFilePath, anotherTrueFilePath};
+    private static String[] MULTIPLE_IOREDIRECTION_TOKENS = {"paste", "<", "<", nonExistentFilePath};
+    private static String[] OUTPUT_REDIRECTION_ONE_EXISTING_FILE = {"echo", "helloWorld", ">", trueFilePath};
+    private static String[] INPUT_REDIRECTION_ONE_EXISTING_FILE = {"paste", "<", trueFilePath};
+    private static String[] INPUT_REDIRECTION_ONE_NONEXISTENT_FILE = {"paste", "<", nonExistentFilePath};
+    private static String[] OUTPUT_REDIRECTION_ONE_NONEXISTENT_FILE = {"echo", "helloWorld", ">", nonExistentFilePath};
     private static String[] NO_FILES_PROVIDED = {"paste", "<"};
 
     @BeforeAll
@@ -43,23 +45,26 @@ class IORedirectionHandlerTest {
 
     @BeforeEach
     void setupBeforeEachTest() throws IOException {
-        Files.deleteIfExists(Path.of(nonExistentFile));
-        Files.deleteIfExists(Path.of(trueFile));
-        Files.deleteIfExists(Path.of(anotherTrueFile));
+        nonExistentFile = new File(nonExistentFilePath);
+        nonExistentFile.delete();
 
-        Files.createFile(Path.of(trueFile));
-        FileWriter trueFileWriter = new FileWriter(trueFile);
+        trueFile = new File(trueFilePath);
+        trueFile.createNewFile();
+        FileWriter trueFileWriter = new FileWriter(trueFile, false);
         trueFileWriter.write("Mark of the true file");
         trueFileWriter.close();
 
-        Files.createFile(Path.of(anotherTrueFile));
+        anotherTrueFile = new File(anotherTrueFilePath);
+        anotherTrueFile.createNewFile();
+        FileWriter anotherTrueFileWriter = new FileWriter(anotherTrueFile, false);
+        anotherTrueFileWriter.close();
     }
 
     @AfterEach
-    void tearDownAfterEachTest() throws IOException {
-        Files.deleteIfExists(Path.of(nonExistentFile));
-        Files.deleteIfExists(Path.of(trueFile));
-        Files.deleteIfExists(Path.of(anotherTrueFile));
+    void tearDownAfterEachTest() {
+        nonExistentFile.delete();
+        trueFile.delete();
+        anotherTrueFile.delete();
     }
 
     @Test
@@ -118,7 +123,7 @@ class IORedirectionHandlerTest {
 
         IORedirectionHandler redirHandler = new IORedirectionHandler(argsList, System.in, testStream, argumentResolver);
         assertDoesNotThrow(() -> redirHandler.extractRedirOptions());
-        assertEquals(true, new File(nonExistentFile).exists());
+        assertEquals(true, new File(nonExistentFilePath).exists());
     }
 
     @Test
