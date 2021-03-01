@@ -1,4 +1,4 @@
-# CS4218 Team 16
+# CS4218 Shell
 Codebase for CS4218, 20/21 Sem2
 Task Assigned: BF + EF1
 
