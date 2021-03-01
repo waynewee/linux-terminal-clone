@@ -16,19 +16,19 @@ class RegexArgumentTest {
      * Contents of Subdirectories are not tested because the test itself already uses subdirectories.
      */
 
-    private static final String TEST_RESOURCE_PATH = "src/test/resources/impl/app/GlobResources/";
-    private static final String SUBDIRECTORY1 = TEST_RESOURCE_PATH + "subdirectory1";
-    private static final String SUBDIRECTORY2 = TEST_RESOURCE_PATH + "subdirectory2";
-    private static final String FILE1 = TEST_RESOURCE_PATH + "test1.txt";
-    private static final String FILE2 = TEST_RESOURCE_PATH + "test2.txt";
-    private static final String FILE3 = TEST_RESOURCE_PATH + "alternate1.txt";
-    private static final String FILE4 = TEST_RESOURCE_PATH + "alternate2.txt";
+    private static final String RESOURCE_PATH = "src/test/resources/impl/app/GlobResources/";
+    private static final String SUBDIRECTORY1 = RESOURCE_PATH + "subdirectory1";
+    private static final String SUBDIRECTORY2 = RESOURCE_PATH + "subdirectory2";
+    private static final String FILE1 = RESOURCE_PATH + "test1.txt";
+    private static final String FILE2 = RESOURCE_PATH + "test2.txt";
+    private static final String FILE3 = RESOURCE_PATH + "alternate1.txt";
+    private static final String FILE4 = RESOURCE_PATH + "alternate2.txt";
 
     RegexArgument testArg;
 
     @BeforeEach
     void setup() {
-        testArg = new RegexArgument(TEST_RESOURCE_PATH);
+        testArg = new RegexArgument(RESOURCE_PATH);
     }
 
     @Test
@@ -80,7 +80,7 @@ class RegexArgumentTest {
     @Test
     void globFiles_NoFilesFound_ReturnsPath() {
         List<String> expected = new LinkedList<>();
-        expected.add(TEST_RESOURCE_PATH + "z");
+        expected.add(RESOURCE_PATH + "z");
         testArg.append('z');
         List<String> results = testArg.globFiles();
         assertEquals(expected, results);

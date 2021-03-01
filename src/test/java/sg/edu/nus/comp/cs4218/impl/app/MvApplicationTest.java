@@ -14,12 +14,15 @@ import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_TARGET_EXISTS;
 
 class MvApplicationTest {
 
-    private static final String noOverwriteFlag = "-n";
+    private static final String NO_OVERWRITE_FLAG = "-n";
+    private static final String FILE_NAME = "test";
+    private static final String FILE_NAME2 = "tests";
+    private static final String SUBDIRECTORY_NAME = "subdirectory";
 
     @Test
     void run_FirstFormOverwrite_Successful(@TempDir Path root) throws Exception {
-        Path sourcePath = root.resolve("test");
-        Path destPath = root.resolve("tests");
+        Path sourcePath = root.resolve(FILE_NAME);
+        Path destPath = root.resolve(FILE_NAME2);
         Files.createFile(sourcePath);
 
         MvApplication app = new MvApplication();
@@ -30,10 +33,9 @@ class MvApplicationTest {
 
     @Test
     void run_SecondFormSingleFileOverwrite_Successful(@TempDir Path root) throws Exception {
-        String testFileName = "test";
-        Path sourcePath = root.resolve(testFileName);
-        Path destPath = root.resolve("subfolder");
-        Path destFilePath = destPath.resolve(testFileName);
+        Path sourcePath = root.resolve(FILE_NAME);
+        Path destPath = root.resolve(SUBDIRECTORY_NAME);
+        Path destFilePath = destPath.resolve(FILE_NAME);
         Files.createFile(sourcePath);
         Files.createDirectory(destPath);
 
@@ -46,14 +48,13 @@ class MvApplicationTest {
 
     @Test
     void run_SecondFormMultipleFilesOverwrite_Successful(@TempDir Path root) throws Exception {
-        String testFileName = "test";
-        Path sourcePath1 = root.resolve(testFileName + "1");
-        Path sourcePath2 = root.resolve(testFileName + "2");
-        Path sourcePath3 = root.resolve(testFileName + "3");
-        Path destPath = root.resolve("subfolder");
-        Path destFilePath1 = destPath.resolve(testFileName + "1");
-        Path destFilePath2 = destPath.resolve(testFileName + "2");
-        Path destFilePath3 = destPath.resolve(testFileName + "3");
+        Path sourcePath1 = root.resolve(FILE_NAME + "1");
+        Path sourcePath2 = root.resolve(FILE_NAME + "2");
+        Path sourcePath3 = root.resolve(FILE_NAME + "3");
+        Path destPath = root.resolve(SUBDIRECTORY_NAME);
+        Path destFilePath1 = destPath.resolve(FILE_NAME + "1");
+        Path destFilePath2 = destPath.resolve(FILE_NAME + "2");
+        Path destFilePath3 = destPath.resolve(FILE_NAME + "3");
         Files.createFile(sourcePath1);
         Files.createFile(sourcePath2);
         Files.createFile(sourcePath3);
@@ -71,14 +72,14 @@ class MvApplicationTest {
     // Test move without overwrite into folder with existing filename
     @Test
     void run_FirstFormNoOverwriteDestExists_ThrowsException(@TempDir Path root) throws IOException {
-        Path sourcePath = root.resolve("test");
-        Path destPath = root.resolve("tests");
+        Path sourcePath = root.resolve(FILE_NAME);
+        Path destPath = root.resolve(FILE_NAME2);
         Files.createFile(sourcePath);
         Files.createFile(destPath);
 
         // Destination file already exists
         MvApplication app = new MvApplication();
-        String[] args = {noOverwriteFlag, sourcePath.toString(), destPath.toString()};
+        String[] args = {NO_OVERWRITE_FLAG, sourcePath.toString(), destPath.toString()};
         assertThrows(MvException.class, () -> {
             app.run(args, System.in, System.out);
         }, ERR_TARGET_EXISTS);
@@ -86,17 +87,16 @@ class MvApplicationTest {
 
     @Test
     void run_SecondFormSingleFileNoOverwriteDestExists_Successful(@TempDir Path root) throws Exception {
-        String testFileName = "test";
-        Path sourcePath = root.resolve(testFileName);
-        Path destPath = root.resolve("subfolder");
-        Path destFilePath = destPath.resolve(testFileName);
+        Path sourcePath = root.resolve(FILE_NAME);
+        Path destPath = root.resolve(SUBDIRECTORY_NAME);
+        Path destFilePath = destPath.resolve(FILE_NAME);
         Files.createFile(sourcePath);
         Files.createDirectory(destPath);
         Files.createFile(destFilePath);
 
         // Not checking if files already exists in subdirectory because it is newly created.
         MvApplication app = new MvApplication();
-        String[] args = {noOverwriteFlag, sourcePath.toString(), destPath.toString()};
+        String[] args = {NO_OVERWRITE_FLAG, sourcePath.toString(), destPath.toString()};
         assertThrows(MvException.class, () -> {
             app.run(args, System.in, System.out);
         }, ERR_TARGET_EXISTS);

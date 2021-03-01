@@ -22,7 +22,7 @@ public class MvApplication implements MvInterface {
     private MvArguments arguments = null;
 
     /**
-     * Runs the cat application with the specified arguments.
+     * Runs the mv application with the specified arguments.
      *
      * @param args   Array of arguments for the application. Each array element is a file path. The
      *               first few paths are the source path and the last is the destination path.
@@ -79,7 +79,7 @@ public class MvApplication implements MvInterface {
     }
 
     /**
-     * renames the file named by the source operand to the destination path named by the target operand
+     * move the file named by the source operand to the destination path named by the target operand
      *
      * @param srcFile  path to source file
      * @param destFile path to destination file

@@ -9,9 +9,9 @@ class MvExceptionTest {
 
     @Test
     void getMessage_RegularMessage_GetsBackMessage() {
-        MvException e = new MvException(ERR_MV_GENERIC);
+        MvException exception = new MvException(ERR_MV_GENERIC);
         String expectedMessage = "mv: " + ERR_MV_GENERIC;
-        assertEquals(expectedMessage, e.getMessage());
+        assertEquals(expectedMessage, exception.getMessage());
     }
 
 }
