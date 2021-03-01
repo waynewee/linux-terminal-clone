@@ -22,10 +22,10 @@ class IORedirectionHandlerTest {
     private static ArgumentResolver argumentResolver;
     private static ByteArrayOutputStream testStream;
     private static String nonExistentFilePath = "someNonExistentFile.txt";
+    private static String anotherNonExistentFilePath = "anotherNonExistentFile.txt";
     private static String trueFilePath = "trueFile.txt";
     private static String anotherTrueFilePath = "anotherTrueFile.txt";
 
-    private static File nonExistentFile;
     private static File trueFile;
     private static File anotherTrueFile;
 
@@ -34,7 +34,7 @@ class IORedirectionHandlerTest {
     private static String[] OUTPUT_REDIRECTION_ONE_EXISTING_FILE = {"echo", "helloWorld", ">", trueFilePath};
     private static String[] INPUT_REDIRECTION_ONE_EXISTING_FILE = {"paste", "<", trueFilePath};
     private static String[] INPUT_REDIRECTION_ONE_NONEXISTENT_FILE = {"paste", "<", nonExistentFilePath};
-    private static String[] OUTPUT_REDIRECTION_ONE_NONEXISTENT_FILE = {"echo", "helloWorld", ">", nonExistentFilePath};
+    private static String[] OUTPUT_REDIRECTION_ONE_NONEXISTENT_FILE = {"echo", "helloWorld", ">", anotherNonExistentFilePath};
     private static String[] NO_FILES_PROVIDED = {"paste", "<"};
 
     @BeforeAll
@@ -45,9 +45,6 @@ class IORedirectionHandlerTest {
 
     @BeforeEach
     void setupBeforeEachTest() throws IOException {
-        nonExistentFile = new File(nonExistentFilePath);
-        nonExistentFile.delete();
-
         trueFile = new File(trueFilePath);
         trueFile.createNewFile();
         FileWriter trueFileWriter = new FileWriter(trueFile, false);
@@ -62,9 +59,14 @@ class IORedirectionHandlerTest {
 
     @AfterEach
     void tearDownAfterEachTest() {
-        nonExistentFile.delete();
         trueFile.delete();
         anotherTrueFile.delete();
+    }
+
+    @AfterAll
+    static void tearDownAfterAll() {
+        File anotherNonExistentFile = new File(anotherNonExistentFilePath);
+        anotherNonExistentFile.delete();
     }
 
     @Test
@@ -112,8 +114,6 @@ class IORedirectionHandlerTest {
 
     @Test
     void extractRedirOptions_inputRedirectionOneNonExistentFile_throwsShellException() {
-        boolean nonExistentFileExists = nonExistentFile.exists();
-        while (nonExistentFileExists) { nonExistentFileExists = !nonExistentFile.delete(); }
         List<String> argsList = new ArrayList<String>(Arrays.asList(INPUT_REDIRECTION_ONE_NONEXISTENT_FILE));
         IORedirectionHandler redirHandler = new IORedirectionHandler(argsList, System.in, testStream, argumentResolver);
         assertThrows(ShellException.class, redirHandler::extractRedirOptions);
@@ -125,7 +125,7 @@ class IORedirectionHandlerTest {
 
         IORedirectionHandler redirHandler = new IORedirectionHandler(argsList, System.in, testStream, argumentResolver);
         assertDoesNotThrow(redirHandler::extractRedirOptions);
-        assertTrue(new File(nonExistentFilePath).exists());
+        assertTrue(new File(anotherNonExistentFilePath).exists());
     }
 
     @Test
