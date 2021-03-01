@@ -112,9 +112,11 @@ class IORedirectionHandlerTest {
 
     @Test
     void extractRedirOptions_inputRedirectionOneNonExistentFile_throwsShellException() {
+        boolean nonExistentFileExists = nonExistentFile.exists();
+        while (nonExistentFileExists) { nonExistentFileExists = !nonExistentFile.delete(); }
         List<String> argsList = new ArrayList<String>(Arrays.asList(INPUT_REDIRECTION_ONE_NONEXISTENT_FILE));
         IORedirectionHandler redirHandler = new IORedirectionHandler(argsList, System.in, testStream, argumentResolver);
-        assertThrows(ShellException.class, () -> redirHandler.extractRedirOptions());
+        assertThrows(ShellException.class, redirHandler::extractRedirOptions);
     }
 
     @Test
@@ -122,14 +124,14 @@ class IORedirectionHandlerTest {
         List<String> argsList = new ArrayList<String>(Arrays.asList(OUTPUT_REDIRECTION_ONE_NONEXISTENT_FILE));
 
         IORedirectionHandler redirHandler = new IORedirectionHandler(argsList, System.in, testStream, argumentResolver);
-        assertDoesNotThrow(() -> redirHandler.extractRedirOptions());
-        assertEquals(true, new File(nonExistentFilePath).exists());
+        assertDoesNotThrow(redirHandler::extractRedirOptions);
+        assertTrue(new File(nonExistentFilePath).exists());
     }
 
     @Test
     void extractRedirOptions_multipleIoRedirectionTokens_throwsShellException() {
         List<String> argsList = new ArrayList<String>(Arrays.asList(MULTIPLE_IOREDIRECTION_TOKENS));
         IORedirectionHandler redirHandler = new IORedirectionHandler(argsList, System.in, testStream, argumentResolver);
-        assertThrows(ShellException.class, () -> redirHandler.extractRedirOptions());
+        assertThrows(ShellException.class, redirHandler::extractRedirOptions);
     }
 }
