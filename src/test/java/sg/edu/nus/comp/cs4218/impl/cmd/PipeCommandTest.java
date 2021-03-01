@@ -42,7 +42,7 @@ class PipeCommandTest {
                 "test1.txt\n" +
                 "testtest2.txt\n";
         expectedOutput = expectedOutput.replace("\n", StringUtils.STRING_NEWLINE);
-        expectedOutput = expectedOutput.replace("\\\\", StringUtils.fileSeparator());
+        expectedOutput = expectedOutput.replace("\\", StringUtils.fileSeparator());
 
         // Add 'ls' command as token
         List<String> tokens1 = new LinkedList<>();

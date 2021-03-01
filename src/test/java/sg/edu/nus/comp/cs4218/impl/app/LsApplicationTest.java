@@ -180,7 +180,7 @@ class LsApplicationTest {
     public void run_LsCommandWithRecursiveOption_ListsOutputCorrectly() throws Exception {
         // Prepare correct output
         String correctOutput = testRecursive.replace("\n", StringUtils.STRING_NEWLINE);
-        correctOutput = correctOutput.replace("\\\\", StringUtils.fileSeparator());
+        correctOutput = correctOutput.replace("\\", StringUtils.fileSeparator());
 
         // Prepare args
         Path testsResourcesDir = getTestsResourcesDir("test_recursive");
@@ -199,7 +199,7 @@ class LsApplicationTest {
     public void run_lsCommandWithRecursiveAndDirectoriesOption_ListsOutputCorrectly() throws Exception {
         // Prepare correct output
         String correctOutput = testRecursiveDirectories.replace("\n", StringUtils.STRING_NEWLINE);
-        correctOutput = correctOutput.replace("\\\\", StringUtils.fileSeparator());
+        correctOutput = correctOutput.replace("\\", StringUtils.fileSeparator());
 
         // Prepare args
         Path testsResourcesDir = getTestsResourcesDir("test_recursive_directories");
@@ -219,7 +219,7 @@ class LsApplicationTest {
     public void run_lsCommandWithRecursiveAndSortOption_ListsOutputCorrectly() throws Exception {
         // Prepare correct output
         String correctOutput = testRecursiveSort.replace("\n", StringUtils.STRING_NEWLINE);
-        correctOutput = correctOutput.replace("\\\\", StringUtils.fileSeparator());
+        correctOutput = correctOutput.replace("\\", StringUtils.fileSeparator());
 
         // Prepare args
         Path testsResourcesDir = getTestsResourcesDir("test_recursive_sort");
@@ -239,7 +239,7 @@ class LsApplicationTest {
     public void run_lsCommandWithFoldersOnlyAndSortOption_ListsOutputCorrectly() throws Exception {
         // Prepare correct output
         String correctOutput = testFoldersOnlySort.replace("\n", StringUtils.STRING_NEWLINE);
-        correctOutput = correctOutput.replace("\\\\", StringUtils.fileSeparator());
+        correctOutput = correctOutput.replace("\\", StringUtils.fileSeparator());
 
         // Prepare args
         Path testsResourcesDir = getTestsResourcesDir("test_folders_sort");
@@ -259,7 +259,7 @@ class LsApplicationTest {
     public void run_lsCommandWithFoldersOnlyAndSortOptionAndRecursive_ListsOutputCorrectly() throws Exception {
         // Prepare correct output
         String correctOutput = testFolderOnlySortRecursive.replace("\n", StringUtils.STRING_NEWLINE);
-        correctOutput = correctOutput.replace("\\\\", StringUtils.fileSeparator());
+        correctOutput = correctOutput.replace("\\", StringUtils.fileSeparator());
 
         // Prepare args
         Path testsResourcesDir = getTestsResourcesDir("test_folders_sort_recursive");
