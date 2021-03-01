@@ -1,12 +1,5 @@
 # CS4218 Team 16
 Codebase for CS4218, 20/21 Sem2
-
-Members:
-* Chew Jing Wei
-* Jaivignesh Venugopal
-* Ng Jun Rong, Terence
-* Wee Woon Wayne
-
 Task Assigned: BF + EF1
 
 ## System Requirements
