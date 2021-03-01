@@ -28,6 +28,13 @@ class LsApplicationTest {
     private static ByteArrayOutputStream outputStream;
     private static Application lsApplication;
 
+    public static String testOrderSort =
+            "src\\test\\resources\\impl\\app\\LsApplicationResources\\test_order_files_sort:\n" +
+            "test3_doc_ext.docx\n" +
+            "test1_ppt_ext.ppt\n" +
+            "test2_pub_ext.pub\n" +
+            "test4_txt_ext.txt\n";
+
     public static String testRecursive =
             "src\\test\\resources\\impl\\app\\LsApplicationResources\\test_recursive:\n" +
                     "answer.txt\n" +
@@ -121,58 +128,63 @@ class LsApplicationTest {
 
     // ls
     @Test
-    public void run_SingleTokenLsCommand_ListsCorrectNumberOfFiles() throws Exception {
+    public void run_LsCommandWithoutArgs_ListsCorrectNumberOfFiles() throws Exception {
         // Prepare correct output
-        int correctOutput;
-        correctOutput = Objects.requireNonNull(new File(Environment.currentDirectory).listFiles()).length;
+        int correctOutput = 7;
 
-        lsApplication.run(new String[0], System.in, outputStream);
-        assertEquals(correctOutput, outputStream.toString().split(StringUtils.STRING_NEWLINE).length);
+        // Prepare args
+        Path testsResourcesDir = getTestsResourcesDir("test_number_of_files");
+        String path = Paths.get(Environment.currentDirectory, testsResourcesDir.toString()).toString();
+
+        String[] args = new String[1];
+        args[0] = path;
+
+        lsApplication.run(args, System.in, outputStream);
+
+        // Remove header line printed in output stream
+        int outputNumberOfFiles = outputStream.toString().trim().split(StringUtils.STRING_NEWLINE).length - 1;
+        assertEquals(correctOutput, outputNumberOfFiles);
     }
 
     // ls -d
     @Test
     public void run_LsCommandWithDirectoriesOption_ListsCorrectNumberOfDirectories() throws Exception {
         // Prepare correct output
-        File[] files = new File(Environment.currentDirectory).listFiles(File::isDirectory);
-        assert files != null;
+        int correctOutput = 3;
 
         // Prepare args
-        String[] args = new String[1];
+        Path testsResourcesDir = getTestsResourcesDir("test_number_of_folders");
+        String path = Paths.get(Environment.currentDirectory, testsResourcesDir.toString()).toString();
+
+        String[] args = new String[2];
         args[0] = "-d";
+        args[1] = path;
 
         lsApplication.run(args, System.in, outputStream);
-        assertEquals(files.length, outputStream.toString().split(StringUtils.STRING_NEWLINE).length);
 
+        // Remove header line printed in output stream
+        int outputNumberOfFiles = outputStream.toString().trim().split(StringUtils.STRING_NEWLINE).length - 1;
+        assertEquals(correctOutput, outputNumberOfFiles);
     }
 
     // ls -X
     @Test
     public void run_LsCommandWithSortOption_ListsFilesInOrder() throws Exception {
         // Prepare correct output
-        File[] files = new File(Environment.currentDirectory).listFiles();
-        ArrayList<File> filesWithoutExtensions = new ArrayList<>();
-        ArrayList<File> filesWithExtensions = new ArrayList<>();
+        String correctOutput = testOrderSort.replace("\n", StringUtils.STRING_NEWLINE);
+        correctOutput = correctOutput.replace("\\\\", StringUtils.fileSeparator());
 
-        for (File file: files) {
-            String filename = file.getName();
-            if (filename.contains(".")) {
-                filesWithExtensions.add(file);
-            } else {
-                filesWithoutExtensions.add(file);
-            }
-        }
-
-        Collections.sort(filesWithoutExtensions);
-        filesWithExtensions.sort(new ExtensionComparator());
-        String expectedOutput = getFileNames(filesWithoutExtensions) + getFileNames(filesWithExtensions);
         // Prepare args
-        String[] args = new String[1];
+        Path testsResourcesDir = getTestsResourcesDir("test_order_files_sort");
+        String path = Paths.get(Environment.currentDirectory, testsResourcesDir.toString()).toString();
+
+        // Prepare args
+        String[] args = new String[2];
         args[0] = "-X";
+        args[1] = path;
 
         lsApplication.run(args, System.in, outputStream);
-        assertEquals(expectedOutput.trim(), outputStream.toString().trim());
-
+        assertEquals(correctOutput, outputStream.toString());
     }
 
     // ls -R [specific folder]
@@ -190,8 +202,7 @@ class LsApplicationTest {
         args[1] = path;
 
         lsApplication.run(args, System.in, outputStream);
-        String output = outputStream.toString();
-        assertEquals(correctOutput, output);
+        assertEquals(correctOutput, outputStream.toString());
     }
 
     // ls -R -d [specific folder]
@@ -211,7 +222,6 @@ class LsApplicationTest {
 
         lsApplication.run(args, System.in, outputStream);
         assertEquals(correctOutput, outputStream.toString());
-
     }
 
     // ls -R -X [specific folder]
@@ -231,7 +241,6 @@ class LsApplicationTest {
 
         lsApplication.run(args, System.in, outputStream);
         assertEquals(correctOutput, outputStream.toString());
-
     }
 
     // ls -d -X [specific folder]
@@ -251,7 +260,6 @@ class LsApplicationTest {
 
         lsApplication.run(args, System.in, outputStream);
         assertEquals(correctOutput, outputStream.toString());
-
     }
 
     // ls -d -X -R [specific folder]
@@ -322,23 +330,6 @@ class LsApplicationTest {
     }
 
     // Utils
-    static class ExtensionComparator implements Comparator<File> {
-
-        @Override
-        public int compare(File file1, File file2) {
-            String ext1 = file1.toString().substring(file1.toString().lastIndexOf('.') + 1);
-            String ext2 = file2.toString().substring(file2.toString().lastIndexOf('.') + 1);
-            return ext1.compareTo(ext2);
-        }
-    }
-    private String getFileNames(ArrayList<File> filesWithoutExtensions) {
-        StringBuilder output = new StringBuilder();
-        for (File file: filesWithoutExtensions) {
-            output.append(file.getName()).append(StringUtils.STRING_NEWLINE);
-        }
-        return output.toString();
-    }
-
     private Path getTestsResourcesDir(String fileName) {
         return Paths.get("src", "test", "resources", "impl", "app", "LsApplicationResources", fileName);
     }
