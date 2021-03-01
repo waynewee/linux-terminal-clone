@@ -128,7 +128,7 @@ class LsApplicationTest {
 
     // ls
     @Test
-    public void run_LsCommandWithoutArgs_ListsCorrectNumberOfFiles() throws Exception {
+    public void run_LsCommandWithoutFlags_ListsCorrectNumberOfFiles() throws Exception {
         // Prepare correct output
         int correctOutput = 7;
 
