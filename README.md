@@ -9,6 +9,10 @@ Members:
 
 Task Assigned: BF + EF1
 
+## System Requirements
+- OS: Windows 10
+- Java: JDK 11
+
 ## Testing Instructions
 We included Maven support into our project. IntelliJ automatically reorganized the project structure. Thus, the test
 folder has been moved. Test cases can be found in src/test/java.
