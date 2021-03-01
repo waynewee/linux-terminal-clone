@@ -37,7 +37,8 @@ public class CdLsIntegrationTest {
         });
 
         final String command2 = "ls\n";
-        String expected = "test_folders_sort_recursive\r\n" +
+        String expected = "test_folders_sort\r\n" +
+                "test_folders_sort_recursive\r\n" +
                 "test_recursive\r\n" +
                 "test_recursive_directories\r\n" +
                 "test_recursive_sort\r\n";
@@ -56,7 +57,8 @@ public class CdLsIntegrationTest {
         });
 
         final String command2 = "ls -d\n";
-        String expected = "test_folders_sort_recursive\r\n" +
+        String expected = "test_folders_sort\r\n" +
+                "test_folders_sort_recursive\r\n" +
                 "test_recursive\r\n" +
                 "test_recursive_directories\r\n" +
                 "test_recursive_sort\r\n";
