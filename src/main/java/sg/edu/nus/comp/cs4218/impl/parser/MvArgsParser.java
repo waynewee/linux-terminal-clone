@@ -18,7 +18,7 @@ public class MvArgsParser extends ArgsParser {
     /**
      * Separates command flags from non-flag arguments given a tokenized command.
      *
-     * @param args
+     * @param args the list of tokens to parse
      */
     @Override
     public void parse(String... args) throws InvalidArgsException {

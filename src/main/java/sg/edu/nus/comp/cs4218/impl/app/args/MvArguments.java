@@ -1,6 +1,7 @@
 package sg.edu.nus.comp.cs4218.impl.app.args;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 public class MvArguments {
     private final String[] sourcePaths;
@@ -24,6 +25,7 @@ public class MvArguments {
     public boolean hasOverwrite() {
         return overwrite;
     }
+
     @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof MvArguments)) {
@@ -33,5 +35,10 @@ public class MvArguments {
         return destPath.equals(other.destPath)
                 && Arrays.equals(sourcePaths, other.sourcePaths)
                 && overwrite == other.overwrite;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(sourcePaths, destPath, overwrite);
     }
 }

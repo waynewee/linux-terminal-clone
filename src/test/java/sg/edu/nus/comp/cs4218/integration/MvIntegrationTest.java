@@ -29,7 +29,6 @@ public class MvIntegrationTest {
         Files.createFile(file);
         String command = "mv " + file.toString() + " " + movedFile.toString() + "\n";
         assertTimeoutPreemptively(Duration.ofMillis(500), () -> {
-            // Expect Exception
             testShell.parseAndEvaluate(command, System.out);
         });
         assertTrue(Files.exists(movedFile));
@@ -45,7 +44,6 @@ public class MvIntegrationTest {
 
         String command = "mv " + file.toString() + " " + movedFile.toString() + "\n";
         assertTimeoutPreemptively(Duration.ofMillis(500), () -> {
-            // Expect Exception
             testShell.parseAndEvaluate(command, System.out);
         });
         assertTrue(Files.exists(movedFile));
@@ -57,7 +55,6 @@ public class MvIntegrationTest {
         Files.createFile(file);
         String command = "mv " + file.toString() + " " + file.toString() + "\n";
         assertTimeoutPreemptively(Duration.ofMillis(500), () -> {
-            // Expect Exception
             testShell.parseAndEvaluate(command, System.out);
         });
         assertTrue(Files.exists(file));
@@ -71,7 +68,6 @@ public class MvIntegrationTest {
         Files.createFile(file2);
         String command = "mv " + file1.toString() + " " + file2.toString() + "\n";
         assertTimeoutPreemptively(Duration.ofMillis(500), () -> {
-            // Expect Exception
             testShell.parseAndEvaluate(command, System.out);
         });
         assertFalse(Files.exists(file1));
@@ -91,7 +87,6 @@ public class MvIntegrationTest {
 
         String command = "mv " + file1.toString() + " " + file2.toString() + " " + subDir.toString() + "\n";
         assertTimeoutPreemptively(Duration.ofMillis(500), () -> {
-            // Expect Exception
             testShell.parseAndEvaluate(command, System.out);
         });
         assertTrue(Files.exists(movedFile1));
@@ -103,7 +98,6 @@ public class MvIntegrationTest {
         // This test uses relative path instead
         String command = "mv asfkjjafasf jkdkdhksdn\n";
         assertTimeoutPreemptively(Duration.ofMillis(500), () -> {
-            // Expect Exception
             assertThrows(MvException.class, () -> {
                 testShell.parseAndEvaluate(command, System.out);
             });
@@ -118,7 +112,6 @@ public class MvIntegrationTest {
         Files.createFile(file2);
         String command = "mv -n " + file.toString() + " " + file2.toString() + "\n";
         assertTimeoutPreemptively(Duration.ofMillis(500), () -> {
-            // Expect Exception
             assertThrows(MvException.class, () -> {
                 testShell.parseAndEvaluate(command, System.out);
             });
@@ -136,7 +129,6 @@ public class MvIntegrationTest {
 
         String command = "mv -n " + file.toString() + " " + file2.toString() + "\n";
         assertTimeoutPreemptively(Duration.ofMillis(500), () -> {
-            // Expect Exception
             assertThrows(MvException.class, () -> {
                 testShell.parseAndEvaluate(command, System.out);
             });
