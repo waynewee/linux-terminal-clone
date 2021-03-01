@@ -10,6 +10,7 @@ import sg.edu.nus.comp.cs4218.exception.LsException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileFilter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -124,7 +125,8 @@ class LsApplicationTest {
     public void run_SingleTokenLsCommand_ListsCorrectNumberOfFiles() throws Exception {
         // Prepare correct output
         int correctOutput;
-        correctOutput = Objects.requireNonNull(new File(Environment.currentDirectory).listFiles()).length;
+        correctOutput = Objects.requireNonNull(new File(Environment.currentDirectory).listFiles(
+                (File file) -> !file.isHidden())).length;
 
         lsApplication.run(new String[0], System.in, outputStream);
         assertEquals(correctOutput, outputStream.toString().split(StringUtils.STRING_NEWLINE).length);
@@ -134,7 +136,12 @@ class LsApplicationTest {
     @Test
     public void run_LsCommandWithDirectoriesOption_ListsCorrectNumberOfDirectories() throws Exception {
         // Prepare correct output
-        File[] files = new File(Environment.currentDirectory).listFiles(File::isDirectory);
+        File[] files = new File(Environment.currentDirectory).listFiles(new FileFilter() {
+            @Override
+            public boolean accept(File file) {
+                return file.isDirectory() && !file.isHidden();
+            }
+        });
         assert files != null;
 
         // Prepare args
@@ -150,7 +157,7 @@ class LsApplicationTest {
     @Test
     public void run_LsCommandWithSortOption_ListsFilesInOrder() throws Exception {
         // Prepare correct output
-        File[] files = new File(Environment.currentDirectory).listFiles();
+        File[] files = new File(Environment.currentDirectory).listFiles((File file) -> !file.isHidden());
         ArrayList<File> filesWithoutExtensions = new ArrayList<>();
         ArrayList<File> filesWithExtensions = new ArrayList<>();
 
