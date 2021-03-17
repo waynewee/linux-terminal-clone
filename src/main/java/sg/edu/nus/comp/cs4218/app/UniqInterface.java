@@ -27,8 +27,9 @@ public interface UniqInterface extends Application {
      * @param isRepeated    Boolean option to print only duplicate lines, one for each group
      * @param isAllRepeated Boolean option to print all duplicate lines (takes precedence if isRepeated is set to true)
      * @param stdin         InputStream containing arguments from Stdin
+     * @param outputFileName of path to output file (if any)
      * @return
      * @throws Exception
      */
-    String uniqFromStdin(Boolean isCount, Boolean isRepeated, Boolean isAllRepeated, InputStream stdin) throws Exception;
+    String uniqFromStdin(Boolean isCount, Boolean isRepeated, Boolean isAllRepeated, InputStream stdin, String outputFileName) throws Exception;
 }

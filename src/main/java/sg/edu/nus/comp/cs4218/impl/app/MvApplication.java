@@ -53,7 +53,7 @@ public class MvApplication implements MvInterface {
             // Second form
             // Expected one or more files at source
             try {
-                mvFilesToFolder(targetPath, arguments.getSourcePaths());
+                mvFilesToFolder(arguments.hasOverwrite(), targetPath, arguments.getSourcePaths());
             } catch (MvException mve) {
                 throw mve;
             } catch (FileAlreadyExistsException fae) {
@@ -65,7 +65,7 @@ public class MvApplication implements MvInterface {
             // First form
             String sourcePath = arguments.getSourcePaths()[0];
             try {
-                mvSrcFileToDestFile(sourcePath, targetPath);
+                mvSrcFileToDestFile(arguments.hasOverwrite(), sourcePath, targetPath);
             } catch (MvException mve) {
                 throw mve;
             } catch (FileAlreadyExistsException fae) {
@@ -86,7 +86,7 @@ public class MvApplication implements MvInterface {
      * @throws Exception If source is not found or not a file or error moving source file to destination
      */
     @Override
-    public String mvSrcFileToDestFile(String srcFile, String destFile) throws Exception {
+    public String mvSrcFileToDestFile(Boolean isOverwrite, String srcFile, String destFile) throws Exception {
         File source = new File(srcFile);
 
         // Check that source exists and is a file
@@ -96,7 +96,7 @@ public class MvApplication implements MvInterface {
             throw new MvException(ERR_SOURCE_NOT_FILE);
         }
 
-        if (arguments.hasOverwrite()) {
+        if (isOverwrite) {
             Files.move(Paths.get(srcFile), Paths.get(destFile), REPLACE_EXISTING);
         } else {
             Files.move(Paths.get(srcFile), Paths.get(destFile));
@@ -112,7 +112,7 @@ public class MvApplication implements MvInterface {
      * @throws Exception If a source is not found or not a file or error moving source file to destination
      */
     @Override
-    public String mvFilesToFolder(String destFolder, String... fileName) throws Exception {
+    public String mvFilesToFolder(Boolean isOverwrite, String destFolder, String... fileName) throws Exception {
 
         for(String sourcePath : fileName) {
             File source = new File(sourcePath);
@@ -124,7 +124,7 @@ public class MvApplication implements MvInterface {
                 throw new MvException(ERR_SOURCE_NOT_FILE);
             }
 
-            if (arguments.hasOverwrite()) {
+            if (isOverwrite) {
                 Files.move(Paths.get(sourcePath), Paths.get(destFolder +
                         StringUtils.fileSeparator() + source.getName()), REPLACE_EXISTING);
             } else {

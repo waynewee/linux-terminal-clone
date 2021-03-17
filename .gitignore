@@ -113,3 +113,6 @@ hs_err_pid*
 *.iml
 trueFile.txt
 anotherTrueFile.txt
+
+# Target Files
+target/test-classes/impl/
