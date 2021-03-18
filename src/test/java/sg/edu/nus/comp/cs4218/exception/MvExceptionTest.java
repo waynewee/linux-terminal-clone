@@ -2,7 +2,7 @@ package sg.edu.nus.comp.cs4218.exception;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_MV_GENERIC;
 
 class MvExceptionTest {
