@@ -40,7 +40,7 @@ public class UniqArguments {
                 continue;
             }
             // `parsingFlag` is to ensure all flags come first, followed by files.
-            if (parsingFlag && arg.charAt(0) == CHAR_FLAG_PREFIX) {
+            if (parsingFlag && arg.charAt(0) == CHAR_FLAG_PREFIX && arg.length() > 1) {
                 if (arg.equals(CHAR_FLAG_PREFIX + "" + CHAR_COUNT_OPTION)) {
                     this.count = true;
                     continue;
