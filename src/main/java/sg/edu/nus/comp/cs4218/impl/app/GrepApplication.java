@@ -211,11 +211,14 @@ public class GrepApplication implements GrepInterface {
             } else {
                 if (inputFiles.isEmpty()) {
                     result = grepFromStdin(pattern, grepFlags[CASE_INSEN_IDX], grepFlags[COUNT_INDEX], grepFlags[PREFIX_FN_IDX], stdin);
-                } else {
+                } else if (stdin == null) {
                     String[] inputFilesArray = new String[inputFiles.size()];
                     inputFilesArray = inputFiles.toArray(inputFilesArray);
                     result = grepFromFiles(pattern, grepFlags[CASE_INSEN_IDX], grepFlags[COUNT_INDEX], grepFlags[PREFIX_FN_IDX], inputFilesArray);
-
+                } else {
+                    String[] inputFilesArray = new String[inputFiles.size()];
+                    inputFilesArray = inputFiles.toArray(inputFilesArray);
+                    result = grepFromFileAndStdin(pattern, grepFlags[CASE_INSEN_IDX], grepFlags[COUNT_INDEX], grepFlags[PREFIX_FN_IDX], stdin, inputFilesArray);
                 }
             }
             stdout.write(result.getBytes());

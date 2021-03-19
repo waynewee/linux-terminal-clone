@@ -1,6 +1,5 @@
 package sg.edu.nus.comp.cs4218.impl.app.args;
 
-import sg.edu.nus.comp.cs4218.exception.GrepException;
 import sg.edu.nus.comp.cs4218.exception.WcException;
 
 import java.util.ArrayList;

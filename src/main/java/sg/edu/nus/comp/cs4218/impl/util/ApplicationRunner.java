@@ -24,6 +24,7 @@ public class ApplicationRunner {
     public final static String APP_SPLIT = "split";
     public final static String APP_MV = "mv";
     public final static String APP_TEE = "tee";
+    public final static String APP_UNIQ = "uniq";
     public final static String APP_RM = "rm";
 
     /**
@@ -74,6 +75,11 @@ public class ApplicationRunner {
             case APP_TEE:
                 application = new TeeApplication();
                 break;
+            case APP_PASTE:
+                application = new PasteApplication();
+                break;
+            case APP_UNIQ:
+                application = new UniqApplication();
             case APP_RM:
                 application = new RmApplication();
                 break;
