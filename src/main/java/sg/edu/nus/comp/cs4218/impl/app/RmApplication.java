@@ -46,7 +46,6 @@ public class RmApplication implements RmInterface {
      */
     @Override
     public void remove(Boolean isEmptyFolder, Boolean isRecursive, String... fileName) throws RmException {
-        // TODO: Deletion does not stop when there is error. Just skip
         StringBuilder errorMsg = new StringBuilder();
         for (String pathString : fileName) {
             try {
