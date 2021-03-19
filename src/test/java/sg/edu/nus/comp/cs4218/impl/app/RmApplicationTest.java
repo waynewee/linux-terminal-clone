@@ -206,7 +206,6 @@ public class RmApplicationTest {
 
     @Test
     void run_UnknownFlag_Throws(@TempDir Path root) throws Exception {
-        Environment.currentDirectory = root.toString();
         Path fileK = root.resolve("kick");
         Files.createFile(fileK);
 
