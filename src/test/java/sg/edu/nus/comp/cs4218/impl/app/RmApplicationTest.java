@@ -155,18 +155,17 @@ public class RmApplicationTest {
     @Test
     void run_RelativePath_DeletesDirectory() throws Exception {
         Path tempDirectory = Files.createDirectory(Path.of(System.getProperty("user.dir")).resolve("temp"));
-        Path subDirectory = Files.createDirectory( tempDirectory.resolve("inner"));
+        Path subDirectory = Files.createDirectory(tempDirectory.resolve("inner"));
 
         String[] args = {FLAG_RECURSIVE, tempDirectory.getFileName().toString()};
         try {
             new RmApplication().run(args, System.in, System.out);
             assertTrue(Files.notExists(tempDirectory));
         } catch (Exception e) {
-            fail();
-        } finally {
             // Clean up
             Files.delete(subDirectory);
             Files.delete(tempDirectory);
+            fail();
         }
     }
 
@@ -207,7 +206,6 @@ public class RmApplicationTest {
 
     @Test
     void run_UnknownFlag_Throws(@TempDir Path root) throws Exception {
-        Environment.currentDirectory = root.toString();
         Path fileK = root.resolve("kick");
         Files.createFile(fileK);
 
@@ -247,22 +245,24 @@ public class RmApplicationTest {
     }
 
     @Test
-    void run_FileWithDFlag_Throws(@TempDir Path root) throws Exception {
+    void run_FileWithDFlag_DeletesFile(@TempDir Path root) throws Exception {
         Path file = root.resolve("test.txt");
         Files.createFile(file);
 
         String[] args = {"-d", file.toString()};
 
-        assertThrows(RmException.class, () -> new RmApplication().run(args, System.in, System.out));
+        new RmApplication().run(args, System.in, System.out);
+        assertTrue(Files.notExists(file));
     }
 
     @Test
-    void run_FileWithRFlag_Throws(@TempDir Path root) throws Exception {
+    void run_FileWithRFlag_DeletesFile(@TempDir Path root) throws Exception {
         Path file = root.resolve("test.txt");
         Files.createFile(file);
 
         String[] args = {"-r", file.toString()};
 
-        assertThrows(RmException.class, () -> new RmApplication().run(args, System.in, System.out));
+        new RmApplication().run(args, System.in, System.out);
+        assertTrue(Files.notExists(file));
     }
 }

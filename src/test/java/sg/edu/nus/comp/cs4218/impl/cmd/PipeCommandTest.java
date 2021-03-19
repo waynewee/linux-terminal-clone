@@ -10,6 +10,7 @@ import sg.edu.nus.comp.cs4218.impl.util.ArgumentResolver;
 import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedList;
@@ -38,11 +39,9 @@ class PipeCommandTest {
     void evaluate_KnownCommandPipeKnownCommand_ProducesCorrectOutput() throws AbstractApplicationException, ShellException {
         // Expected output
         String expectedOutput =
-                "src\\test\\resources\\impl\\app\\PipeCommandResources:\n" +
-                "test1.txt\n" +
-                "testtest2.txt\n";
-        expectedOutput = expectedOutput.replace("\n", StringUtils.STRING_NEWLINE);
-        expectedOutput = expectedOutput.replace("\\", StringUtils.fileSeparator());
+                "src" + File.separator + "test" + File.separator + "resources" + File.separator + "impl"
+                        + File.separator + "app" + File.separator + "PipeCommandResources:" + StringUtils.STRING_NEWLINE
+                        + "test1.txt" + StringUtils.STRING_NEWLINE + "testtest2.txt" + StringUtils.STRING_NEWLINE;
 
         // Add 'ls' command as token
         List<String> tokens1 = new LinkedList<>();
