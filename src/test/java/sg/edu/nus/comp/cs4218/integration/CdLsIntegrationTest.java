@@ -1,5 +1,6 @@
 package sg.edu.nus.comp.cs4218.integration;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,6 +30,11 @@ public class CdLsIntegrationTest {
         outputStream = new ByteArrayOutputStream();
     }
 
+    @AfterAll
+    static void resetAll() {
+        Environment.currentDirectory = ROOT;
+    }
+
     @Test
     public void parseAndEvaluate_CdThenLs_ListOutputCorrectly() {
         final String command1 = "cd " + PATH_TO_LS_RESOURCES + " \n";
@@ -39,6 +45,9 @@ public class CdLsIntegrationTest {
         final String command2 = "ls\n";
         String expected = "test_folders_sort\r\n" +
                 "test_folders_sort_recursive\r\n" +
+                "test_number_of_files\r\n" +
+                "test_number_of_folders\r\n" +
+                "test_order_files_sort\r\n" +
                 "test_recursive\r\n" +
                 "test_recursive_directories\r\n" +
                 "test_recursive_sort\r\n";
@@ -59,6 +68,9 @@ public class CdLsIntegrationTest {
         final String command2 = "ls -d\n";
         String expected = "test_folders_sort\r\n" +
                 "test_folders_sort_recursive\r\n" +
+                "test_number_of_files\r\n" +
+                "test_number_of_folders\r\n" +
+                "test_order_files_sort\r\n" +
                 "test_recursive\r\n" +
                 "test_recursive_directories\r\n" +
                 "test_recursive_sort\r\n";

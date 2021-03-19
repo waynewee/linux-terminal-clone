@@ -114,5 +114,11 @@ hs_err_pid*
 trueFile.txt
 anotherTrueFile.txt
 
+# Jacoco Files
+target/surefire-reports/
+target/site/jacoco/
+target/maven-status/
+target/jacoco.exec
+
 # Target Files
 target/test-classes/impl/
