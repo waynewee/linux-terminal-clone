@@ -7,9 +7,7 @@ import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
-import java.util.Vector;
 
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
@@ -45,8 +43,10 @@ public class WcApplication implements WcInterface {
         try {
             if (wcArgs.getFiles().isEmpty()) {
                 result = countFromStdin(wcArgs.isBytes(), wcArgs.isLines(), wcArgs.isWords(), stdin);
-            } else {
+            } else if (stdin == null) {
                 result = countFromFiles(wcArgs.isBytes(), wcArgs.isLines(), wcArgs.isWords(), wcArgs.getFiles().toArray(new String[0]));
+            } else {
+                result = countFromFileAndStdin(wcArgs.isBytes(), wcArgs.isLines(), wcArgs.isWords(), stdin, wcArgs.getFiles().toArray(new String[0]));
             }
         } catch (Exception e) {
             // Will never happen
@@ -193,15 +193,15 @@ public class WcApplication implements WcInterface {
         for (String file : fileName) {
             File node = IOUtils.resolveFilePath(file).toFile();
             if (!node.exists()) {
-                result.add("wc: " + ERR_FILE_NOT_FOUND);
+                result.add(new WcException(ERR_FILE_NOT_FOUND).getMessage());
                 continue;
             }
             if (node.isDirectory()) {
-                result.add("wc: " + ERR_IS_DIR);
+                result.add(new WcException(ERR_IS_DIR).getMessage());
                 continue;
             }
             if (!node.canRead()) {
-                result.add("wc: " + ERR_NO_PERM);
+                result.add(new WcException(ERR_NO_PERM).getMessage());
                 continue;
             }
             InputStream input = IOUtils.openInputStream(file);

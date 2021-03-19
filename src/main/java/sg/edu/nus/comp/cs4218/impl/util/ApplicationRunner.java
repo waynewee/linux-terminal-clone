@@ -24,6 +24,7 @@ public class ApplicationRunner {
     public final static String APP_SPLIT = "split";
     public final static String APP_MV = "mv";
     public final static String APP_TEE = "tee";
+    public final static String APP_UNIQ = "uniq";
 
     /**
      * Run the application as specified by the application command keyword and arguments.
@@ -72,6 +73,12 @@ public class ApplicationRunner {
                 break;
             case APP_TEE:
                 application = new TeeApplication();
+                break;
+            case APP_PASTE:
+                application = new PasteApplication();
+                break;
+            case APP_UNIQ:
+                application = new UniqApplication();
                 break;
             default:
                 throw new ShellException(app + ": " + ERR_INVALID_APP);
