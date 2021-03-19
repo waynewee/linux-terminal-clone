@@ -4,4 +4,8 @@ public class UniqException extends AbstractApplicationException {
     public UniqException(String message) {
         super("uniq: " + message);
     }
+
+    public UniqException(String message, Throwable exception) {
+        super("uniq: " + message, exception);
+    }
 }

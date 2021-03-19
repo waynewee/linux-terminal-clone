@@ -1,6 +1,6 @@
 package sg.edu.nus.comp.cs4218.impl.util;
 
-import sg.edu.nus.comp.cs4218.Environment;
+import sg.edu.nus.comp.cs4218.EnvironmentUtil;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
 
 import java.io.*;
@@ -61,7 +61,7 @@ public final class IOUtils {
      * @throws ShellException If inputStream cannot be closed successfully.
      */
     public static void closeInputStream(InputStream inputStream) throws ShellException {
-        if (inputStream == System.in || inputStream == null) {
+        if (inputStream == null || inputStream.equals(System.in)) {
             return;
         }
 
@@ -79,7 +79,7 @@ public final class IOUtils {
      * @throws ShellException If outputStream cannot be closed successfully.
      */
     public static void closeOutputStream(OutputStream outputStream) throws ShellException {
-        if (outputStream == System.out || outputStream == null) {
+        if (outputStream == null || outputStream.equals(System.out)) {
             return;
         }
 
@@ -91,7 +91,7 @@ public final class IOUtils {
     }
 
     public static Path resolveFilePath(String fileName) {
-        Path currentDirectory = Paths.get(Environment.currentDirectory);
+        Path currentDirectory = Paths.get(EnvironmentUtil.currentDirectory);
         return currentDirectory.resolve(fileName);
     }
 

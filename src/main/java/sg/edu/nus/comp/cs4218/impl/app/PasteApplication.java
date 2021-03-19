@@ -41,13 +41,13 @@ public class PasteApplication implements PasteInterface {
                 result = mergeFileAndStdin(pasteArguments.isSerial(), stdin, files.toArray(new String[0]));
             }
         } catch (Exception e) {
-            throw new PasteException(ERR_GENERAL);
+            throw new PasteException(ERR_GENERAL, e);
         }
         try {
             stdout.write(result.getBytes());
             stdout.write(STRING_NEWLINE.getBytes());
         } catch (IOException e) {
-            throw new PasteException(ERR_WRITE_STREAM);
+            throw new PasteException(ERR_WRITE_STREAM, e);
         }
     }
 
@@ -97,7 +97,7 @@ public class PasteApplication implements PasteInterface {
                 try {
                     fileReaders.put(file, new BufferedReader(new FileReader(file)));
                 } catch (FileNotFoundException e) {
-                    throw new PasteException(ERR_FILE_NOT_FOUND);
+                    throw new PasteException(ERR_FILE_NOT_FOUND, e);
                 }
             }
         }
@@ -112,7 +112,7 @@ public class PasteApplication implements PasteInterface {
                     lineResult.add(nextLine);
                 }
             } catch (IOException e) {
-                throw new PasteException(ERR_IO_EXCEPTION);
+                throw new PasteException(ERR_IO_EXCEPTION, e);
             }
             result.append(lineResult.toString());
             result.append(STRING_NEWLINE);
@@ -135,7 +135,7 @@ public class PasteApplication implements PasteInterface {
                 try {
                     fileReaders.put(file, new BufferedReader(new FileReader(file)));
                 } catch (FileNotFoundException e) {
-                    throw new PasteException(ERR_FILE_NOT_FOUND);
+                    throw new PasteException(ERR_FILE_NOT_FOUND, e);
                 }
             }
         }
@@ -159,13 +159,13 @@ public class PasteApplication implements PasteInterface {
                     nextLine = fileReaders.get(file).readLine();
                 }
             } catch (IOException e) {
-                throw new PasteException(ERR_IO_EXCEPTION);
+                throw new PasteException(ERR_IO_EXCEPTION, e);
             }
-            if (nextLine != null) {
+            if (nextLine == null) {
+                lineResult.add("");
+            } else {
                 lineResult.add(nextLine);
                 nothingWasRead = false;
-            } else {
-                lineResult.add("");
             }
 
             // if final input stream, check if nothing was read previously

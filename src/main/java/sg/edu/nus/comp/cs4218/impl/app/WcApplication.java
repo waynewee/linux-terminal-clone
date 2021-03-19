@@ -165,16 +165,16 @@ public class WcApplication implements WcInterface {
         boolean displayAll = !isLines && !isWords && !isBytes;
         StringBuilder sb = new StringBuilder(); //NOPMD
         if (isLines || displayAll) {
-            sb.append(" ").append(count[0]);
+            sb.append(' ').append(count[0]);
         }
         if (isWords || displayAll) {
-            sb.append(" ").append(count[1]);
+            sb.append(' ').append(count[1]);
         }
         if (isBytes || displayAll) {
-            sb.append(" ").append(count[2]);
+            sb.append(' ').append(count[2]);
         }
 
-        sb.append(" ").append("stdin");
+        sb.append(" stdin");
 
         return sb.toString();
     }
@@ -244,7 +244,7 @@ public class WcApplication implements WcInterface {
             sb.append(String.format(NUMBER_FORMAT, count[2]));
         }
 
-        sb.append(" ").append("stdin");
+        sb.append(" stdin");
 
         result.add(sb.toString());
 

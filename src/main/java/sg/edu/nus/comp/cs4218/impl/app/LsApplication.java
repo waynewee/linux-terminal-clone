@@ -1,6 +1,6 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
-import sg.edu.nus.comp.cs4218.Environment;
+import sg.edu.nus.comp.cs4218.EnvironmentUtil;
 import sg.edu.nus.comp.cs4218.app.LsInterface;
 import sg.edu.nus.comp.cs4218.exception.InvalidArgsException;
 import sg.edu.nus.comp.cs4218.exception.LsException;
@@ -36,7 +36,7 @@ public class LsApplication implements LsInterface {
         List<Path> paths;
         if (folderName.length == 0 && isRecursive) {
             String[] directories = new String[1];
-            directories[0] = Environment.currentDirectory;
+            directories[0] = EnvironmentUtil.currentDirectory;
             paths = resolvePaths(directories);
         } else {
             paths = resolvePaths(folderName);
@@ -60,7 +60,7 @@ public class LsApplication implements LsInterface {
         try {
             parser.parse(args);
         } catch (InvalidArgsException e) {
-            throw new LsException(e.getMessage());
+            throw new LsException(e.getMessage(), e);
         }
 
         Boolean foldersOnly = parser.isFoldersOnly();
@@ -73,7 +73,7 @@ public class LsApplication implements LsInterface {
         try {
             stdout.write(result.getBytes());
         } catch (Exception e) {
-            throw new LsException(ERR_WRITE_STREAM);
+            throw new LsException(ERR_WRITE_STREAM, e);
         }
     }
 
@@ -86,11 +86,11 @@ public class LsApplication implements LsInterface {
      * @return
      */
     private String listCwdContent(Boolean isFoldersOnly, Boolean isSortByExt) throws LsException {
-        String cwd = Environment.currentDirectory;
+        String cwd = EnvironmentUtil.currentDirectory;
         try {
             return formatContents(getContents(Paths.get(cwd), isFoldersOnly), isSortByExt);
         } catch (InvalidDirectoryException e) {
-            throw new LsException("Unexpected error occurred!");
+            throw new LsException("Unexpected error occurred!", e);
         }
     }
 
@@ -113,14 +113,15 @@ public class LsApplication implements LsInterface {
                 String formatted = formatContents(contents, isSortByExt);
                 String relativePath = getRelativeToCwd(path).toString();
                 result.append(StringUtils.isBlank(relativePath) ? PATH_CURR_DIR : relativePath);
-                result.append(":" + StringUtils.STRING_NEWLINE);
+                result.append(':');
+                result.append(StringUtils.STRING_NEWLINE);
                 result.append(formatted);
 
-                if (!formatted.isEmpty()) {
+                if (formatted.isEmpty()) {
+                    result = new StringBuilder();
+                } else {
                     // Empty directories should not have an additional new line
                     result.append(StringUtils.STRING_NEWLINE);
-                } else {
-                    result = new StringBuilder();
                 }
 
                 // RECURSE!
@@ -176,23 +177,23 @@ public class LsApplication implements LsInterface {
         }
 
         if (isSortByExt) {
-            List<String> filesNamesWithoutExtensions = new ArrayList<>();
-            List<String> filesNamesWithExtensions = new ArrayList<>();
+            List<String> filesWithoutExt = new ArrayList<>();
+            List<String> filesWithExt = new ArrayList<>();
             for (String filename: fileNames) {
                 if (filename.contains(".")) {
-                    filesNamesWithExtensions.add(filename);
+                    filesWithExt.add(filename);
                 } else {
-                    filesNamesWithoutExtensions.add(filename);
+                    filesWithoutExt.add(filename);
                 }
             }
 
             // Sort files without extensions
-            Collections.sort(filesNamesWithoutExtensions);
+            Collections.sort(filesWithoutExt);
             // Sort files with extensions
-            filesNamesWithExtensions.sort(new ExtensionComparator());
+            filesWithExt.sort(new ExtensionComparator());
             // Combine both the results
-            fileNames = new ArrayList<>(filesNamesWithoutExtensions);
-            fileNames.addAll(filesNamesWithExtensions);
+            fileNames = new ArrayList<>(filesWithoutExt);
+            fileNames.addAll(filesWithExt);
         }
 
         StringBuilder result = new StringBuilder();
@@ -268,7 +269,7 @@ public class LsApplication implements LsInterface {
             return Paths.get(directory).normalize();
         }
 
-        return Paths.get(Environment.currentDirectory, directory).normalize();
+        return Paths.get(EnvironmentUtil.currentDirectory, directory).normalize();
     }
 
     /**
@@ -278,7 +279,7 @@ public class LsApplication implements LsInterface {
      * @return
      */
     private Path getRelativeToCwd(Path path) {
-        return Paths.get(Environment.currentDirectory).relativize(path);
+        return Paths.get(EnvironmentUtil.currentDirectory).relativize(path);
     }
 
     private class InvalidDirectoryException extends Exception {

@@ -7,4 +7,8 @@ public class ShellException extends Exception {
     public ShellException(String message) {
         super("shell: " + message);
     }
+
+    public ShellException(String message, Throwable exception) {
+        super("shell: " + message, exception);
+    }
 }

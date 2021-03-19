@@ -3,7 +3,6 @@ package sg.edu.nus.comp.cs4218.impl.app;
 import org.junit.jupiter.api.Test;
 
 import org.junit.jupiter.api.io.TempDir;
-import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.RmException;
 
 import java.nio.file.Files;

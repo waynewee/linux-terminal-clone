@@ -1,6 +1,6 @@
 package sg.edu.nus.comp.cs4218.impl.util;
 
-import sg.edu.nus.comp.cs4218.Environment;
+import sg.edu.nus.comp.cs4218.EnvironmentUtil;
 
 import java.io.File;
 import java.nio.file.Paths;
@@ -49,7 +49,9 @@ public final class RegexArgument {
 
     public void appendAsterisk() {
         plaintext.append(CHAR_ASTERISK);
-        regex.append("[^" + StringUtils.fileSeparator() + "]*");
+        regex.append("[^");
+        regex.append(StringUtils.fileSeparator());
+        regex.append("]*");
         isRegex = true;
     }
 
@@ -113,7 +115,7 @@ public final class RegexArgument {
             File nextNode = new File(node, current);
             String match = isAbsolute
                     ? nextNode.getPath()
-                    : nextNode.getPath().substring(Environment.currentDirectory.length() + 1);
+                    : nextNode.getPath().substring(EnvironmentUtil.currentDirectory.length() + 1);
             // TODO: Find a better way to handle this.
             if (onlyDirectories && nextNode.isDirectory()) {
                 match += File.separator;
@@ -124,10 +126,6 @@ public final class RegexArgument {
             matches.addAll(traverseAndFilter(regexPattern, nextNode, isAbsolute, onlyDirectories));
         }
         return matches;
-    }
-
-    public boolean isRegex() {
-        return isRegex;
     }
 
     public boolean isEmpty() {

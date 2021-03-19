@@ -4,7 +4,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import sg.edu.nus.comp.cs4218.Environment;
+import sg.edu.nus.comp.cs4218.EnvironmentUtil;
 import sg.edu.nus.comp.cs4218.impl.ShellImpl;
 
 import java.io.ByteArrayOutputStream;
@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class CdLsIntegrationTest {
 
     private static final String PATH_TO_LS_RESOURCES = "src/test/resources/impl/app/LsApplicationResources/";
-    private static final String ROOT = Environment.currentDirectory;
+    private static final String ROOT = EnvironmentUtil.currentDirectory;
     private static ShellImpl testShell;
     private static ByteArrayOutputStream outputStream;
 
@@ -26,13 +26,13 @@ public class CdLsIntegrationTest {
 
     @BeforeEach
     void reset() {
-        Environment.currentDirectory = ROOT;
+        EnvironmentUtil.currentDirectory = ROOT;
         outputStream = new ByteArrayOutputStream();
     }
 
     @AfterAll
     static void resetAll() {
-        Environment.currentDirectory = ROOT;
+        EnvironmentUtil.currentDirectory = ROOT;
     }
 
     @Test
