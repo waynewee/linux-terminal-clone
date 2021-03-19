@@ -10,13 +10,14 @@ import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_FILE_SEP;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
 class CatApplicationTest {
 
     private static CatApplication catApplication;
 
-    private static final String PATH = "src/test/resources/impl/app/CatApplicationResources/";
+    private static final String PATH = "src/test/resources/impl/app/CatApplicationResources/".replace('/', CHAR_FILE_SEP);
 
     private static final String FILE_MULTI_1 = "multi-line-1.txt";
     private static final String FILE_SINGLE_1 = "single-line-1.txt";

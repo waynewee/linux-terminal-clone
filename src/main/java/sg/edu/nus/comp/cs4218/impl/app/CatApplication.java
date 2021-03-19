@@ -37,8 +37,10 @@ public class CatApplication implements CatInterface {
         try {
             if (catArgs.getFiles().isEmpty()) {
                 result = catStdin(catArgs.isLineNumber(), stdin);
-            } else {
+            } else if (stdin == null) {
                 result = catFiles(catArgs.isLineNumber(), catArgs.getFiles().toArray(new String[0]));
+            } else {
+                result = catFileAndStdin(catArgs.isLineNumber(), stdin, catArgs.getFiles().toArray(new String[0]));
             }
         } catch (Exception e) {
             throw new CatException(ERR_GENERAL);
