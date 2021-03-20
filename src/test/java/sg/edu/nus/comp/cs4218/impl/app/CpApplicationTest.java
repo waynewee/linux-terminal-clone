@@ -3,13 +3,12 @@ package sg.edu.nus.comp.cs4218.impl.app;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import sg.edu.nus.comp.cs4218.Application;
-import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.CpException;
-import sg.edu.nus.comp.cs4218.impl.app.CpApplication;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -32,10 +31,24 @@ public class CpApplicationTest {
     }
 
     @Test
+    public void run_InvalidNumberOfFiles_ThrowsException() {
+        // Prepare args
+        Path sourceFolder = getFolderPath("invalid_file", "sourceFolder");
+        Path sourceTestFile = Paths.get(sourceFolder.toString(), "test1.txt");
+
+
+        String[] args = new String[1];
+        args[0] = sourceTestFile.toString();
+
+        // Assert right exception thrown
+        assertThrows(CpException.class, () -> cpApplication.run(args, System.in, outputStream));
+    }
+
+    @Test
     public void run_InvalidFile_ThrowsException() {
         // Prepare args
-        Path sourceFolder = getFolderPath(Environment.currentDirectory, "invalid_file", "sourceFolder");
-        Path destinationFolder = getFolderPath(Environment.currentDirectory, "invalid_file", "destinationFolder");
+        Path sourceFolder = getFolderPath("invalid_file", "sourceFolder");
+        Path destinationFolder = getFolderPath("invalid_file", "destinationFolder");
 
         Path sourceTestFile = Paths.get(sourceFolder.toString(), "test1.txt");
         Path destinationTestFile = Paths.get(destinationFolder.toString(), "test1.txt");
@@ -47,18 +60,13 @@ public class CpApplicationTest {
 
         // Assert right exception thrown
         assertThrows(CpException.class, () -> cpApplication.run(args, System.in, outputStream));
-
-    }
-
-    private Path getFolderPath(String environmentDirectory, String invalidFile, String folderLocation) {
-        return Paths.get(environmentDirectory, "tests", "resources", "impl", "app", "CopyApplicationResources", invalidFile, folderLocation);
     }
 
     @Test
     public void run_InvalidFolder_ThrowsException() {
         // Prepare args
-        Path sourceFolder = getFolderPath(Environment.currentDirectory, "invalid_folder", "sourceFolder");
-        Path destinationFolder = getFolderPath(Environment.currentDirectory, "invalid_folder", "destinationFolder");
+        Path sourceFolder = getFolderPath("invalid_folder", "sourceFolder");
+        Path destinationFolder = getFolderPath("invalid_folder", "destinationFolder");
 
         String[] args = new String[2];
         args[0] = sourceFolder.toString();
@@ -71,8 +79,8 @@ public class CpApplicationTest {
     @Test
     public void run_ValidFile_CopiesToDestination() throws Exception {
         // Prepare args
-        Path sourceFolder = getFolderPath(Environment.currentDirectory, "valid_file", "sourceFolder");
-        Path destinationFolder = getFolderPath(Environment.currentDirectory, "valid_file", "destinationFolder");
+        Path sourceFolder = getFolderPath("valid_file", "sourceFolder");
+        Path destinationFolder = getFolderPath("valid_file", "destinationFolder");
 
         Path sourceTestFile = Paths.get(sourceFolder.toString(), "test1.txt");
         Path destinationTestFile = Paths.get(destinationFolder.toString(), "test1.txt");
@@ -83,15 +91,15 @@ public class CpApplicationTest {
 
         cpApplication.run(args, System.in, outputStream);
 
-        assert(!Files.exists(sourceTestFile));
         assert(Files.exists(destinationTestFile));
+        cleanUpCode(destinationTestFile);
     }
 
     @Test
     public void run_ValidDirectory_CopiesToDestination() throws Exception {
         // Prepare args
-        Path sourceFolder = getFolderPath(Environment.currentDirectory, "valid_directory", "sourceFolder");
-        Path destinationFolder = getFolderPath(Environment.currentDirectory, "valid_directory", "destinationFolder");
+        Path sourceFolder = getFolderPath("valid_directory", "sourceFolder");
+        Path destinationFolder = getFolderPath("valid_directory", "destinationFolder" + File.separator + "sourceFolder");
 
         String[] args = new String[2];
         args[0] = sourceFolder.toString();
@@ -99,18 +107,17 @@ public class CpApplicationTest {
 
         cpApplication.run(args, System.in, outputStream);
 
-        assert(!Files.exists(sourceFolder));
         assert(Files.exists(destinationFolder));
+        cleanUpCode(destinationFolder);
     }
 
     @Test
     public void run_GivenRecursiveFlag_CopiesFoldersToDestinationRecursively() throws Exception {
         // Prepare args
-        Path sourceFolder = getFolderPath(Environment.currentDirectory, "recursive_valid_folder", "sourceFolder");
-        Path destinationFolder = getFolderPath(Environment.currentDirectory, "recursive_valid_folder", "destinationFolder");
+        Path sourceFolder = getFolderPath("recursive_valid_folder", "sourceFolder");
+        Path destinationFolder = getFolderPath("recursive_valid_folder", "destinationFolder" + File.separator + "sourceFolder");
 
         int fileCountInSource = getFileCount(sourceFolder);
-        int fileCountInDestination = getFileCount(sourceFolder);
 
         String[] args = new String[3];
         args[0] = "-R";
@@ -119,14 +126,17 @@ public class CpApplicationTest {
 
         cpApplication.run(args, System.in, outputStream);
 
+        int fileCountInDestination = getFileCount(destinationFolder);
+
         assertEquals(fileCountInSource, fileCountInDestination);
+        cleanUpCode(destinationFolder);
     }
 
     @Test
     public void run_GivenSmallLetterRecursiveFlag_CopiesFoldersToDestinationRecursively() throws Exception {
         // Prepare args
-        Path sourceFolder = getFolderPath(Environment.currentDirectory, "recursive_valid_folder", "sourceFolder");
-        Path destinationFolder = getFolderPath(Environment.currentDirectory, "recursive_valid_folder", "destinationFolder");
+        Path sourceFolder = getFolderPath("recursive_valid_folder", "sourceFolder");
+        Path destinationFolder = getFolderPath("recursive_valid_folder", "destinationFolder" + File.separator + "sourceFolder");
 
         int fileCountInSource = getFileCount(sourceFolder);
         int fileCountInDestination = getFileCount(sourceFolder);
@@ -139,6 +149,7 @@ public class CpApplicationTest {
         cpApplication.run(args, System.in, outputStream);
 
         assertEquals(fileCountInSource, fileCountInDestination);
+        cleanUpCode(destinationFolder);
     }
 
     // Helper Functions
@@ -153,5 +164,32 @@ public class CpApplicationTest {
             }
         }
         return count;
+    }
+
+    private Path getFolderPath(String invalidFile, String folderLocation) {
+        return Paths.get("src", "test", "resources", "impl", "app", "CpApplicationResources", invalidFile, folderLocation);
+    }
+
+    private void cleanUpCode(Path destinationTestFile) {
+        try {
+            if (!Files.isDirectory(destinationTestFile)) {
+                Files.delete(destinationTestFile);
+            } else {
+                deleteRecursively(destinationTestFile);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void deleteRecursively(Path path) throws IOException {
+        if (Files.isDirectory(path)) {
+            try (DirectoryStream<Path> entries = Files.newDirectoryStream(path)) {
+                for (Path entry : entries) {
+                    deleteRecursively(entry);
+                }
+            }
+        }
+        Files.delete(path);
     }
 }

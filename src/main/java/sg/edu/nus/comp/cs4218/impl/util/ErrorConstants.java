@@ -29,6 +29,7 @@ public class ErrorConstants {
     public static final String ERR_IS_DIR = "This is a directory";
     public static final String ERR_IS_NOT_DIR = "Not a directory";
     public static final String ERR_NO_PERM = "Permission denied";
+    public static final String ERR_FOLDER_NOT_EMPTY = "Folder is not empty";
 
     // `date` related
     public static final String ERR_INVALID_FORMAT_PREFIX = "Invalid format. Date format must start with '+'";
@@ -59,6 +60,9 @@ public class ErrorConstants {
     public static final String ERR_SOURCE_NOT_FOUND = "Source file does not exists";
     public static final String ERR_TARGET_EXISTS = "Target file already exists";
     public static final String ERR_SOURCE_NOT_FILE = "Source is not a file";
+
+    // 'cp' related
+    public static final String ERR_TOO_MANY_FOLDER_ARGUMENTS = "Too many folder arguments";
 
     // General constants
     public static final String ERR_INVALID_APP = "Invalid sg.edu.nus.comp.cs4218.app";
