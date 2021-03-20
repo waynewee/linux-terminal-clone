@@ -28,18 +28,18 @@ public class LsApplication implements LsInterface {
 
     @Override
     public String listFolderContent(Boolean isFoldersOnly, Boolean isRecursive, Boolean isSortByExt,
-                                    String... folderName) throws LsException {
-        if (folderName.length == 0 && !isRecursive) {
+                                    String... folderNames) throws LsException {
+        if (folderNames.length == 0 && !isRecursive) {
             return listCwdContent(isFoldersOnly, isSortByExt);
         }
 
         List<Path> paths;
-        if (folderName.length == 0 && isRecursive) {
+        if (folderNames.length == 0 && isRecursive) {
             String[] directories = new String[1];
             directories[0] = Environment.currentDirectory;
             paths = resolvePaths(directories);
         } else {
-            paths = resolvePaths(folderName);
+            paths = resolvePaths(folderNames);
         }
 
         return buildResult(paths, isFoldersOnly, isRecursive, isSortByExt);
@@ -284,11 +284,6 @@ public class LsApplication implements LsInterface {
     private class InvalidDirectoryException extends Exception {
         InvalidDirectoryException(String directory) {
             super(String.format("ls: cannot access '%s': No such file or directory", directory));
-        }
-
-        InvalidDirectoryException(String directory, Throwable cause) {
-            super(String.format("ls: cannot access '%s': No such file or directory", directory),
-                    cause);
         }
     }
 
