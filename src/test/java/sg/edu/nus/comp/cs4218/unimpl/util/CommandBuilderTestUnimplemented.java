@@ -15,32 +15,6 @@ import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NOT_SUPPORTED;
 
 class CommandBuilderTestUnimplemented {
     @Test
-    public void parseCommand_backquotedSubCommand_isOneArgument() throws ShellException {
-        Command command = CommandBuilder.parseCommand("echo `echo hi`", new ApplicationRunner());
-        CallCommand callCommand = (CallCommand) command;
-        List<String> argsList = callCommand.getArgsList();
-        assertEquals("`echo hi`", argsList.get(1));
-    }
-
-    @Test
-    public void parseCommand_backquotedSubCommandWithQuotes_isOneArgument() throws ShellException {
-        Command command = CommandBuilder.parseCommand("echo `echo \"`this is not special`\"`", new ApplicationRunner());
-        CallCommand callCommand = (CallCommand) command;
-        List<String> argsList = callCommand.getArgsList();
-        assertEquals("`echo \"`this is not special`\"`", argsList.get(1));
-    }
-
-    @Test
-    /**
-     * In typical UNIX systems, a new line will be prompted but our shell does not support multiline commands
-     */
-    public void parseCommand_incompleteBackquote_throwsShellException() throws ShellException {
-        assertThrows(ShellException.class, () ->
-                CommandBuilder.parseCommand("`echo hi", new ApplicationRunner()));
-    }
-
-
-    @Test
     public void parseCommand_oneSemiColon_makesTwoCommands() throws ShellException {
         Command command = CommandBuilder.parseCommand("echo hi; echo bye", new ApplicationRunner());
         SequenceCommand sequenceCommand = (SequenceCommand) command;

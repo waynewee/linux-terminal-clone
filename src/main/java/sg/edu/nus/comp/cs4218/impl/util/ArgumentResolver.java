@@ -81,22 +81,34 @@ public class ArgumentResolver {
                     subCommand.setLength(0); // Clear the previous subCommand registered
 
                     // check if back quotes are nested
+                    // if backquotes not nested, follow specifications:
+                    // 1. Whitespace characters are used during the argument splitting
+                    //    step. Since our shell does not support multi-line commands,
+                    //    newlines in OUT should be replaced with spaces.
+                    // 2. Other characters (including quotes) are not interpreted
+                    //    during the next parsing step as special characters.
                     if (unmatchedQuotes.isEmpty()) {
                         List<RegexArgument> subOutputSegment = Stream
                                 .of(StringUtils.tokenize(subCommandOutput))
-                                .map(str -> makeRegexArgument(str))
+                                .map(this::makeRegexArgument)
                                 .collect(Collectors.toList());
 
-                        // append the first token to the previous parsedArg
                         // e.g. arg: abc`1 2 3`xyz`4 5 6` (contents in `` is after command sub)
                         // expected: [abc1, 2, 3xyz4, 5, 6]
-                        if (subOutputSegment.isEmpty()) {
+                        if (!subOutputSegment.isEmpty()) {
+                            // first token must be appended to the previous parsedArg
                             RegexArgument firstOutputArg = subOutputSegment.remove(0);
                             appendParsedArgIntoSegment(parsedArgsSegment, firstOutputArg);
+
+                            // other tokens are added separately into parsedArgsSegment
+                            while (!subOutputSegment.isEmpty()) {
+                                RegexArgument outputArg = subOutputSegment.remove(0);
+                                parsedArgsSegment.add(outputArg);
+                            }
                         }
 
                     } else {
-                        // don't tokenize subCommand output
+                        // if backquotes not nested, don't tokenize subCommand output
                         appendParsedArgIntoSegment(parsedArgsSegment,
                                 makeRegexArgument(subCommandOutput));
                     }
