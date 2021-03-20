@@ -75,7 +75,7 @@ public final class RegexArgument {
                 dir += tokens[i] + "/";
             }
 
-            File currentDir = Paths.get(dir).toFile();
+            File currentDir = Paths.get(Environment.currentDirectory + dir).toFile();
 
             for (String candidate : Objects.requireNonNull(currentDir.list())) {
                 String path = dir + candidate;
