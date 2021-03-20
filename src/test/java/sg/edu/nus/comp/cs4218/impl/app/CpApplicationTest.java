@@ -96,6 +96,35 @@ public class CpApplicationTest {
     }
 
     @Test
+    public void run_ValidMultipleFiles_CopiesToDestination() throws Exception {
+        // Prepare args
+        Path sourceFolder = getFolderPath("valid_multiple_files", "sourceFolder");
+        Path destinationFolder = getFolderPath("valid_multiple_files", "destinationFolder");
+
+        Path sourceTestFile1 = Paths.get(sourceFolder.toString(), "test1.txt");
+        Path sourceTestFile2 = Paths.get(sourceFolder.toString(), "test2.txt");
+        Path sourceTestFile3 = Paths.get(sourceFolder.toString(), "test3.txt");
+        Path destinationTestFile1 = Paths.get(destinationFolder.toString(), "test1.txt");
+        Path destinationTestFile2 = Paths.get(destinationFolder.toString(), "test2.txt");
+        Path destinationTestFile3 = Paths.get(destinationFolder.toString(), "test3.txt");
+
+        String[] args = new String[4];
+        args[0] = sourceTestFile1.toString();
+        args[1] = sourceTestFile2.toString();
+        args[2] = sourceTestFile3.toString();
+        args[3] = destinationFolder.toString();
+
+        cpApplication.run(args, System.in, outputStream);
+
+        assert(Files.exists(destinationTestFile1));
+        assert(Files.exists(destinationTestFile2));
+        assert(Files.exists(destinationTestFile3));
+        cleanUpCode(destinationTestFile1);
+        cleanUpCode(destinationTestFile2);
+        cleanUpCode(destinationTestFile3);
+    }
+
+    @Test
     public void run_ValidDirectory_CopiesToDestination() throws Exception {
         // Prepare args
         Path sourceFolder = getFolderPath("valid_directory", "sourceFolder");
