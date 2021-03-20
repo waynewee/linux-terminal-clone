@@ -1,10 +1,13 @@
-package sg.edu.nus.comp.cs4218.unimpl.app;
+package sg.edu.nus.comp.cs4218.impl.app;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import sg.edu.nus.comp.cs4218.Application;
 import sg.edu.nus.comp.cs4218.Environment;
+import sg.edu.nus.comp.cs4218.exception.CpException;
+import sg.edu.nus.comp.cs4218.impl.app.CpApplication;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.nio.file.Files;
@@ -14,13 +17,13 @@ import java.nio.file.Paths;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class CopyApplicationTest {
+public class CpApplicationTest {
     private static ByteArrayOutputStream outputStream;
-    private static Application copyApplication;
+    private static CpApplication cpApplication;
 
     @BeforeAll
     static void prepareApplication() {
-        copyApplication = new CopyApplication();
+        cpApplication = new CpApplication();
     }
 
     @BeforeEach
@@ -43,7 +46,7 @@ public class CopyApplicationTest {
         args[1] = destinationTestFile.toString();
 
         // Assert right exception thrown
-        CopyException copyException = assertThrows(CopyException.class, () -> copyException.run(args, System.in, outputStream));
+        assertThrows(CpException.class, () -> cpApplication.run(args, System.in, outputStream));
 
     }
 
@@ -62,11 +65,11 @@ public class CopyApplicationTest {
         args[1] = destinationFolder.toString();
 
         // Assert right exception thrown
-        CopyException copyException = assertThrows(CopyException.class, () -> copyException.run(args, System.in, outputStream));
+        assertThrows(CpException.class, () -> cpApplication.run(args, System.in, outputStream));
     }
 
     @Test
-    public void run_ValidFile_CopiesToDestination() {
+    public void run_ValidFile_CopiesToDestination() throws Exception {
         // Prepare args
         Path sourceFolder = getFolderPath(Environment.currentDirectory, "valid_file", "sourceFolder");
         Path destinationFolder = getFolderPath(Environment.currentDirectory, "valid_file", "destinationFolder");
@@ -78,14 +81,14 @@ public class CopyApplicationTest {
         args[0] = sourceTestFile.toString();
         args[1] = destinationTestFile.toString();
 
-        copyException.run(args, System.in, outputStream);
+        cpApplication.run(args, System.in, outputStream);
 
         assert(!Files.exists(sourceTestFile));
         assert(Files.exists(destinationTestFile));
     }
 
     @Test
-    public void run_ValidDirectory_CopiesToDestination() {
+    public void run_ValidDirectory_CopiesToDestination() throws Exception {
         // Prepare args
         Path sourceFolder = getFolderPath(Environment.currentDirectory, "valid_directory", "sourceFolder");
         Path destinationFolder = getFolderPath(Environment.currentDirectory, "valid_directory", "destinationFolder");
@@ -94,14 +97,14 @@ public class CopyApplicationTest {
         args[0] = sourceFolder.toString();
         args[1] = destinationFolder.toString();
 
-        copyException.run(args, System.in, outputStream);
+        cpApplication.run(args, System.in, outputStream);
 
         assert(!Files.exists(sourceFolder));
         assert(Files.exists(destinationFolder));
     }
 
     @Test
-    public void run_GivenRecursiveFlag_CopiesFoldersToDestinationRecursively() {
+    public void run_GivenRecursiveFlag_CopiesFoldersToDestinationRecursively() throws Exception {
         // Prepare args
         Path sourceFolder = getFolderPath(Environment.currentDirectory, "recursive_valid_folder", "sourceFolder");
         Path destinationFolder = getFolderPath(Environment.currentDirectory, "recursive_valid_folder", "destinationFolder");
@@ -114,13 +117,13 @@ public class CopyApplicationTest {
         args[1] = sourceFolder.toString();
         args[2] = destinationFolder.toString();
 
-        copyException.run(args, System.in, outputStream);
+        cpApplication.run(args, System.in, outputStream);
 
         assertEquals(fileCountInSource, fileCountInDestination);
     }
 
     @Test
-    public void run_GivenSmallLetterRecursiveFlag_CopiesFoldersToDestinationRecursively() {
+    public void run_GivenSmallLetterRecursiveFlag_CopiesFoldersToDestinationRecursively() throws Exception {
         // Prepare args
         Path sourceFolder = getFolderPath(Environment.currentDirectory, "recursive_valid_folder", "sourceFolder");
         Path destinationFolder = getFolderPath(Environment.currentDirectory, "recursive_valid_folder", "destinationFolder");
@@ -133,7 +136,7 @@ public class CopyApplicationTest {
         args[1] = sourceFolder.toString();
         args[2] = destinationFolder.toString();
 
-        copyException.run(args, System.in, outputStream);
+        cpApplication.run(args, System.in, outputStream);
 
         assertEquals(fileCountInSource, fileCountInDestination);
     }
