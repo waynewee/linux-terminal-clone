@@ -1,7 +1,7 @@
 package sg.edu.nus.comp.cs4218.impl.util;
 
 @SuppressWarnings({"PMD.ExcessiveMethodLength", "PMD.ClassNamingConventions", "PMD.LongVariable"})
-public class ErrorConstants {
+public final class ErrorConstants {
 
     // Streams related
     public static final String ERR_WRITE_STREAM = "Could not write to output stream";
