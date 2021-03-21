@@ -1,13 +1,13 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
-import sg.edu.nus.comp.cs4218.Environment;
+import sg.edu.nus.comp.cs4218.EnvironmentUtil;
 import sg.edu.nus.comp.cs4218.app.GrepInterface;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.GrepException;
+import sg.edu.nus.comp.cs4218.impl.app.args.GrepArguments;
 import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 
 import java.io.*;
-import java.nio.Buffer;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -71,32 +71,29 @@ public class GrepApplication implements GrepInterface {
         ArrayList<GrepResults> grepResultsList = new ArrayList<>();
 
         for (String f : fileNames) {
-            try {
-                String path = convertToAbsolutePath(f);
-                File file = new File(path);
+            String path = convertToAbsolutePath(f);
+            File file = new File(path);
 
-                GrepResults grepResults = new GrepResults();
+            GrepResults grepResults = new GrepResults();
 
-                if (!file.exists()) {
-                    String exceptionMessage = new GrepException(file.getName() + ": " + ERR_FILE_NOT_FOUND).getMessage();
-                    grepResults.exceptionMessages.add(exceptionMessage);
-                    grepResultsList.add(grepResults);
-                    continue;
-                }
-                if (file.isDirectory()) { // ignore if it's a directory
-                    String exceptionMessage = new GrepException(file.getName() + ": " + ERR_IS_DIR).getMessage();
-                    grepResults.exceptionMessages.add(exceptionMessage);
-                    grepResultsList.add(grepResults);
-                    continue;
-                }
-
-                InputStream inputStream = IOUtils.openInputStream(path);
-                grepResults = grepResults(pattern, isCaseInsensitive, inputStream);
-                grepResults.file = file.getName();
+            if (!file.exists()) {
+                String exceptionMessage = new GrepException(file.getName() + ": " + ERR_FILE_NOT_FOUND).getMessage();
+                grepResults.exceptionMessages.add(exceptionMessage);
                 grepResultsList.add(grepResults);
-            } catch (PatternSyntaxException pse) {
-                throw new GrepException(ERR_INVALID_REGEX);
+                continue;
+
             }
+            if (file.isDirectory()) { // ignore if it's a directory
+                String exceptionMessage = new GrepException(file.getName() + ": " + ERR_IS_DIR).getMessage();
+                grepResults.exceptionMessages.add(exceptionMessage);
+                grepResultsList.add(grepResults);
+                continue;
+            }
+
+            InputStream inputStream = IOUtils.openInputStream(path);
+            grepResults = grepResults(pattern, isCaseInsensitive, inputStream);
+            grepResults.file = file.getName();
+            grepResultsList.add(grepResults);
         }
 
         return grepResultsList;
@@ -123,7 +120,7 @@ public class GrepApplication implements GrepInterface {
             }
             reader.close();
         } catch (PatternSyntaxException pse) {
-            throw new GrepException(ERR_INVALID_REGEX);
+            throw new GrepException(ERR_INVALID_REGEX, pse);
         }
 
         return grepResults;
@@ -138,7 +135,7 @@ public class GrepApplication implements GrepInterface {
      */
     private String convertToAbsolutePath(String fileName) {
         String home = System.getProperty("user.home").trim();
-        String currentDir = Environment.currentDirectory.trim();
+        String currentDir = EnvironmentUtil.currentDirectory.trim();
         String convertedPath = convertPathToSystemPath(fileName);
 
         String newPath;
@@ -195,81 +192,34 @@ public class GrepApplication implements GrepInterface {
     public void run(String[] args, InputStream stdin, OutputStream stdout) throws AbstractApplicationException {
         try {
             boolean[] grepFlags = new boolean[NUM_ARGUMENTS];
-            ArrayList<String> inputFiles = new ArrayList<>();
-            String pattern = getGrepArguments(args, grepFlags, inputFiles);
+            GrepArguments grepArguments = new GrepArguments();
+            grepArguments.parse(args);
+            ArrayList<String> inputFiles = (ArrayList<String>) grepArguments.getFiles();
+            String pattern = grepArguments.getPattern();
             String result = "";
 
             if (stdin == null && inputFiles.isEmpty()) {
                 throw new Exception(ERR_NO_INPUT);
             }
-            if (pattern == null) {
-                throw new Exception(ERR_SYNTAX);
+
+            if (inputFiles.isEmpty()) {
+                result = grepFromStdin(pattern, grepArguments.isCaseInsensitive(), grepArguments.isCountOfLinesOnly(), grepArguments.isPrefixFileName(), stdin);
+            } else if (stdin == null) {
+                String[] inputFilesArray = new String[inputFiles.size()];
+                inputFilesArray = inputFiles.toArray(inputFilesArray);
+                result = grepFromFiles(pattern, grepArguments.isCaseInsensitive(), grepArguments.isCountOfLinesOnly(), grepArguments.isPrefixFileName(), inputFilesArray);
+            } else {
+                String[] inputFilesArray = new String[inputFiles.size()];
+                inputFilesArray = inputFiles.toArray(inputFilesArray);
+                result = grepFromFileAndStdin(pattern, grepArguments.isCaseInsensitive(), grepArguments.isCountOfLinesOnly(), grepArguments.isPrefixFileName(), stdin, inputFilesArray);
             }
 
-            if (pattern.isEmpty()) {
-                throw new Exception(ERR_EMPTY_REGEX);
-            } else {
-                if (inputFiles.isEmpty()) {
-                    result = grepFromStdin(pattern, grepFlags[CASE_INSEN_IDX], grepFlags[COUNT_INDEX], grepFlags[PREFIX_FN_IDX], stdin);
-                } else if (stdin == null) {
-                    String[] inputFilesArray = new String[inputFiles.size()];
-                    inputFilesArray = inputFiles.toArray(inputFilesArray);
-                    result = grepFromFiles(pattern, grepFlags[CASE_INSEN_IDX], grepFlags[COUNT_INDEX], grepFlags[PREFIX_FN_IDX], inputFilesArray);
-                } else {
-                    String[] inputFilesArray = new String[inputFiles.size()];
-                    inputFilesArray = inputFiles.toArray(inputFilesArray);
-                    result = grepFromFileAndStdin(pattern, grepFlags[CASE_INSEN_IDX], grepFlags[COUNT_INDEX], grepFlags[PREFIX_FN_IDX], stdin, inputFilesArray);
-                }
-            }
             stdout.write(result.getBytes());
         } catch (GrepException grepException) {
             throw grepException;
         } catch (Exception e) {
-            throw new GrepException(e.getMessage());
+            throw new GrepException(e.getMessage(), e);
         }
-    }
-
-    /**
-     * Separates the arguments provided by user into the flags, pattern and input files.
-     *
-     * @param args       supplied by user
-     * @param grepFlags  a bool array of possible flags in grep
-     * @param inputFiles a ArrayList<String> of file names supplied by user
-     * @return regex pattern supplied by user. An empty String if not supplied.
-     */
-    private String getGrepArguments(String[] args, boolean[] grepFlags, ArrayList<String> inputFiles) throws Exception {
-        String pattern = null;
-        boolean isFile = false; // files can only appear after pattern
-
-        for (String s : args) {
-            char[] arg = s.toCharArray();
-            if (isFile) {
-                inputFiles.add(s);
-            } else {
-                if (!s.isEmpty() && arg[0] == CHAR_FLAG_PREFIX) {
-                    arg = Arrays.copyOfRange(arg, 1, arg.length);
-                    for (char c : arg) {
-                        switch (c) {
-                            case CASE_INSEN_IDENT:
-                                grepFlags[CASE_INSEN_IDX] = true;
-                                break;
-                            case COUNT_IDENT:
-                                grepFlags[COUNT_INDEX] = true;
-                                break;
-                            case PREFIX_FN:
-                                grepFlags[PREFIX_FN_IDX] = true;
-                                break;
-                            default:
-                                throw new GrepException(ERR_SYNTAX);
-                        }
-                    }
-                } else { // pattern must come before file names
-                    pattern = s;
-                    isFile = true; // next arg onwards will be file
-                }
-            }
-        }
-        return pattern;
     }
 
     @Override
@@ -280,9 +230,8 @@ public class GrepApplication implements GrepInterface {
         if (stdin == null) {
             throw new GrepException(ERR_NULL_STREAMS);
         }
-        ArrayList<GrepResults> fileGrepResultsList = grepResultsFromFiles(pattern, isCaseInsensitive, isPrefixFileName, fileNames);
         GrepResults stdinGrepResults = grepResults(pattern, isCaseInsensitive, stdin);
-        ArrayList<GrepResults> grepResultsList = new ArrayList<>(fileGrepResultsList);
+        ArrayList<GrepResults> grepResultsList = grepResultsFromFiles(pattern, isCaseInsensitive, isPrefixFileName, fileNames);
         grepResultsList.add(stdinGrepResults);
         StringJoiner stringJoiner = new StringJoiner(STRING_NEWLINE);
         for (GrepResults grepResults : grepResultsList) {
@@ -311,14 +260,14 @@ public class GrepApplication implements GrepInterface {
 
         public void getCount(boolean isSingleFile, StringJoiner stringJoiner) {
             String count = Integer.toString(lines.size());
-            if (!isSingleFile){
+            if (isSingleFile){
+                stringJoiner.add(count);
+            } else {
                 if (file == null) {
                     stringJoiner.add("stdin: " + count);
                 } else {
                     stringJoiner.add(file + ": " + count);
                 }
-            } else {
-                stringJoiner.add(count);
             }
         }
 

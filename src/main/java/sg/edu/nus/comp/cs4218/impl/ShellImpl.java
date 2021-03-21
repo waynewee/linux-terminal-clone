@@ -1,7 +1,7 @@
 package sg.edu.nus.comp.cs4218.impl;
 
 import sg.edu.nus.comp.cs4218.Command;
-import sg.edu.nus.comp.cs4218.Environment;
+import sg.edu.nus.comp.cs4218.EnvironmentUtil;
 import sg.edu.nus.comp.cs4218.Shell;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
@@ -27,7 +27,7 @@ public class ShellImpl implements Shell {
 
         while (true) {
             try {
-                String currentDirectory = Environment.currentDirectory;
+                String currentDirectory = EnvironmentUtil.currentDirectory;
                 String commandString;
                 try {
                     System.out.print(String.format("%s> ", currentDirectory));

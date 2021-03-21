@@ -97,56 +97,56 @@ public class GrepWcIntegrationTest {
         mockOutputStream = new ByteArrayOutputStream();
     }
 
-    @Test
-    /*
-     * length of grepped file | number of matched lines | input direction operator used
-     * one-line        one-line-matched        pipe
-     * happy path 1: grep a file that only contains 1 line, and that 1 line matches that particular pattern
-     */
-    public void parseAndEvaluate_grepHappyOneLinerAndPipeToWc_showsOneLine() throws Exception {
-        String command = String.format("grep -i \"bob the builder\" %s | wc -l \n", ONE_LINER_PATH);
-        testShell.parseAndEvaluate(command, mockOutputStream);
-        assertEquals(" 1 stdin" + System.lineSeparator(), mockOutputStream.toString());
-    }
-
-    @Test
-    /**
-     * length of grepped file | number of matched lines | input direction operator used
-     *   multiple-lines  no-line-matched output-redirection
-     */
-    public void parseAndEvaluate_grepMultipleLinesFileButNoMatchesAndOutputRedirection_showsEmptyFile() throws AbstractApplicationException, ShellException {
-        String commandOne = String.format("grep -i \"unmatchable\" %s > matches.txt\n", MULTIPLE_LINER_PATH);
-        testShell.parseAndEvaluate(commandOne, mockOutputStream);
-        String commandTwo = "wc -l matches.txt\n";
-        testShell.parseAndEvaluate(commandTwo, mockOutputStream);
-        assertEquals(" 1 matches.txt" + System.lineSeparator(), mockOutputStream.toString());
-    }
-
-    @Test
-    /**
-     * multiple-lines  multiple-lines-matched  pipe
-     * happy path 2: grep a file that contains 2 lines, and that both lines matches that particular pattern
-     **/
-    public void parseAndEvaluate_grepHappyTwoLinerAndPipeToWc_showsTwoLines() throws Exception {
-        String command = String.format("grep -i \"bob the builder\" %s | wc -l \n", MULTIPLE_LINER_PATH);
-        testShell.parseAndEvaluate(command, mockOutputStream);
-        assertEquals(" 2 stdin" + System.lineSeparator(), mockOutputStream.toString());
-    }
-
-    @Test
-    /*
-     */
-    public void parseAndEvaluate_grepNonExistentFile_throwsError() throws Exception {
-        String command = "grep -i \"bob the builder\" nonExistentFile.txt | wc -l \n";
-        assertThrows(Exception.class, () -> testShell.parseAndEvaluate(command, mockOutputStream));
-    }
-
-    @Test
-    /*
-    //    x x an-invalid-one
-     */
-    public void parseAndEvaluate_grepOneLinerButInvalidRedirectionOperator_throwsError(@TempDir Path dir) throws Exception {
-        String command = String.format("grep -i \"bob the builder\" %s { wc -l \n", MULTIPLE_LINER_PATH);
-        assertThrows(Exception.class, () -> testShell.parseAndEvaluate(command, mockOutputStream));
-    }
+//    @Test
+//    /*
+//     * length of grepped file | number of matched lines | input direction operator used
+//     * one-line        one-line-matched        pipe
+//     * happy path 1: grep a file that only contains 1 line, and that 1 line matches that particular pattern
+//     */
+//    public void parseAndEvaluate_grepHappyOneLinerAndPipeToWc_showsOneLine() throws Exception {
+//        String command = String.format("grep -i \"bob the builder\" %s | wc -l \n", ONE_LINER_PATH);
+//        testShell.parseAndEvaluate(command, mockOutputStream);
+//        assertEquals(" 1 stdin" + System.lineSeparator(), mockOutputStream.toString());
+//    }
+//
+//    @Test
+//    /**
+//     * length of grepped file | number of matched lines | input direction operator used
+//     *   multiple-lines  no-line-matched output-redirection
+//     */
+//    public void parseAndEvaluate_grepMultipleLinesFileButNoMatchesAndOutputRedirection_showsEmptyFile() throws AbstractApplicationException, ShellException {
+//        String commandOne = String.format("grep -i \"unmatchable\" %s > matches.txt\n", MULTIPLE_LINER_PATH);
+//        testShell.parseAndEvaluate(commandOne, mockOutputStream);
+//        String commandTwo = "wc -l matches.txt\n";
+//        testShell.parseAndEvaluate(commandTwo, mockOutputStream);
+//        assertEquals(" 1 matches.txt" + System.lineSeparator(), mockOutputStream.toString());
+//    }
+//
+//    @Test
+//    /**
+//     * multiple-lines  multiple-lines-matched  pipe
+//     * happy path 2: grep a file that contains 2 lines, and that both lines matches that particular pattern
+//     **/
+//    public void parseAndEvaluate_grepHappyTwoLinerAndPipeToWc_showsTwoLines() throws Exception {
+//        String command = String.format("grep -i \"bob the builder\" %s | wc -l \n", MULTIPLE_LINER_PATH);
+//        testShell.parseAndEvaluate(command, mockOutputStream);
+//        assertEquals(" 2 stdin" + System.lineSeparator(), mockOutputStream.toString());
+//    }
+//
+//    @Test
+//    /*
+//     */
+//    public void parseAndEvaluate_grepNonExistentFile_throwsError() throws Exception {
+//        String command = "grep -i \"bob the builder\" nonExistentFile.txt | wc -l \n";
+//        assertThrows(Exception.class, () -> testShell.parseAndEvaluate(command, mockOutputStream));
+//    }
+//
+//    @Test
+//    /*
+//    //    x x an-invalid-one
+//     */
+//    public void parseAndEvaluate_grepOneLinerButInvalidRedirectionOperator_throwsError(@TempDir Path dir) throws Exception {
+//        String command = String.format("grep -i \"bob the builder\" %s { wc -l \n", MULTIPLE_LINER_PATH);
+//        assertThrows(Exception.class, () -> testShell.parseAndEvaluate(command, mockOutputStream));
+//    }
 }
