@@ -66,5 +66,7 @@ public class PipeCommand implements Command {
     }
 
     @Override
-    public void terminate() {}
+    public void terminate() {
+
+    }
 }

@@ -28,8 +28,7 @@ class TeeApplicationTest {
     private static File nonExistentFile;
 
     static InputStream streamFromString(String initialString) {
-        InputStream inputStream = new ByteArrayInputStream(initialString.getBytes());
-        return inputStream;
+        return new ByteArrayInputStream(initialString.getBytes());
     };
 
     @BeforeAll

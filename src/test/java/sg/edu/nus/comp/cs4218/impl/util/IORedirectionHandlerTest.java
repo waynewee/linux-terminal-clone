@@ -21,21 +21,21 @@ class IORedirectionHandlerTest {
 
     private static ArgumentResolver argumentResolver;
     private static ByteArrayOutputStream testStream;
-    private static final String nonExistentFilePath = "someNonExistentFile.txt";
-    private static final String anotherNonExistentFilePath = "anotherNonExistentFile.txt";
-    private static final String trueFilePath = "trueFile.txt";
-    private static final String anotherTrueFilePath = "anotherTrueFile.txt";
+    private static String nonExistentFilePath = "someNonExistentFile.txt";
+    private static String anotherNonExistentFilePath = "anotherNonExistentFile.txt";
+    private static String trueFilePath = "trueFile.txt";
+    private static String anotherTrueFilePath = "anotherTrueFile.txt";
 
     private static File trueFile;
     private static File anotherTrueFile;
 
-    private static final String[] TWO_INPUT_REDIRECTION_FILES = {"paste", "<", trueFilePath, anotherTrueFilePath};
-    private static final String[] MULTIPLE_IOREDIRECTION_TOKENS = {"paste", "<", "<", nonExistentFilePath};
-    private static final String[] OUTPUT_REDIRECTION_ONE_EXISTING_FILE = {"echo", "helloWorld", ">", trueFilePath};
-    private static final String[] INPUT_REDIRECTION_ONE_EXISTING_FILE = {"paste", "<", trueFilePath};
-    private static final String[] INPUT_REDIRECTION_ONE_NONEXISTENT_FILE = {"paste", "<", nonExistentFilePath};
-    private static final String[] OUTPUT_REDIRECTION_ONE_NONEXISTENT_FILE = {"echo", "helloWorld", ">", anotherNonExistentFilePath};
-    private static final String[] NO_FILES_PROVIDED = {"paste", "<"};
+    private static String[] TWO_INPUT_REDIRECTION_FILES = {"paste", "<", trueFilePath, anotherTrueFilePath};
+    private static String[] MULTIPLE_IOREDIRECTION_TOKENS = {"paste", "<", "<", nonExistentFilePath};
+    private static String[] OUTPUT_REDIRECTION_ONE_EXISTING_FILE = {"echo", "helloWorld", ">", trueFilePath};
+    private static String[] INPUT_REDIRECTION_ONE_EXISTING_FILE = {"paste", "<", trueFilePath};
+    private static String[] INPUT_REDIRECTION_ONE_NONEXISTENT_FILE = {"paste", "<", nonExistentFilePath};
+    private static String[] OUTPUT_REDIRECTION_ONE_NONEXISTENT_FILE = {"echo", "helloWorld", ">", anotherNonExistentFilePath};
+    private static String[] NO_FILES_PROVIDED = {"paste", "<"};
 
     @BeforeAll
     static void setUp() throws IOException {
