@@ -12,4 +12,11 @@ class ExitApplicationTest {
         ExitApplication app = new ExitApplication();
         app.run(new String[0], System.in, System.out);
     }
+
+    @Test
+    @ExpectSystemExit
+    void terminateExecution_Exits() throws ExitException {
+        ExitApplication app = new ExitApplication();
+        app.terminateExecution();
+    }
 }
