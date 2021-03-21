@@ -9,8 +9,4 @@ public class LsException extends AbstractApplicationException {
     public LsException(String message) {
         super("ls: " + message);
     }
-
-    public LsException(IOException exception) {
-        super("ls: " + exception.getMessage());
-    }
 }
