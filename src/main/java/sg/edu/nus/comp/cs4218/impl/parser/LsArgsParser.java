@@ -1,5 +1,10 @@
 package sg.edu.nus.comp.cs4218.impl.parser;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 
 public class LsArgsParser extends ArgsParser {
@@ -27,6 +32,22 @@ public class LsArgsParser extends ArgsParser {
     }
 
     public List<String> getDirectories() {
-        return nonFlagArgs;
+        List<String> directories = new LinkedList<>();
+        for (String string: nonFlagArgs) {
+            if (Files.isDirectory(Paths.get(string))) {
+                directories.add(string);
+            }
+        }
+        return directories;
+    }
+
+    public List<String> getFiles() {
+        List<String> files = new LinkedList<>();
+        for (String string: nonFlagArgs) {
+            if (!Files.isDirectory(Path.of(string))) {
+                files.add(string);
+            }
+        }
+        return files;
     }
 }
