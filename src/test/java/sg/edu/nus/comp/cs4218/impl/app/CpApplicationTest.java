@@ -4,7 +4,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import sg.edu.nus.comp.cs4218.Environment;
+import sg.edu.nus.comp.cs4218.EnvironmentUtil;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.CpException;
 
@@ -229,7 +229,7 @@ public class CpApplicationTest {
 
     // Given tests from teaching stuff
     public static final String TEMP = "temp-cp";
-    public static final Path TEMP_PATH = Paths.get(Environment.currentDirectory, TEMP);
+    public static final Path TEMP_PATH = Paths.get(EnvironmentUtil.currentDirectory, TEMP);
 
     @BeforeEach
     void createTemp() throws IOException {

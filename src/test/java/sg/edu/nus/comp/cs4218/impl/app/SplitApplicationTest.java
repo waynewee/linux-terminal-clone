@@ -346,9 +346,9 @@ class SplitApplicationTest {
         splitApplication.run(args, inputStream, outputStream);
         inputStream.close();
 
-        Path outputFilePath1 = Paths.get(Environment.currentDirectory, "xaa");
-        Path outputFilePath2 = Paths.get(Environment.currentDirectory, "xab");
-        Path outputFilePath3 = Paths.get(Environment.currentDirectory, "xac");
+        Path outputFilePath1 = Paths.get(EnvironmentUtil.currentDirectory, "xaa");
+        Path outputFilePath2 = Paths.get(EnvironmentUtil.currentDirectory, "xab");
+        Path outputFilePath3 = Paths.get(EnvironmentUtil.currentDirectory, "xac");
 
         assert(Files.exists(outputFilePath1));
         assert(Files.exists(outputFilePath2));
@@ -377,7 +377,7 @@ class SplitApplicationTest {
         splitApplication.run(args, inputStream, outputStream);
         inputStream.close();
 
-        Path outputFilePath1 = Paths.get(Environment.currentDirectory, "xaa");
+        Path outputFilePath1 = Paths.get(EnvironmentUtil.currentDirectory, "xaa");
 //
         assert(Files.exists(outputFilePath1));
 
@@ -391,7 +391,7 @@ class SplitApplicationTest {
     @Test
     public void run_onByteFlagWithKSuffixStandardInput_SplitsInputIntoFiles() throws Exception {
         // Prepare Args
-        String path = Paths.get(Environment.currentDirectory).toString();
+        String path = Paths.get(EnvironmentUtil.currentDirectory).toString();
         String[] args = new String[2];
         args[0] = "-b";
         args[1] = "1k";
@@ -405,7 +405,7 @@ class SplitApplicationTest {
         splitApplication.run(args, inputStream, outputStream);
         inputStream.close();
 
-        Path outputFilePath1 = Paths.get(Environment.currentDirectory, "xaa");
+        Path outputFilePath1 = Paths.get(EnvironmentUtil.currentDirectory, "xaa");
 
         assert(Files.exists(outputFilePath1));
         // Restore System.in
@@ -418,13 +418,13 @@ class SplitApplicationTest {
     @Test
     public void run_onByteFlagWithMSuffixStandardInput_SplitsInputIntoFiles() throws Exception {
         // Prepare Args
-        String path = Paths.get(Environment.currentDirectory).toString();
+        String path = Paths.get(EnvironmentUtil.currentDirectory).toString();
         String[] args = new String[2];
         args[0] = "-b";
         args[1] = "1m";
 
         // Prepare input stream
-        String inputString = baseInputString1.repeat(500000);
+        String inputString = baseInputString1.repeat(400000);
 
         ByteArrayInputStream inputStream = new ByteArrayInputStream((inputString + StringUtils.STRING_NEWLINE).getBytes());
         System.setIn(inputStream);
@@ -432,8 +432,8 @@ class SplitApplicationTest {
         splitApplication.run(args, inputStream, outputStream);
         inputStream.close();
 
-        Path outputFilePath1 = Paths.get(Environment.currentDirectory, "xaa");
-        Path outputFilePath2 = Paths.get(Environment.currentDirectory, "xab");
+        Path outputFilePath1 = Paths.get(EnvironmentUtil.currentDirectory, "xaa");
+        Path outputFilePath2 = Paths.get(EnvironmentUtil.currentDirectory, "xab");
 
         assert(Files.exists(outputFilePath1));
         assert(Files.exists(outputFilePath2));
@@ -456,7 +456,8 @@ class SplitApplicationTest {
     private void removeOutputFilesInCurrentDirectory() {
         File dir = Paths.get(EnvironmentUtil.currentDirectory).toFile();
         for (File file : dir.listFiles()) {
-            if (file.getName().equals("xaa") || file.getName().equals("xab") || file.getName().equals("xac")) {
+            if (file.getName().equals("xaa") || file.getName().equals("xab") || file.getName().equals("xac")
+                    || file.getName().equals("xad") || file.getName().equals("xae") || file.getName().equals("xaf")) {
                 file.delete();
             }
         }
