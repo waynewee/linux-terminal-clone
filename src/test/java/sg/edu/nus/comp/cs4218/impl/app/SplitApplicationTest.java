@@ -22,6 +22,8 @@ import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 class SplitApplicationTest {
     private static ByteArrayOutputStream outputStream;
     private static Application splitApplication;
+    private static String baseInputString1 = "heythere";
+    private static String baseInputString2 = "heythere\n";
 
     @BeforeAll
     static void prepareApplication() {
@@ -322,6 +324,119 @@ class SplitApplicationTest {
         assert(Files.exists(outputFilePath2));
         assert(Files.exists(outputFilePath3));
 
+        // Restore System.in
+        System.setIn(System.in);
+
+        // Remove output files in current directory
+        removeOutputFilesInCurrentDirectory();
+    }
+
+    @Test
+    public void run_onLineFlagWithStandardInput_SplitsInputIntoFiles() throws Exception {
+        // Prepare Args
+        String[] args = new String[2];
+        args[0] = "-l";
+        args[1] = "2";
+
+        // Prepare input stream
+        String inputString = baseInputString2.repeat(10);
+        ByteArrayInputStream inputStream = new ByteArrayInputStream((inputString + StringUtils.STRING_NEWLINE).getBytes());
+        System.setIn(inputStream);
+
+        splitApplication.run(args, inputStream, outputStream);
+        inputStream.close();
+
+        Path outputFilePath1 = Paths.get(Environment.currentDirectory, "xaa");
+        Path outputFilePath2 = Paths.get(Environment.currentDirectory, "xab");
+        Path outputFilePath3 = Paths.get(Environment.currentDirectory, "xac");
+
+        assert(Files.exists(outputFilePath1));
+        assert(Files.exists(outputFilePath2));
+        assert(Files.exists(outputFilePath3));
+
+        // Restore System.in
+        System.setIn(System.in);
+
+        // Remove output files in current directory
+        removeOutputFilesInCurrentDirectory();
+    }
+
+    @Test
+    public void run_onByteFlagWithBSuffixStandardInput_SplitsInputIntoFiles() throws Exception {
+        // Prepare Args
+        String[] args = new String[2];
+        args[0] = "-b";
+        args[1] = "1b";
+
+        // Prepare input stream
+        String inputString = baseInputString1.repeat(70);
+
+        ByteArrayInputStream inputStream = new ByteArrayInputStream((inputString + StringUtils.STRING_NEWLINE).getBytes());
+        System.setIn(inputStream);
+
+        splitApplication.run(args, inputStream, outputStream);
+        inputStream.close();
+
+        Path outputFilePath1 = Paths.get(Environment.currentDirectory, "xaa");
+//
+        assert(Files.exists(outputFilePath1));
+
+        // Restore System.in
+        System.setIn(System.in);
+
+        // Remove output files in current directory
+        removeOutputFilesInCurrentDirectory();
+    }
+
+    @Test
+    public void run_onByteFlagWithKSuffixStandardInput_SplitsInputIntoFiles() throws Exception {
+        // Prepare Args
+        String path = Paths.get(Environment.currentDirectory).toString();
+        String[] args = new String[2];
+        args[0] = "-b";
+        args[1] = "1k";
+
+        // Prepare input stream
+        String inputString = baseInputString1.repeat(150);
+
+        ByteArrayInputStream inputStream = new ByteArrayInputStream((inputString + StringUtils.STRING_NEWLINE).getBytes());
+        System.setIn(inputStream);
+
+        splitApplication.run(args, inputStream, outputStream);
+        inputStream.close();
+
+        Path outputFilePath1 = Paths.get(Environment.currentDirectory, "xaa");
+
+        assert(Files.exists(outputFilePath1));
+        // Restore System.in
+        System.setIn(System.in);
+
+        // Remove output files in current directory
+        removeOutputFilesInCurrentDirectory();
+    }
+
+    @Test
+    public void run_onByteFlagWithMSuffixStandardInput_SplitsInputIntoFiles() throws Exception {
+        // Prepare Args
+        String path = Paths.get(Environment.currentDirectory).toString();
+        String[] args = new String[2];
+        args[0] = "-b";
+        args[1] = "1m";
+
+        // Prepare input stream
+        String inputString = baseInputString1.repeat(500000);
+
+        ByteArrayInputStream inputStream = new ByteArrayInputStream((inputString + StringUtils.STRING_NEWLINE).getBytes());
+        System.setIn(inputStream);
+
+        splitApplication.run(args, inputStream, outputStream);
+        inputStream.close();
+
+        Path outputFilePath1 = Paths.get(Environment.currentDirectory, "xaa");
+        Path outputFilePath2 = Paths.get(Environment.currentDirectory, "xab");
+
+        assert(Files.exists(outputFilePath1));
+        assert(Files.exists(outputFilePath2));
         // Restore System.in
         System.setIn(System.in);
 
