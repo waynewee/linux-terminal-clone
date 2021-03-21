@@ -8,7 +8,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import sg.edu.nus.comp.cs4218.Command;
@@ -20,18 +21,9 @@ import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
 public class SequenceCommandTest {
 
-    private static ApplicationRunner applicationRunner;
-    private static ArgumentResolver argumentResolver;
-
-    @BeforeAll
-    static void instantiateVariables() {
-        applicationRunner = new ApplicationRunner();
-        argumentResolver = new ArgumentResolver();
-    }
-
     @Test
     void evaluate_TwoCommands_DisplaysBothResults() throws AbstractApplicationException, ShellException {
-        String expectedOutput = "main\n" + "test\n";
+        String expectedOutput = "destinationFolder\n" + "sourceFolder\n";
         expectedOutput = expectedOutput.replace("\n", STRING_NEWLINE);
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -39,12 +31,12 @@ public class SequenceCommandTest {
 
         List<String> argsList1 = new LinkedList<>();
         argsList1.add("cd");
-        argsList1.add("src");
-        commands.add(new CallCommand(argsList1, applicationRunner, argumentResolver));
+        argsList1.add("src/test/resources/impl/app/CpApplicationResources/valid_file");
+        commands.add(new CallCommand(argsList1, new ApplicationRunner(), new ArgumentResolver()));
 
         List<String> argsList2 = new LinkedList<>();
         argsList2.add("ls");
-        commands.add(new CallCommand(argsList2, applicationRunner, argumentResolver));
+        commands.add(new CallCommand(argsList2, new ApplicationRunner(), new ArgumentResolver()));
         new SequenceCommand(commands).evaluate(System.in, output);
         assertEquals(expectedOutput, output.toString());
     }
@@ -66,12 +58,12 @@ public class SequenceCommandTest {
         List<String> argsList1 = new LinkedList<>();
         argsList1.add("cd");
         argsList1.add("randomNonExistentFolder");
-        commands.add(new CallCommand(argsList1, applicationRunner, argumentResolver));
+        commands.add(new CallCommand(argsList1, new ApplicationRunner(), new ArgumentResolver()));
 
         List<String> argsList2 = new LinkedList<>();
         argsList2.add("ls");
         argsList2.add("src/test/resources/impl/app/CpApplicationResources/valid_file");
-        commands.add(new CallCommand(argsList2, applicationRunner, argumentResolver));
+        commands.add(new CallCommand(argsList2, new ApplicationRunner(), new ArgumentResolver()));
         new SequenceCommand(commands).evaluate(System.in, output);
         assertEquals(expectedOutput, output.toString());
     }
@@ -90,11 +82,11 @@ public class SequenceCommandTest {
 
         List<String> argsList1 = new LinkedList<>();
         argsList1.add("unimplementedCommand");
-        commands.add(new CallCommand(argsList1, applicationRunner, argumentResolver));
+        commands.add(new CallCommand(argsList1, new ApplicationRunner(), new ArgumentResolver()));
 
         List<String> argsList2 = new LinkedList<>();
         argsList2.add("unimplementedCommand");
-        commands.add(new CallCommand(argsList2, applicationRunner, argumentResolver));
+        commands.add(new CallCommand(argsList2, new ApplicationRunner(), new ArgumentResolver()));
         new SequenceCommand(commands).evaluate(System.in, output);
         assertEquals(expectedOutput, output.toString());
     }
