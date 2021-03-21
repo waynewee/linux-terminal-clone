@@ -29,13 +29,13 @@ class IORedirectionHandlerTest {
     private static File trueFile;
     private static File anotherTrueFile;
 
-    private static String[] TWO_INPUT_REDIRECTION_FILES = {"paste", "<", trueFilePath, anotherTrueFilePath};
-    private static String[] MULTIPLE_IOREDIRECTION_TOKENS = {"paste", "<", "<", nonExistentFilePath};
-    private static String[] OUTPUT_REDIRECTION_ONE_EXISTING_FILE = {"echo", "helloWorld", ">", trueFilePath};
-    private static String[] INPUT_REDIRECTION_ONE_EXISTING_FILE = {"paste", "<", trueFilePath};
-    private static String[] INPUT_REDIRECTION_ONE_NONEXISTENT_FILE = {"paste", "<", nonExistentFilePath};
-    private static String[] OUTPUT_REDIRECTION_ONE_NONEXISTENT_FILE = {"echo", "helloWorld", ">", anotherNonExistentFilePath};
-    private static String[] NO_FILES_PROVIDED = {"paste", "<"};
+    private static String[] twoInputRedirectionFiles = {"paste", "<", trueFilePath, anotherTrueFilePath};
+    private static String[] multipleIORedirectionTokens = {"paste", "<", "<", nonExistentFilePath};
+    private static String[] outputRedirectionOneExistingFile = {"echo", "helloWorld", ">", trueFilePath};
+    private static String[] inputRedirectionOneExistingFile = {"paste", "<", trueFilePath};
+    private static String[] inputRedirectionOneNonexistentFile = {"paste", "<", nonExistentFilePath};
+    private static String[] outputRedirectionOneNonexistentFile = {"echo", "helloWorld", ">", anotherNonExistentFilePath};
+    private static String[] noFilesProvided = {"paste", "<"};
 
     @BeforeAll
     static void setUp() throws IOException {
@@ -77,21 +77,21 @@ class IORedirectionHandlerTest {
 
     @Test
     void extractRedirOptions_inputRedirectionTwoFiles_throwsShellException() {
-        List<String> argsList = new ArrayList<String>(Arrays.asList(TWO_INPUT_REDIRECTION_FILES));
+        List<String> argsList = new ArrayList<String>(Arrays.asList(twoInputRedirectionFiles));
         IORedirectionHandler redirHandler = new IORedirectionHandler(argsList, System.in, testStream, argumentResolver);
         assertThrows(ShellException.class, () -> redirHandler.extractRedirOptions());
     }
 
     @Test
     void extractRedirOptions_noFilesProvided_throwsNoSuchElementException() {
-        List<String> argsList = new ArrayList<String>(Arrays.asList(NO_FILES_PROVIDED));
+        List<String> argsList = new ArrayList<String>(Arrays.asList(noFilesProvided));
         IORedirectionHandler redirHandler = new IORedirectionHandler(argsList, System.in, testStream, argumentResolver);
         assertThrows(NoSuchElementException.class, () -> redirHandler.extractRedirOptions());
     }
 
     @Test
     void extractRedirOptions_inputRedirectionOneExistingFile_readsFromFile() throws IOException {
-        List<String> argsList = new ArrayList<String>(Arrays.asList(INPUT_REDIRECTION_ONE_EXISTING_FILE));
+        List<String> argsList = new ArrayList<String>(Arrays.asList(inputRedirectionOneExistingFile));
         IORedirectionHandler redirHandler = new IORedirectionHandler(argsList, System.in, testStream, argumentResolver);
         assertDoesNotThrow(redirHandler::extractRedirOptions);
 
@@ -101,7 +101,7 @@ class IORedirectionHandlerTest {
 
     @Test
     void getNoRedirArgsList_outputRedirectionOneExistingFile_noRedirArgsListHasNoOutputRedirectionArgs() throws AbstractApplicationException, ShellException {
-        List<String> argsList = new ArrayList<String>(Arrays.asList(OUTPUT_REDIRECTION_ONE_EXISTING_FILE));
+        List<String> argsList = new ArrayList<String>(Arrays.asList(outputRedirectionOneExistingFile));
         IORedirectionHandler redirHandler = new IORedirectionHandler(argsList, System.in, testStream, argumentResolver);
         assertDoesNotThrow(redirHandler::extractRedirOptions);
         List<String> noRedirArgsList = redirHandler.getNoRedirArgsList();
@@ -110,7 +110,7 @@ class IORedirectionHandlerTest {
 
     @Test
     void getNoRedirArgsList_inputRedirectionOneExistingFile_noRedirArgsListHasNoInputRedirectionArgs() throws AbstractApplicationException, ShellException {
-        List<String> argsList = new ArrayList<String>(Arrays.asList(INPUT_REDIRECTION_ONE_EXISTING_FILE));
+        List<String> argsList = new ArrayList<String>(Arrays.asList(inputRedirectionOneExistingFile));
         IORedirectionHandler redirHandler = new IORedirectionHandler(argsList, System.in, testStream, argumentResolver);
         assertDoesNotThrow(redirHandler::extractRedirOptions);
         List<String> noRedirArgsList = redirHandler.getNoRedirArgsList();
@@ -120,14 +120,14 @@ class IORedirectionHandlerTest {
 
     @Test
     void extractRedirOptions_inputRedirectionOneNonExistentFile_throwsShellException() {
-        List<String> argsList = new ArrayList<String>(Arrays.asList(INPUT_REDIRECTION_ONE_NONEXISTENT_FILE));
+        List<String> argsList = new ArrayList<String>(Arrays.asList(inputRedirectionOneNonexistentFile));
         IORedirectionHandler redirHandler = new IORedirectionHandler(argsList, System.in, testStream, argumentResolver);
         assertThrows(ShellException.class, redirHandler::extractRedirOptions);
     }
 
     @Test
     void extractRedirOptions_outputRedirectionOneNonExistentFile_throwsNoErrors() throws IOException {
-        List<String> argsList = new ArrayList<String>(Arrays.asList(OUTPUT_REDIRECTION_ONE_NONEXISTENT_FILE));
+        List<String> argsList = new ArrayList<String>(Arrays.asList(outputRedirectionOneNonexistentFile));
 
         IORedirectionHandler redirHandler = new IORedirectionHandler(argsList, System.in, testStream, argumentResolver);
         assertDoesNotThrow(redirHandler::extractRedirOptions);
@@ -136,7 +136,7 @@ class IORedirectionHandlerTest {
 
     @Test
     void extractRedirOptions_multipleIoRedirectionTokens_throwsShellException() {
-        List<String> argsList = new ArrayList<String>(Arrays.asList(MULTIPLE_IOREDIRECTION_TOKENS));
+        List<String> argsList = new ArrayList<String>(Arrays.asList(multipleIORedirectionTokens));
         IORedirectionHandler redirHandler = new IORedirectionHandler(argsList, System.in, testStream, argumentResolver);
         assertThrows(ShellException.class, redirHandler::extractRedirOptions);
     }
