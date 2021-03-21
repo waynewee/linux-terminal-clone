@@ -19,8 +19,6 @@ import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 
 public class MvApplication implements MvInterface {
 
-    private MvArguments arguments = null;
-
     /**
      * Runs the mv application with the specified arguments.
      *
@@ -40,10 +38,10 @@ public class MvApplication implements MvInterface {
         try {
             parser.parse(args);
         } catch (InvalidArgsException e) {
-            throw new MvException(e.getMessage());
+            throw new MvException(e.getMessage(), e);
         }
 
-        arguments = parser.getArguments();
+        MvArguments arguments = parser.getArguments();
 
         // Check if target exists
         String targetPath = arguments.getDestPath();
@@ -57,9 +55,9 @@ public class MvApplication implements MvInterface {
             } catch (MvException mve) {
                 throw mve;
             } catch (FileAlreadyExistsException fae) {
-                throw new MvException(ERR_TARGET_EXISTS);
+                throw new MvException(ERR_TARGET_EXISTS, fae);
             } catch (Exception e) {
-                throw new MvException(ERR_MV_GENERIC);
+                throw new MvException(ERR_MV_GENERIC, e);
             }
         } else {
             // First form
@@ -69,13 +67,11 @@ public class MvApplication implements MvInterface {
             } catch (MvException mve) {
                 throw mve;
             } catch (FileAlreadyExistsException fae) {
-                throw new MvException(ERR_TARGET_EXISTS);
+                throw new MvException(ERR_TARGET_EXISTS, fae);
             } catch (Exception e) {
-                throw new MvException(ERR_MV_GENERIC);
+                throw new MvException(ERR_MV_GENERIC, e);
             }
         }
-        // Important because arguments is static
-        arguments = null;
     }
 
     /**

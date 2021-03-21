@@ -1,6 +1,5 @@
 package sg.edu.nus.comp.cs4218.impl.app.args;
 
-import sg.edu.nus.comp.cs4218.exception.GrepException;
 import sg.edu.nus.comp.cs4218.exception.WcException;
 
 import java.util.ArrayList;
@@ -12,9 +11,9 @@ import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_FLAG_PREFIX;
 
 public class WcArguments {
 
-    public static final char CHAR_BYTES_OPTION = 'c';
-    public static final char CHAR_LINES_OPTION = 'l';
-    public static final char CHAR_WORDS_OPTION = 'w';
+    public static final char BYTES_FLAG = 'c';
+    public static final char LINES_FLAG = 'l';
+    public static final char WORDS_FLAG = 'w';
     private final List<String> files;
     private boolean lines, words, bytes;
 
@@ -34,9 +33,6 @@ public class WcArguments {
         if (args == null) {
             throw new WcException(ERR_NULL_ARGS);
         }
-        if (args.length < 1) {
-            throw new WcException(ERR_NO_REGEX);
-        }
 
         boolean parsingFlag = true;
         // Parse arguments=
@@ -46,15 +42,15 @@ public class WcArguments {
             }
             // `parsingFlag` is to ensure all flags come first, followed by files.
             if (parsingFlag && arg.charAt(0) == CHAR_FLAG_PREFIX) {
-                if (arg.equals(CHAR_FLAG_PREFIX + "" + CHAR_BYTES_OPTION)) {
+                if (arg.equals(CHAR_FLAG_PREFIX + "" + BYTES_FLAG)) {
                     this.bytes = true;
                     continue;
                 }
-                if (arg.equals(CHAR_FLAG_PREFIX + "" + CHAR_WORDS_OPTION)) {
+                if (arg.equals(CHAR_FLAG_PREFIX + "" + WORDS_FLAG)) {
                     this.words = true;
                     continue;
                 }
-                if (arg.equals(CHAR_FLAG_PREFIX + "" + CHAR_LINES_OPTION)) {
+                if (arg.equals(CHAR_FLAG_PREFIX + "" + LINES_FLAG)) {
                     this.lines = true;
                     continue;
                 }
@@ -63,15 +59,15 @@ public class WcArguments {
 
                 for (int i = 1; i < arg.toCharArray().length; i++) {
                     char argChar = arg.toCharArray()[i];
-                    if (argChar == CHAR_BYTES_OPTION) {
+                    if (argChar == BYTES_FLAG) {
                         this.bytes = true;
                         continue;
                     }
-                    if (argChar == CHAR_WORDS_OPTION) {
+                    if (argChar == WORDS_FLAG) {
                         this.words = true;
                         continue;
                     }
-                    if (argChar == CHAR_LINES_OPTION) {
+                    if (argChar == LINES_FLAG) {
                         this.lines = true;
                         continue;
                     }

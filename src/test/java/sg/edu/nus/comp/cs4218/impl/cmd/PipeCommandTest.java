@@ -2,7 +2,7 @@ package sg.edu.nus.comp.cs4218.impl.cmd;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import sg.edu.nus.comp.cs4218.Environment;
+import sg.edu.nus.comp.cs4218.EnvironmentUtil;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
 import sg.edu.nus.comp.cs4218.impl.util.ApplicationRunner;
@@ -47,7 +47,7 @@ class PipeCommandTest {
         List<String> tokens1 = new LinkedList<>();
         Path testsResourcesDir = Paths.get("src", "test", "resources", "impl", "app", "PipeCommandResources");
         tokens1.add("ls");
-        tokens1.add(Paths.get(Environment.currentDirectory, testsResourcesDir.toString()).toString());
+        tokens1.add(Paths.get(testsResourcesDir.toString()).toString());
 
         // Initialise callCommand
         CallCommand callCommand1 = new CallCommand(tokens1, new ApplicationRunner(), new ArgumentResolver());
@@ -78,7 +78,7 @@ class PipeCommandTest {
         List<String> tokens1 = new LinkedList<>();
         Path testsResourcesDir = Paths.get("src", "test", "resources", "impl", "app", "PipeCommandResources");
         tokens1.add("cat");
-        tokens1.add(Paths.get(Environment.currentDirectory, testsResourcesDir.toString(), "git1.txt").toString());
+        tokens1.add(Paths.get(EnvironmentUtil.currentDirectory, testsResourcesDir.toString(), "git1.txt").toString());
         // Initialise 'grep' command as token
         CallCommand callCommand1 = new CallCommand(tokens1, new ApplicationRunner(), new ArgumentResolver());
 

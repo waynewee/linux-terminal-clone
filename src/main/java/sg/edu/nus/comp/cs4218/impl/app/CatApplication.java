@@ -37,17 +37,19 @@ public class CatApplication implements CatInterface {
         try {
             if (catArgs.getFiles().isEmpty()) {
                 result = catStdin(catArgs.isLineNumber(), stdin);
-            } else {
+            } else if (stdin == null) {
                 result = catFiles(catArgs.isLineNumber(), catArgs.getFiles().toArray(new String[0]));
+            } else {
+                result = catFileAndStdin(catArgs.isLineNumber(), stdin, catArgs.getFiles().toArray(new String[0]));
             }
         } catch (Exception e) {
-            throw new CatException(ERR_GENERAL);
+            throw new CatException(ERR_GENERAL, e);
         }
         try {
             stdout.write(result.getBytes());
             stdout.write(STRING_NEWLINE.getBytes());
         } catch (IOException e) {
-            throw new CatException(ERR_WRITE_STREAM);
+            throw new CatException(ERR_WRITE_STREAM, e);
         }
     }
 
@@ -66,10 +68,6 @@ public class CatApplication implements CatInterface {
             }
             if (node.isDirectory()) {
                 result.add(new CatException(ERR_IS_DIR).getMessage());
-                continue;
-            }
-            if (!node.canRead()) {
-                result.add(new CatException(ERR_NO_PERM).getMessage());
                 continue;
             }
 
@@ -102,7 +100,7 @@ public class CatApplication implements CatInterface {
         while (scanner.hasNextLine()) {
             String line = scanner.nextLine();
             if (isLineNumber) {
-                result.append(lineNumber).append(" ");
+                result.append(lineNumber).append(' ');
             }
             result.append(line);
             if (scanner.hasNextLine()) {
@@ -129,10 +127,6 @@ public class CatApplication implements CatInterface {
             }
             if (node.isDirectory()) {
                 result.add(new CatException(ERR_IS_DIR).getMessage());
-                continue;
-            }
-            if (!node.canRead()) {
-                result.add(new CatException(ERR_NO_PERM).getMessage());
                 continue;
             }
 

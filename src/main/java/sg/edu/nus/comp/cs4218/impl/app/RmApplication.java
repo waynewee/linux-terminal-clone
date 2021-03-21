@@ -8,7 +8,6 @@ import sg.edu.nus.comp.cs4218.impl.parser.RmArgsParser;
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Objects;
 
 public class RmApplication implements RmInterface {
     /**
@@ -28,8 +27,8 @@ public class RmApplication implements RmInterface {
             if (parser.getFilesPaths().length == 0) {
                 throw new InvalidArgsException("File name missing");
             }
-        } catch (InvalidArgsException iae) {
-            throw new RmException(iae.getMessage());
+        } catch (Exception e) {
+            throw new RmException(e.getMessage(), e);
         }
         // Give it to helper function
         remove(parser.isDirectory(), parser.isRecursive(), parser.getFilesPaths());
@@ -76,7 +75,7 @@ public class RmApplication implements RmInterface {
             } catch (Exception e) {
                 // Collate all the exception messages
                 errorMsg.append(e.getMessage());
-                errorMsg.append("\n");
+                errorMsg.append('\n');
             }
         }
 
@@ -90,7 +89,7 @@ public class RmApplication implements RmInterface {
 
         File[] subFiles = file.listFiles();
         if (subFiles != null) {
-            for (File subFile : file.listFiles()) {
+            for (File subFile : subFiles) {
                 removeRecursive(subFile);
             }
         }
@@ -100,7 +99,7 @@ public class RmApplication implements RmInterface {
                 throw new Exception("File removal failed. File: " + file.getPath());
             }
         } catch (Exception e) {
-            throw new RmException(e.getMessage());
+            throw new RmException(e.getMessage(), e);
         }
     }
 }

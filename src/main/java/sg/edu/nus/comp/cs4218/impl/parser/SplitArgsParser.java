@@ -1,6 +1,6 @@
 package sg.edu.nus.comp.cs4218.impl.parser;
 
-import sg.edu.nus.comp.cs4218.Environment;
+import sg.edu.nus.comp.cs4218.EnvironmentUtil;
 import sg.edu.nus.comp.cs4218.exception.InvalidArgsException;
 
 import java.nio.file.Files;
@@ -11,8 +11,8 @@ import static java.lang.Integer.parseInt;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 
 public class SplitArgsParser extends ArgsParser{
-    private final static char FLAG_IS_SPLIT_BY_LINE = 'l';
-    private final static char FLAG_IS_SPLIT_BY_BYTES = 'b';
+    private final static char LINE_FLAG = 'l';
+    private final static char BYTES_FLAG = 'b';
 
     private int splitSize = 1000;
     private String splitSuffix = "";
@@ -23,8 +23,8 @@ public class SplitArgsParser extends ArgsParser{
 
     public SplitArgsParser() {
         super();
-        legalFlags.add(FLAG_IS_SPLIT_BY_LINE);
-        legalFlags.add(FLAG_IS_SPLIT_BY_BYTES);
+        legalFlags.add(LINE_FLAG);
+        legalFlags.add(BYTES_FLAG);
     }
 
     public void processArguments() throws InvalidArgsException {
@@ -33,7 +33,7 @@ public class SplitArgsParser extends ArgsParser{
         }
 
         if (noFlagsGiven()) {
-            flags.add(FLAG_IS_SPLIT_BY_LINE);
+            flags.add(LINE_FLAG);
             if (nonFlagArgs.isEmpty()) {
                 standardInput = true;
             } else if (nonFlagArgs.size() == 1) {
@@ -90,8 +90,8 @@ public class SplitArgsParser extends ArgsParser{
         // Validate split size
         try {
             splitSize = parseInt(temp);
-        } catch (NumberFormatException numberFormatException) {
-            throw new InvalidArgsException(ERR_INVALID_ARG);
+        } catch (NumberFormatException nfe) {
+            throw new InvalidArgsException(ERR_INVALID_ARG, nfe);
         }
     }
 
@@ -107,8 +107,8 @@ public class SplitArgsParser extends ArgsParser{
         if (Files.exists(Paths.get(rawFileName))) {
             fileName = Paths.get(rawFileName);
             return;
-        } else if (Files.exists(Paths.get(Environment.currentDirectory, rawFileName))) {
-            fileName = Paths.get(Environment.currentDirectory, rawFileName);
+        } else if (Files.exists(Paths.get(EnvironmentUtil.currentDirectory, rawFileName))) {
+            fileName = Paths.get(EnvironmentUtil.currentDirectory, rawFileName);
             return;
         }
 
@@ -116,19 +116,19 @@ public class SplitArgsParser extends ArgsParser{
     }
 
     public boolean splitByBothBytesAndLines() {
-        return flags.contains(FLAG_IS_SPLIT_BY_BYTES) && flags.contains(FLAG_IS_SPLIT_BY_LINE);
+        return flags.contains(BYTES_FLAG) && flags.contains(LINE_FLAG);
     }
 
     public boolean noFlagsGiven() {
-        return !flags.contains(FLAG_IS_SPLIT_BY_BYTES) && !flags.contains(FLAG_IS_SPLIT_BY_LINE);
+        return !flags.contains(BYTES_FLAG) && !flags.contains(LINE_FLAG);
     }
 
     public Boolean isSplitByBytes() {
-        return flags.contains(FLAG_IS_SPLIT_BY_BYTES);
+        return flags.contains(BYTES_FLAG);
     }
 
     public boolean isSplitByLines() {
-        return flags.contains(FLAG_IS_SPLIT_BY_LINE);
+        return flags.contains(LINE_FLAG);
     }
 
     public int getSplitSize() {
@@ -148,10 +148,10 @@ public class SplitArgsParser extends ArgsParser{
     }
 
     public String getFileName() {
-        if (fileName != null) {
-            return fileName.toString();
-        } else {
+        if (fileName == null) {
             return null;
+        } else {
+            return fileName.toString();
         }
     }
 }

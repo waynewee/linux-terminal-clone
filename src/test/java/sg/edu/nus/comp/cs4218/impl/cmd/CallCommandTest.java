@@ -2,7 +2,7 @@ package sg.edu.nus.comp.cs4218.impl.cmd;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import sg.edu.nus.comp.cs4218.Environment;
+import sg.edu.nus.comp.cs4218.EnvironmentUtil;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
 import sg.edu.nus.comp.cs4218.impl.util.ApplicationRunner;
@@ -45,7 +45,7 @@ class CallCommandTest {
 
         // Prepare correct output
         boolean correctOutput;
-        correctOutput = Objects.requireNonNull(new File(Environment.currentDirectory).listFiles()).length == 0;
+        correctOutput = Objects.requireNonNull(new File(EnvironmentUtil.currentDirectory).listFiles()).length == 0;
 
         callCommand.evaluate(System.in, outputStream);
         assertEquals(correctOutput, outputStream.toString().isEmpty());

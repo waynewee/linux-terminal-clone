@@ -7,9 +7,7 @@ import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
-import java.util.Vector;
 
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
@@ -35,7 +33,6 @@ public class WcApplication implements WcInterface {
     @Override
     public void run(String[] args, InputStream stdin, OutputStream stdout)
             throws WcException {
-        // Format: wc [-clw] [FILES]
         if (stdout == null) {
             throw new WcException(ERR_NULL_STREAMS);
         }
@@ -45,8 +42,10 @@ public class WcApplication implements WcInterface {
         try {
             if (wcArgs.getFiles().isEmpty()) {
                 result = countFromStdin(wcArgs.isBytes(), wcArgs.isLines(), wcArgs.isWords(), stdin);
-            } else {
+            } else if (stdin == null) {
                 result = countFromFiles(wcArgs.isBytes(), wcArgs.isLines(), wcArgs.isWords(), wcArgs.getFiles().toArray(new String[0]));
+            } else {
+                result = countFromFileAndStdin(wcArgs.isBytes(), wcArgs.isLines(), wcArgs.isWords(), stdin, wcArgs.getFiles().toArray(new String[0]));
             }
         } catch (Exception e) {
             // Will never happen
@@ -80,17 +79,12 @@ public class WcApplication implements WcInterface {
         boolean displayAll = !isLines && !isWords && !isBytes;
         for (String file : fileName) {
             File node = IOUtils.resolveFilePath(file).toFile();
-
             if (!node.exists()) {
                 result.add(new WcException(ERR_FILE_NOT_FOUND).getMessage());
                 continue;
             }
             if (node.isDirectory()) {
                 result.add(new WcException(ERR_IS_DIR).getMessage());
-                continue;
-            }
-            if (!node.canRead()) {
-                result.add(new WcException(ERR_NO_PERM).getMessage());
                 continue;
             }
 
@@ -165,16 +159,16 @@ public class WcApplication implements WcInterface {
         boolean displayAll = !isLines && !isWords && !isBytes;
         StringBuilder sb = new StringBuilder(); //NOPMD
         if (isLines || displayAll) {
-            sb.append(" ").append(count[0]);
+            sb.append(' ').append(count[0]);
         }
         if (isWords || displayAll) {
-            sb.append(" ").append(count[1]);
+            sb.append(' ').append(count[1]);
         }
         if (isBytes || displayAll) {
-            sb.append(" ").append(count[2]);
+            sb.append(' ').append(count[2]);
         }
 
-        sb.append(" ").append("stdin");
+        sb.append(" stdin");
 
         return sb.toString();
     }
@@ -193,15 +187,11 @@ public class WcApplication implements WcInterface {
         for (String file : fileName) {
             File node = IOUtils.resolveFilePath(file).toFile();
             if (!node.exists()) {
-                result.add("wc: " + ERR_FILE_NOT_FOUND);
+                result.add(new WcException(ERR_FILE_NOT_FOUND).getMessage());
                 continue;
             }
             if (node.isDirectory()) {
-                result.add("wc: " + ERR_IS_DIR);
-                continue;
-            }
-            if (!node.canRead()) {
-                result.add("wc: " + ERR_NO_PERM);
+                result.add(new WcException(ERR_IS_DIR).getMessage());
                 continue;
             }
             InputStream input = IOUtils.openInputStream(file);
@@ -244,7 +234,7 @@ public class WcApplication implements WcInterface {
             sb.append(String.format(NUMBER_FORMAT, count[2]));
         }
 
-        sb.append(" ").append("stdin");
+        sb.append(" stdin");
 
         result.add(sb.toString());
 
@@ -271,9 +261,7 @@ public class WcApplication implements WcInterface {
      * @throws IOException
      */
     public long[] getCountReport(InputStream input) throws Exception {
-        if (input == null) {
-            throw new WcException(ERR_NULL_STREAMS);
-        }
+
         long[] result = new long[3]; // lines, words, bytes
 
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
