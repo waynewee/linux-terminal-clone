@@ -21,10 +21,10 @@ class IORedirectionHandlerTest {
 
     private static ArgumentResolver argumentResolver;
     private static ByteArrayOutputStream testStream;
-    private static String nonExistentFilePath = "someNonExistentFile.txt";
-    private static String anotherNonExistentFilePath = "anotherNonExistentFile.txt";
-    private static String trueFilePath = "trueFile.txt";
-    private static String anotherTrueFilePath = "anotherTrueFile.txt";
+    private static final String nonExistentFilePath = "IORedirectionHandler_someNonExistentFile.txt";
+    private static final String anotherNonExistentFilePath = "IORedirectionHandler_anotherNonExistentFile.txt";
+    private static final String trueFilePath = "IORedirectionHandler_trueFile.txt";
+    private static final String anotherTrueFilePath = "IORedirectionHandler_anotherTrueFile.txt";
 
     private static File trueFile;
     private static File anotherTrueFile;
@@ -38,27 +38,31 @@ class IORedirectionHandlerTest {
     private static String[] noFilesProvided = {"paste", "<"};
 
     @BeforeAll
-    static void setUp() throws IOException {
+    static void setUp() {
         argumentResolver = new ArgumentResolver();
         testStream = new ByteArrayOutputStream();
 
         File nonExistentFile = new File(nonExistentFilePath);
         nonExistentFile.delete();
+        nonExistentFile.deleteOnExit();
 
         File anotherNonExistentFile = new File(anotherNonExistentFilePath);
         anotherNonExistentFile.delete();
+        anotherNonExistentFile.deleteOnExit();
     }
 
     @BeforeEach
     void setupBeforeEachTest() throws IOException {
         trueFile = new File(trueFilePath);
         trueFile.createNewFile();
+        trueFile.deleteOnExit();
         FileWriter trueFileWriter = new FileWriter(trueFile, false);
         trueFileWriter.write("Mark of the true file");
         trueFileWriter.close();
 
         anotherTrueFile = new File(anotherTrueFilePath);
         anotherTrueFile.createNewFile();
+        anotherTrueFile.deleteOnExit();
         FileWriter anotherTrueFileWriter = new FileWriter(anotherTrueFile, false);
         anotherTrueFileWriter.close();
     }
@@ -73,6 +77,7 @@ class IORedirectionHandlerTest {
     static void tearDownAfterAll() {
         File anotherNonExistentFile = new File(anotherNonExistentFilePath);
         anotherNonExistentFile.delete();
+        anotherNonExistentFile.deleteOnExit();
     }
 
     @Test

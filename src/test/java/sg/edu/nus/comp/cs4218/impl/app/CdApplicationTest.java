@@ -3,7 +3,11 @@ package sg.edu.nus.comp.cs4218.impl.app;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -15,10 +19,14 @@ import sg.edu.nus.comp.cs4218.exception.CdException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 
 class CdApplicationTest {
     static CdApplication cdApplication;
     static String originalDir;
+    static InputStream mockInputStream = Mockito.mock(InputStream.class);
+    static OutputStream mockOutputStream = Mockito.mock(OutputStream.class);
 
     @BeforeAll
     static void setUp() throws IOException {
@@ -57,5 +65,25 @@ class CdApplicationTest {
     @Test
     void changeToDirectory_relativePathNonExistant_throwsCdException() {
         assertThrows(CdException.class, () -> cdApplication.changeToDirectory("." + File.separator + ".nonExistantDirectory"));
+    }
+
+    @Test
+    void changeToDirectory_nullPath_throwsCdException() {
+        assertThrows(CdException.class, () -> cdApplication.changeToDirectory(null));
+    }
+
+    @Test
+    void run_nullArgs_throwsCdException() {
+        assertThrows(CdException.class, () -> cdApplication.run(null, mockInputStream, mockOutputStream));
+    }
+
+    @Test
+    void changeToDirectory_emptyPath_throwsCdException() {
+        assertThrows(CdException.class, () -> cdApplication.changeToDirectory(""));
+    }
+
+    @Test
+    void changeToDirectory_isFile_throwsCdException() {
+        assertThrows(CdException.class, () -> cdApplication.changeToDirectory(".gitignore"));
     }
 }

@@ -1,5 +1,6 @@
 package sg.edu.nus.comp.cs4218.integration;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,10 +20,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class TeeIntegationTest {
     private static Shell testShell;
     private static OutputStream mockOutputStream;
-    private static String tempFilePath = "temp.txt";
-    private static String existingFilePath = "existing.txt";
-    private static String anotherExistingFilePath = "anotherExisting.txt";
-    private static String nonExistentFilePath = "nonExistent.txt";
+    private static final String tempFilePath = "teeIntegration_temp.txt";
+    private static final String existingFilePath = "teeIntegration_Existing.txt";
+    private static final String anotherExistingFilePath = "teeIntegration_AnotherExisting.txt";
+    private static final String nonExistentFilePath = "teeIntegration_nonExistent.txt";
     private static File tempFile;
     private static File existingFile;
     private static File anotherExistingFile;
@@ -57,18 +58,18 @@ public class TeeIntegationTest {
 
     @AfterEach
     void teardownEach() {
-        if (tempFile != null) {
-            tempFile.delete();
-        }
-        if (existingFile != null) {
-            existingFile.delete();
-        }
-        if (anotherExistingFile != null) {
-            anotherExistingFile.delete();
-        }
-        if (nonExistentFile != null) {
-            nonExistentFile.delete();
-        }
+        tempFile.delete();
+        existingFile.delete();
+        anotherExistingFile.delete();
+        nonExistentFile.delete();
+    }
+
+    @AfterAll
+    static void teardownAfterAll() {
+        tempFile.delete();
+        existingFile.delete();
+        anotherExistingFile.delete();
+        nonExistentFile.delete();
     }
 
 

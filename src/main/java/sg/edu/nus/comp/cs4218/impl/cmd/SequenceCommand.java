@@ -31,6 +31,9 @@ public class SequenceCommand implements Command {
             throws AbstractApplicationException, ShellException {
         ExitException exitException = null;
         List<String> outputLines = new LinkedList<>();
+        if (commands == null) {
+            return;
+        }
 
         for (Command command : commands) {
             try {
