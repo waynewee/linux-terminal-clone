@@ -3,20 +3,16 @@ package sg.edu.nus.comp.cs4218.impl.util;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_SYNTAX;
 
-import java.io.FileNotFoundException;
-import java.time.Duration;
 import java.util.List;
 
 import sg.edu.nus.comp.cs4218.Command;
-import sg.edu.nus.comp.cs4218.Shell;
+
 import sg.edu.nus.comp.cs4218.impl.cmd.CallCommand;
 import sg.edu.nus.comp.cs4218.impl.cmd.SequenceCommand;
-import sg.edu.nus.comp.cs4218.impl.util.ApplicationRunner;
-import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 class CommandBuilderTest {
@@ -113,5 +109,26 @@ class CommandBuilderTest {
         Command command = CommandBuilder.parseCommand("echo hi; echo bye; echo cat", new ApplicationRunner());
         SequenceCommand sequenceCommand = (SequenceCommand) command;
         assertEquals(3, sequenceCommand.getCommands().size());
+    }
+
+    @Test
+    void parseCommand_onePipeOneSemiColon_makesTwoCommands() throws Exception {
+        Command command = CommandBuilder.parseCommand("cat PMD.Rules.xml | grep \"This\"; ls", new ApplicationRunner());
+        SequenceCommand sequenceCommand = (SequenceCommand) command;
+        assertEquals(2, sequenceCommand.getCommands().size());
+    }
+
+    @Test
+    void main_SemicolonFirst_ThrowException() {
+        assertThrows(ShellException.class, () -> {
+            CommandBuilder.parseCommand("; ls", new ApplicationRunner());
+        }, ERR_SYNTAX);
+    }
+
+    @Test
+    void main_PipeFirst_ThrowException() {
+        assertThrows(ShellException.class, () -> {
+            CommandBuilder.parseCommand("| ls", new ApplicationRunner());
+        }, ERR_SYNTAX);
     }
 }
