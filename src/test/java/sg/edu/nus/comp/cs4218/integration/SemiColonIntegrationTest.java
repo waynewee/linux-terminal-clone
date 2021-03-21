@@ -1,18 +1,28 @@
 package sg.edu.nus.comp.cs4218.integration;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
+import sg.edu.nus.comp.cs4218.EnvironmentUtil;
+import sg.edu.nus.comp.cs4218.Shell;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
 import sg.edu.nus.comp.cs4218.impl.ShellImpl;
 import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
+
 import java.io.ByteArrayOutputStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 
-public class SemicolonIntegrationTest {
-    private static ShellImpl testShell;
+public class SemiColonIntegrationTest {
+    private static Shell testShell;
+    private static final String ROOT = EnvironmentUtil.currentDirectory;
     private static ByteArrayOutputStream outputStream;
+
+    @AfterAll
+    static void resetAll() {
+        EnvironmentUtil.currentDirectory = ROOT;
+    }
 
     @Test
     void evaluate_TwoCommands_DisplaysBothResults() throws AbstractApplicationException, ShellException {
@@ -50,7 +60,7 @@ public class SemicolonIntegrationTest {
         assertEquals(expectedOutput, outputStream.toString());
     }
 
-            @Test
+    @Test
     void evaluate_TwoCommands_DisplaysFirstAndSecondException() throws AbstractApplicationException, ShellException {
         testShell = new ShellImpl();
         outputStream = new ByteArrayOutputStream();
