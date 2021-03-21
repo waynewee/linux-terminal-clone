@@ -8,4 +8,8 @@ public class SplitException extends AbstractApplicationException{
         super("split: " + message);
     }
 
+    public SplitException(String message, Throwable exception) {
+        super("split: " + message, exception);
+    }
+
 }

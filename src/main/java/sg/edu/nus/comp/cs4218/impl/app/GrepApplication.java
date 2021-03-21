@@ -1,6 +1,6 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
-import sg.edu.nus.comp.cs4218.Environment;
+import sg.edu.nus.comp.cs4218.EnvironmentUtil;
 import sg.edu.nus.comp.cs4218.app.GrepInterface;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.GrepException;
@@ -8,7 +8,6 @@ import sg.edu.nus.comp.cs4218.impl.app.args.GrepArguments;
 import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 
 import java.io.*;
-import java.nio.Buffer;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -82,6 +81,7 @@ public class GrepApplication implements GrepInterface {
                 grepResults.exceptionMessages.add(exceptionMessage);
                 grepResultsList.add(grepResults);
                 continue;
+
             }
             if (file.isDirectory()) { // ignore if it's a directory
                 String exceptionMessage = new GrepException(file.getName() + ": " + ERR_IS_DIR).getMessage();
@@ -120,7 +120,7 @@ public class GrepApplication implements GrepInterface {
             }
             reader.close();
         } catch (PatternSyntaxException pse) {
-            throw new GrepException(ERR_INVALID_REGEX);
+            throw new GrepException(ERR_INVALID_REGEX, pse);
         }
 
         return grepResults;
@@ -135,7 +135,7 @@ public class GrepApplication implements GrepInterface {
      */
     private String convertToAbsolutePath(String fileName) {
         String home = System.getProperty("user.home").trim();
-        String currentDir = Environment.currentDirectory.trim();
+        String currentDir = EnvironmentUtil.currentDirectory.trim();
         String convertedPath = convertPathToSystemPath(fileName);
 
         String newPath;
@@ -218,7 +218,7 @@ public class GrepApplication implements GrepInterface {
         } catch (GrepException grepException) {
             throw grepException;
         } catch (Exception e) {
-            throw new GrepException(e.getMessage());
+            throw new GrepException(e.getMessage(), e);
         }
     }
 
@@ -230,9 +230,8 @@ public class GrepApplication implements GrepInterface {
         if (stdin == null) {
             throw new GrepException(ERR_NULL_STREAMS);
         }
-        ArrayList<GrepResults> fileGrepResultsList = grepResultsFromFiles(pattern, isCaseInsensitive, isPrefixFileName, fileNames);
         GrepResults stdinGrepResults = grepResults(pattern, isCaseInsensitive, stdin);
-        ArrayList<GrepResults> grepResultsList = new ArrayList<>(fileGrepResultsList);
+        ArrayList<GrepResults> grepResultsList = grepResultsFromFiles(pattern, isCaseInsensitive, isPrefixFileName, fileNames);
         grepResultsList.add(stdinGrepResults);
         StringJoiner stringJoiner = new StringJoiner(STRING_NEWLINE);
         for (GrepResults grepResults : grepResultsList) {
@@ -261,14 +260,14 @@ public class GrepApplication implements GrepInterface {
 
         public void getCount(boolean isSingleFile, StringJoiner stringJoiner) {
             String count = Integer.toString(lines.size());
-            if (!isSingleFile){
+            if (isSingleFile){
+                stringJoiner.add(count);
+            } else {
                 if (file == null) {
                     stringJoiner.add("stdin: " + count);
                 } else {
                     stringJoiner.add(file + ": " + count);
                 }
-            } else {
-                stringJoiner.add(count);
             }
         }
 

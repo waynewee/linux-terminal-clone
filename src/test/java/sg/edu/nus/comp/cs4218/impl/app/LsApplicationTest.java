@@ -4,7 +4,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import sg.edu.nus.comp.cs4218.Application;
-import sg.edu.nus.comp.cs4218.Environment;
+import sg.edu.nus.comp.cs4218.EnvironmentUtil;
 import sg.edu.nus.comp.cs4218.exception.InvalidArgsException;
 import sg.edu.nus.comp.cs4218.exception.LsException;
 
@@ -192,6 +192,7 @@ class LsApplicationTest {
         // Prepare args
         Path testsResourcesDir = getTestsResourcesDir("test_recursive");
         String path = Paths.get(testsResourcesDir.toString()).toString();
+
         String[] args = new String[2];
         args[0] = "-R";
         args[1] = path;
@@ -210,6 +211,7 @@ class LsApplicationTest {
         // Prepare args
         Path testsResourcesDir = getTestsResourcesDir("test_recursive_directories");
         String path = Paths.get(testsResourcesDir.toString()).toString();
+
         String[] args = new String[3];
         args[0] = "-R";
         args[1] = "-d";
@@ -229,6 +231,7 @@ class LsApplicationTest {
         // Prepare args
         Path testsResourcesDir = getTestsResourcesDir("test_recursive_sort");
         String path = Paths.get(testsResourcesDir.toString()).toString();
+
         String[] args = new String[3];
         args[0] = "-R";
         args[1] = "-X";
@@ -248,6 +251,7 @@ class LsApplicationTest {
         // Prepare args
         Path testsResourcesDir = getTestsResourcesDir("test_folders_sort");
         String path = Paths.get(testsResourcesDir.toString()).toString();
+
         String[] args = new String[3];
         args[0] = "-d";
         args[1] = "-X";
@@ -267,6 +271,7 @@ class LsApplicationTest {
         // Prepare args
         Path testsResourcesDir = getTestsResourcesDir("test_folders_sort_recursive");
         String path = Paths.get(testsResourcesDir.toString()).toString();
+
         String[] args = new String[4];
         args[0] = "-d";
         args[1] = "-X";

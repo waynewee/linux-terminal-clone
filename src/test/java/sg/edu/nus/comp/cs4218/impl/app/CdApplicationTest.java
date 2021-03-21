@@ -9,7 +9,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.junit.jupiter.api.AfterAll;
-import sg.edu.nus.comp.cs4218.Environment;
+import sg.edu.nus.comp.cs4218.EnvironmentUtil;
 import sg.edu.nus.comp.cs4218.exception.CdException;
 
 import org.junit.jupiter.api.BeforeAll;
@@ -23,7 +23,7 @@ class CdApplicationTest {
     @BeforeAll
     static void setUp() throws IOException {
         cdApplication = new CdApplication();
-        originalDir = Environment.currentDirectory;
+        originalDir = EnvironmentUtil.currentDirectory;
 
         Path testDirectoryPath = Paths.get("./.directoryForTesting");
         Files.deleteIfExists(testDirectoryPath);
@@ -44,14 +44,14 @@ class CdApplicationTest {
     @Test
     void changeToDirectory_relativePathExisting_changesDirectory() {
         assertDoesNotThrow(() -> cdApplication.changeToDirectory("." + File.separator + ".directoryForTesting"));
-        assertEquals(Environment.currentDirectory, originalDir + File.separator + ".directoryForTesting");
+        assertEquals(EnvironmentUtil.currentDirectory, originalDir + File.separator + ".directoryForTesting");
     }
 
     @Test
     void changeToDirectory_absolutePathExisting_changesDirectory() {
         String absolutePath = originalDir + File.separator + ".directoryForTesting";
         assertDoesNotThrow(() -> cdApplication.changeToDirectory(absolutePath));
-        assertEquals(Environment.currentDirectory, absolutePath);
+        assertEquals(EnvironmentUtil.currentDirectory, absolutePath);
     }
 
     @Test

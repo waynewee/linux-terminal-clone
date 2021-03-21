@@ -1,16 +1,13 @@
 package sg.edu.nus.comp.cs4218.impl.util;
 
-import sg.edu.nus.comp.cs4218.Environment;
+import sg.edu.nus.comp.cs4218.EnvironmentUtil;
 
 import java.io.File;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.regex.Pattern;
 
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_ASTERISK;
-
-import javax.annotation.processing.Generated;
 
 @SuppressWarnings("PMD.AvoidStringBufferField")
 public final class RegexArgument {
@@ -36,7 +33,9 @@ public final class RegexArgument {
 
     public void appendAsterisk() {
         plaintext.append(CHAR_ASTERISK);
-        regex.append("[^" + StringUtils.fileSeparator() + "]*");
+        regex.append("[^");
+        regex.append(StringUtils.fileSeparator());
+        regex.append("]*");
         isRegex = true;
     }
 
@@ -62,7 +61,7 @@ public final class RegexArgument {
                 dir += tokens[i] + "/";
             }
 
-            File currentDir = Paths.get(Environment.currentDirectory + File.separator + dir).toFile();
+            File currentDir = Paths.get(EnvironmentUtil.currentDirectory + File.separator + dir).toFile();
             String[] dirContent = currentDir.list();
 
             for (String candidate : Objects.requireNonNull(dirContent)) {

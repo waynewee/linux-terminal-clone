@@ -2,7 +2,7 @@ package sg.edu.nus.comp.cs4218.integration;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import sg.edu.nus.comp.cs4218.Environment;
+import sg.edu.nus.comp.cs4218.EnvironmentUtil;
 import sg.edu.nus.comp.cs4218.Shell;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
@@ -23,7 +23,7 @@ public class SplitCatIntegrationTest {
 
     @AfterEach
     void removeOutputFiles() {
-        Path path = Paths.get(Environment.currentDirectory, "src", "test", "resources", "impl", "app", "IntegrationResources", "SplitCatIntegration");
+        Path path = Paths.get(EnvironmentUtil.currentDirectory, "src", "test", "resources", "impl", "app", "IntegrationResources", "SplitCatIntegration");
         File[] files = path.toFile().listFiles();
         for (File file: files) {
             if (!file.toString().endsWith(".txt")) {

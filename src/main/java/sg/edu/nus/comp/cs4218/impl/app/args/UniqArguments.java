@@ -3,7 +3,6 @@ package sg.edu.nus.comp.cs4218.impl.app.args;
 import sg.edu.nus.comp.cs4218.exception.UniqException;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_FLAG_PREFIX;
@@ -11,10 +10,10 @@ import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_FLAG_PREFIX;
 
 public class UniqArguments {
 
-    public static final char CHAR_COUNT_OPTION = 'c';
-    public static final char CHAR_REPEATED_OPTION = 'd';
-    public static final char CHAR_ALL_REPEATED_OPTION = 'D';
-    private ArrayList<String> files = new ArrayList<>();
+    public static final char COUNT_FLAG = 'c';
+    public static final char DUPLICATE_FLAG = 'd';
+    public static final char ALL_DUPLICATE_FLAG = 'D';
+    private final ArrayList<String> files = new ArrayList<>();
     private boolean count, repeated, allRepeated;
 
     public UniqArguments() {
@@ -41,15 +40,15 @@ public class UniqArguments {
             }
             // `parsingFlag` is to ensure all flags come first, followed by files.
             if (parsingFlag && arg.charAt(0) == CHAR_FLAG_PREFIX && arg.length() > 1) {
-                if (arg.equals(CHAR_FLAG_PREFIX + "" + CHAR_COUNT_OPTION)) {
+                if (arg.equals(CHAR_FLAG_PREFIX + "" + COUNT_FLAG)) {
                     this.count = true;
                     continue;
                 }
-                if (arg.equals(CHAR_FLAG_PREFIX + "" + CHAR_ALL_REPEATED_OPTION)) {
+                if (arg.equals(CHAR_FLAG_PREFIX + "" + ALL_DUPLICATE_FLAG)) {
                     this.allRepeated = true;
                     continue;
                 }
-                if (arg.equals(CHAR_FLAG_PREFIX + "" + CHAR_REPEATED_OPTION)) {
+                if (arg.equals(CHAR_FLAG_PREFIX + "" + DUPLICATE_FLAG)) {
                     this.repeated = true;
                     continue;
                 }
