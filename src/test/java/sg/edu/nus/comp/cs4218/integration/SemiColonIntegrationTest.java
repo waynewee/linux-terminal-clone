@@ -10,6 +10,7 @@ import sg.edu.nus.comp.cs4218.impl.ShellImpl;
 import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
@@ -29,7 +30,9 @@ public class SemiColonIntegrationTest {
         testShell = new ShellImpl();
         outputStream = new ByteArrayOutputStream();
 
-        String command1 = "cd src/test/resources/impl/app/CpApplicationResources/valid_file; ls";
+        String command1 = String.format(
+                "cd src%1$stest%1$sresources%1$simpl%1$sapp%1$sCpApplicationResources%1$svalid_file; ls",
+                File.separator);
 
         testShell.parseAndEvaluate(command1, outputStream);
 
@@ -45,17 +48,15 @@ public class SemiColonIntegrationTest {
         testShell = new ShellImpl();
         outputStream = new ByteArrayOutputStream();
 
-        String command = "cd randomNonExistentFolder; ls src/test/resources/impl/app/CpApplicationResources/valid_file";
+        String command = String.format("cd randomNonExistentFolder; " +
+                "ls src%1$stest%1$sresources%1$simpl%1$sapp%1$sCpApplicationResources%1$svalid_file", File.separator);
 
         testShell.parseAndEvaluate(command, outputStream);
 
         String expectedOutput =
-                "cd: No such file or directory\n" +
-                        "src\\test\\resources\\impl\\app\\CpApplicationResources\\valid_file:\n" +
-                        "destinationFolder\n" + "sourceFolder\n";
-
-        expectedOutput = expectedOutput.replace("\n", STRING_NEWLINE);
-        expectedOutput = expectedOutput.replace("\\\\", StringUtils.fileSeparator());
+                String.format("cd: No such file or directory%2$s" +
+                        "src%1$stest%1$sresources%1$simpl%1$sapp%1$sCpApplicationResources%1$svalid_file:%2$s" +
+                        "destinationFolder%2$s" + "sourceFolder%2$s", File.separator, System.lineSeparator());
 
         assertEquals(expectedOutput, outputStream.toString());
     }
@@ -69,11 +70,8 @@ public class SemiColonIntegrationTest {
         testShell.parseAndEvaluate(command1, outputStream);
 
         String expectedOutput =
-                "shell: unimplementedCommand: Invalid sg.edu.nus.comp.cs4218.app\n" +
-                        "shell: unimplementedCommand: Invalid sg.edu.nus.comp.cs4218.app\n";
-
-        expectedOutput = expectedOutput.replace("\n", STRING_NEWLINE);
-        expectedOutput = expectedOutput.replace("\\\\", StringUtils.fileSeparator());
+                String.format("shell: unimplementedCommand: Invalid sg.edu.nus.comp.cs4218.app%1$s" +
+                        "shell: unimplementedCommand: Invalid sg.edu.nus.comp.cs4218.app%1$s", System.lineSeparator());
 
         assertEquals(expectedOutput, outputStream.toString());
     }

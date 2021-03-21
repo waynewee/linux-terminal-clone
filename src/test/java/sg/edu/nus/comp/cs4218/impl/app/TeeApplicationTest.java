@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,10 +19,10 @@ import org.junit.jupiter.api.Test;
 // TODO: assert for output stream as well
 class TeeApplicationTest {
     private static TeeApplication teeApplication;
-    private static String emptyFilePath = "empty.txt";
-    private static String existingFilePath = "existing.txt";
-    private static String anotherExistingFilePath = "anotherExisting.txt";
-    private static String nonExistentFilePath = "nonExistent.txt";
+    private static String emptyFilePath = "teeApplication_empty.txt";
+    private static String existingFilePath = "teeApplication_existing.txt";
+    private static String anotherExistingFilePath = "teeApplication_anotherExisting.txt";
+    private static String nonExistentFilePath = "teeApplication_nonExistent.txt";
     private static File emptyFile;
     private static File existingFile;
     private static File anotherExistingFile;
@@ -41,24 +42,28 @@ class TeeApplicationTest {
     void setupBeforeTest() throws IOException {
         emptyFile = new File(emptyFilePath);
         emptyFile.createNewFile();
+        emptyFile.deleteOnExit();
 
         existingFile = new File(existingFilePath);
         existingFile.createNewFile();
+        existingFile.deleteOnExit();
         FileWriter fileWriter = new FileWriter(existingFile);
         fileWriter.write("hello");
         fileWriter.close();
 
         anotherExistingFile = new File(anotherExistingFilePath);
         anotherExistingFile.createNewFile();
+        anotherExistingFile.deleteOnExit();
         FileWriter anotherFileWriter = new FileWriter(anotherExistingFile);
         anotherFileWriter.write("hello again");
         anotherFileWriter.close();
 
         nonExistentFile = new File(nonExistentFilePath);
+        nonExistentFile.deleteOnExit();
     }
 
     @AfterEach
-    void tearDownAfterTest() throws IOException {
+    void tearDownAfterTest() {
         emptyFile.delete();
         existingFile.delete();
         anotherExistingFile.delete();
