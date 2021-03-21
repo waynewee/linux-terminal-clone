@@ -1,6 +1,9 @@
 package sg.edu.nus.comp.cs4218.impl.util;
 
+import sg.edu.nus.comp.cs4218.Environment;
+
 import java.io.File;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -59,9 +62,10 @@ public final class RegexArgument {
                 dir += tokens[i] + "/";
             }
 
-            File currentDir = Paths.get(Environment.currentDirectory + dir).toFile();
+            File currentDir = Paths.get(Environment.currentDirectory + File.separator + dir).toFile();
+            String[] dirContent = currentDir.list();
 
-            for (String candidate : Objects.requireNonNull(currentDir.list())) {
+            for (String candidate : Objects.requireNonNull(dirContent)) {
                 String path = dir + candidate;
                 if (regexPattern.matcher(path).matches()) {
                     globbedFiles.add(dir + candidate);

@@ -2,13 +2,11 @@ package sg.edu.nus.comp.cs4218.impl.app;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.GrepException;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -637,7 +635,8 @@ class GrepApplicationTest {
 
     @Test
     public void grepFromFile_FileIsDir_ReturnsIsDirException() throws Exception {
-        String result = grepApplication.grepFromFiles(PATTERN_APPLES, false, false, false, PATH_DIRECTORY);
+        String filename = PATH_DIRECTORY;
+        String result = grepApplication.grepFromFiles(PATTERN_APPLES, false, false, false, filename);
         assertEquals(new GrepException(DIRECTORY + ": " + ERR_IS_DIR).getMessage() + STRING_NEWLINE, result);
     }
 
