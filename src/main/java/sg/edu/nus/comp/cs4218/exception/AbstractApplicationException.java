@@ -8,10 +8,6 @@ public abstract class AbstractApplicationException extends Exception {
         super(message);
     }
 
-    public AbstractApplicationException(Throwable exception) {
-        super(exception);
-    }
-
     public AbstractApplicationException(String message, Throwable exception) {
         super(message, exception);
     }
