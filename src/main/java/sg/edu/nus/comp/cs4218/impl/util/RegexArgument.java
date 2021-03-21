@@ -1,18 +1,21 @@
 package sg.edu.nus.comp.cs4218.impl.util;
 
-import sg.edu.nus.comp.cs4218.EnvironmentUtil;
+import sg.edu.nus.comp.cs4218.Environment;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.regex.Pattern;
 
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_ASTERISK;
 
+import javax.annotation.processing.Generated;
+
 @SuppressWarnings("PMD.AvoidStringBufferField")
 public final class RegexArgument {
-    private StringBuilder plaintext;
-    private StringBuilder regex;
+    private final StringBuilder plaintext;
+    private final StringBuilder regex;
     private boolean isRegex;
 
     public RegexArgument() {
@@ -26,22 +29,6 @@ public final class RegexArgument {
         merge(str);
     }
 
-    // Used for `find` command.
-    // `text` here corresponds to the folder that we want to look in.
-    public RegexArgument(String str, String text, boolean isRegex) {
-        this();
-        this.plaintext.append(text);
-        this.isRegex = isRegex;
-        this.regex.append(".*"); // We want to match filenames
-        for (char c : str.toCharArray()) {
-            if (c == CHAR_ASTERISK) {
-                this.regex.append("[^" + StringUtils.fileSeparator() + "]*");
-            } else {
-                this.regex.append(Pattern.quote(String.valueOf(c)));
-            }
-        }
-    }
-
     public void append(char chr) {
         plaintext.append(chr);
         regex.append(Pattern.quote(String.valueOf(chr)));
@@ -49,9 +36,7 @@ public final class RegexArgument {
 
     public void appendAsterisk() {
         plaintext.append(CHAR_ASTERISK);
-        regex.append("[^");
-        regex.append(StringUtils.fileSeparator());
-        regex.append("]*");
+        regex.append("[^" + StringUtils.fileSeparator() + "]*");
         isRegex = true;
     }
 
@@ -77,9 +62,10 @@ public final class RegexArgument {
                 dir += tokens[i] + "/";
             }
 
-            File currentDir = Paths.get(dir).toFile();
+            File currentDir = Paths.get(Environment.currentDirectory + File.separator + dir).toFile();
+            String[] dirContent = currentDir.list();
 
-            for (String candidate : Objects.requireNonNull(currentDir.list())) {
+            for (String candidate : Objects.requireNonNull(dirContent)) {
                 String path = dir + candidate;
                 if (regexPattern.matcher(path).matches()) {
                     globbedFiles.add(dir + candidate);
@@ -91,41 +77,6 @@ public final class RegexArgument {
         }
 
         return globbedFiles;
-    }
-
-
-    /**
-     * Traverses a given File node and returns a list of absolute path that match the given regexPattern.
-     * <p>
-     * Assumptions:
-     * - ignores files and folders that we do not have access to (insufficient read permissions)
-     * - regexPattern should not be null
-     *
-     * @param regexPattern    Pattern object
-     * @param node            File object
-     * @param isAbsolute      Boolean option to indicate that the regexPattern refers to an absolute path
-     * @param onlyDirectories Boolean option to list only the directories
-     */
-    private List<String> traverseAndFilter(Pattern regexPattern, File node, boolean isAbsolute, boolean onlyDirectories) {
-        List<String> matches = new ArrayList<>();
-        if (regexPattern == null || !node.canRead() || !node.isDirectory()) {
-            return matches;
-        }
-        for (String current : node.list()) {
-            File nextNode = new File(node, current);
-            String match = isAbsolute
-                    ? nextNode.getPath()
-                    : nextNode.getPath().substring(EnvironmentUtil.currentDirectory.length() + 1);
-            // TODO: Find a better way to handle this.
-            if (onlyDirectories && nextNode.isDirectory()) {
-                match += File.separator;
-            }
-            if (!nextNode.isHidden() && regexPattern.matcher(match).matches()) {
-                matches.add(nextNode.getAbsolutePath());
-            }
-            matches.addAll(traverseAndFilter(regexPattern, nextNode, isAbsolute, onlyDirectories));
-        }
-        return matches;
     }
 
     public boolean isEmpty() {

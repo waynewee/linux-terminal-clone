@@ -10,6 +10,9 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import sg.edu.nus.comp.cs4218.exception.EchoException;
 
+import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
+
 
 class EchoApplicationTest {
 
@@ -69,8 +72,17 @@ class EchoApplicationTest {
     }
 
     @Test
-    public void constructResult_singleSpaceArgument_ReturnsSingleSpace() throws EchoException {
+    public void constructResult_SingleSpaceArgument_ReturnsSingleSpace() throws EchoException {
         String result = echoApplication.constructResult(ARGS_SPACE);
         assertEquals(ARGS_SPACE[0], result);
+    }
+
+    @Test
+    public void run_OutputStreamNull_ThrowsNoOutputStreamException() {
+        String[] args = {};
+        Exception exception = assertThrows(Exception.class, ()->{
+            echoApplication.run(args, new ByteArrayInputStream("".getBytes(StandardCharsets.UTF_8)), null);
+        });
+        assertEquals(new EchoException(ERR_NO_OSTREAM).getMessage(), exception.getMessage());
     }
 }

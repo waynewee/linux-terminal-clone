@@ -70,10 +70,6 @@ public class CatApplication implements CatInterface {
                 result.add(new CatException(ERR_IS_DIR).getMessage());
                 continue;
             }
-            if (!node.canRead()) {
-                result.add(new CatException(ERR_NO_PERM).getMessage());
-                continue;
-            }
 
             InputStream input = IOUtils.openInputStream(file);
             inputStreams.add(input);
@@ -131,10 +127,6 @@ public class CatApplication implements CatInterface {
             }
             if (node.isDirectory()) {
                 result.add(new CatException(ERR_IS_DIR).getMessage());
-                continue;
-            }
-            if (!node.canRead()) {
-                result.add(new CatException(ERR_NO_PERM).getMessage());
                 continue;
             }
 

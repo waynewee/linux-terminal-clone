@@ -94,21 +94,4 @@ public final class IOUtils {
         Path currentDirectory = Paths.get(EnvironmentUtil.currentDirectory);
         return currentDirectory.resolve(fileName);
     }
-
-    /**
-     * Returns a list of lines based on the given InputStream.
-     *
-     * @param input InputStream containing arguments from System.in or FileInputStream
-     * @throws Exception
-     */
-    public static List<String> getLinesFromInputStream(InputStream input) throws Exception {
-        List<String> output = new ArrayList<>();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(input));
-        String line;
-        while ((line = reader.readLine()) != null) {
-            output.add(line);
-        }
-        reader.close();
-        return output;
-    }
 }

@@ -7,7 +7,7 @@ import sg.edu.nus.comp.cs4218.exception.GrepException;
 import sg.edu.nus.comp.cs4218.impl.app.args.GrepArguments;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_INVALID_FLAG;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 
 
 class GrepArgumentsTest {
@@ -17,6 +17,8 @@ class GrepArgumentsTest {
     private static final String FLAG_COUNT = "-c";
     private static final String FLAG_PREFIX = "-H";
     private static final String FLAG_INVALID = "-x";
+
+    private static final String PATTERN_EMPTY = "";
 
     private static GrepArguments grepArguments;
 
@@ -73,7 +75,39 @@ class GrepArgumentsTest {
         GrepException grepException = assertThrows(GrepException.class, () -> {
             grepArguments.parse(FLAG_INVALID, FILE);
         });
-        assertEquals(grepException.getMessage(), new GrepException(ERR_INVALID_FLAG).getMessage());
+        assertEquals(new GrepException(ERR_INVALID_FLAG).getMessage(), grepException.getMessage());
     }
 
+    @Test
+    public void parse_ArgsNull_ThrowsNullArgsException() {
+        GrepException grepException = assertThrows(GrepException.class, ()->{
+            grepArguments.parse(null);
+        });
+        assertEquals(new GrepException(ERR_NULL_ARGS).getMessage(), grepException.getMessage());
+    }
+
+    @Test
+    public void parse_ArgsEmpty_ThrowsNoRegexException() {
+        String[] args = {};
+        GrepException grepException = assertThrows(GrepException.class, ()->{
+            grepArguments.parse(args);
+        });
+        assertEquals(new GrepException(ERR_NO_REGEX).getMessage(), grepException.getMessage());
+    }
+
+    @Test
+    public void validate_PatternNull_ThrowsNullArgsException() {
+        Exception exception = assertThrows(Exception.class, ()->{
+            GrepArguments.validate(null);
+        });
+        assertEquals(new GrepException(ERR_NULL_ARGS).getMessage(), exception.getMessage());
+    }
+
+    @Test
+    public void validate_PatternNull_ThrowsEmptyRegexException() {
+        Exception exception = assertThrows(Exception.class, ()->{
+            GrepArguments.validate(PATTERN_EMPTY);
+        });
+        assertEquals(new GrepException(ERR_EMPTY_REGEX).getMessage(), exception.getMessage());
+    }
 }

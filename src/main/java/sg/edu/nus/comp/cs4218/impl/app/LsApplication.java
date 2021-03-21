@@ -28,18 +28,18 @@ public class LsApplication implements LsInterface {
 
     @Override
     public String listFolderContent(Boolean isFoldersOnly, Boolean isRecursive, Boolean isSortByExt,
-                                    String... folderName) throws LsException {
-        if (folderName.length == 0 && !isRecursive) {
+                                    String... folderNames) throws LsException {
+        if (folderNames.length == 0 && !isRecursive) {
             return listCwdContent(isFoldersOnly, isSortByExt);
         }
 
         List<Path> paths;
-        if (folderName.length == 0 && isRecursive) {
+        if (folderNames.length == 0 && isRecursive) {
             String[] directories = new String[1];
             directories[0] = EnvironmentUtil.currentDirectory;
             paths = resolvePaths(directories);
         } else {
-            paths = resolvePaths(folderName);
+            paths = resolvePaths(folderNames);
         }
 
         return buildResult(paths, isFoldersOnly, isRecursive, isSortByExt);
@@ -66,17 +66,43 @@ public class LsApplication implements LsInterface {
         Boolean foldersOnly = parser.isFoldersOnly();
         Boolean recursive = parser.isRecursive();
         Boolean sortByExt = parser.isSortByExt();
+        String[] files = parser.getFiles().toArray(new String[parser.getFiles().size()]);
         String[] directories = parser.getDirectories()
                 .toArray(new String[parser.getDirectories().size()]);
-        String result = listFolderContent(foldersOnly, recursive, sortByExt, directories);
+
+        String result1;
+        String result2;
+        result1 = listFileContent(files);
+        result2 = listFolderContent(foldersOnly, recursive, sortByExt, directories);
 
         try {
-            stdout.write(result.getBytes());
+            if (!parser.getFiles().isEmpty()) {
+                stdout.write(result1.getBytes());
+            }
+
+            if (parser.getFiles().isEmpty() || !parser.getDirectories().isEmpty()) {
+                stdout.write(result2.getBytes());
+            }
         } catch (Exception e) {
             throw new LsException(ERR_WRITE_STREAM, e);
         }
     }
 
+    public String listFileContent(String... filename) throws LsException {
+        List<Path> paths;
+        paths = resolvePaths(filename);
+        StringBuilder result = new StringBuilder();
+        for (Path path : paths) {
+            String relativePath = getRelativeToCwd(path).toString();
+            result.append(StringUtils.isBlank(relativePath) ? PATH_CURR_DIR : relativePath);
+            result.append(StringUtils.STRING_NEWLINE);
+        }
+        if (result.length() == 0) {
+            return "";
+        } else {
+            return result.toString().trim() + StringUtils.STRING_NEWLINE;
+        }
+    }
     /**
      * Lists only the current directory's content and RETURNS. This does not account for recursive
      * mode in cwd.
@@ -285,11 +311,6 @@ public class LsApplication implements LsInterface {
     private class InvalidDirectoryException extends Exception {
         InvalidDirectoryException(String directory) {
             super(String.format("ls: cannot access '%s': No such file or directory", directory));
-        }
-
-        InvalidDirectoryException(String directory, Throwable cause) {
-            super(String.format("ls: cannot access '%s': No such file or directory", directory),
-                    cause);
         }
     }
 

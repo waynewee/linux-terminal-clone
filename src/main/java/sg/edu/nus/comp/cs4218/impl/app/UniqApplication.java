@@ -31,21 +31,17 @@ public class UniqApplication implements UniqInterface {
         UniqArguments uniqArgs = new UniqArguments();
         uniqArgs.parse(args);
         String result;
-        try {
-            if (uniqArgs.getInputFile() == null) {
-                result = uniqFromFile(uniqArgs.isCount(), uniqArgs.isRepeated(), uniqArgs.isAllRepeated(), uniqArgs.getInputFile(), uniqArgs.getOutputFile());
-            } else {
-                result = uniqFromStdin(uniqArgs.isCount(), uniqArgs.isRepeated(), uniqArgs.isAllRepeated(), stdin, uniqArgs.getOutputFile());
-            }
-        } catch (Exception e) {
-            throw new UniqException(ERR_GENERAL, e);
+        if (uniqArgs.getInputFile() == null) {
+            result = uniqFromStdin(uniqArgs.isCount(), uniqArgs.isRepeated(), uniqArgs.isAllRepeated(), stdin, uniqArgs.getOutputFile());
+        } else {
+            result = uniqFromFile(uniqArgs.isCount(), uniqArgs.isRepeated(), uniqArgs.isAllRepeated(), uniqArgs.getInputFile(), uniqArgs.getOutputFile());
         }
         try {
             if (uniqArgs.getOutputFile() == null) {
                 stdout.write(result.getBytes());
             }
         } catch (IOException e) {
-            throw new UniqException(ERR_WRITE_STREAM, e);
+            throw new UniqException(ERR_WRITE_STREAM);
         }
     }
 
@@ -63,7 +59,7 @@ public class UniqApplication implements UniqInterface {
             }
             return result;
         } catch (FileNotFoundException e){
-            throw new UniqException(ERR_FILE_NOT_FOUND, e);
+            throw new UniqException(ERR_FILE_NOT_FOUND);
         }
     }
 
@@ -90,11 +86,11 @@ public class UniqApplication implements UniqInterface {
             String previousLine = null;
             while ((currentLine = reader.readLine()) != null) {
                 if (previousLine != null) {
-                    if (currentLine.equals(previousLine)) {
-                        count++;
-                    } else {
+                    if (!currentLine.equals(previousLine)) {
                         addLine(result, isCount, isRepeated, isAllRepeated, count, previousLine);
                         count = 1;
+                    } else {
+                        count++;
                     }
                 }
                 previousLine = currentLine;
@@ -104,7 +100,7 @@ public class UniqApplication implements UniqInterface {
 
             return result.toString() + STRING_NEWLINE;
         } catch (IOException e) {
-            throw new UniqException(ERR_IO_EXCEPTION, e);
+            throw new UniqException(ERR_IO_EXCEPTION);
         }
     }
 
@@ -125,7 +121,7 @@ public class UniqApplication implements UniqInterface {
             fileWriter.write(result);
             fileWriter.close();
         } catch (IOException e) {
-            throw new UniqException(ERR_IO_EXCEPTION, e);
+            throw new UniqException(ERR_IO_EXCEPTION);
         }
 
     }
