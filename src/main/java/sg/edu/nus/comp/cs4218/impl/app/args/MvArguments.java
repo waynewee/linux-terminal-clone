@@ -36,9 +36,4 @@ public class MvArguments {
                 && Arrays.equals(sourcePaths, other.sourcePaths)
                 && overwrite == other.overwrite;
     }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(sourcePaths, destPath, overwrite);
-    }
 }

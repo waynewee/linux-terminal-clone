@@ -10,7 +10,7 @@ import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_TARGET_EXISTS;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 
 class MvApplicationTest {
 
@@ -27,6 +27,18 @@ class MvApplicationTest {
 
         MvApplication app = new MvApplication();
         String[] args = {sourcePath.toString(), destPath.toString()};
+        app.run(args, System.in, System.out);
+        assertTrue(Files.exists(destPath));
+    }
+
+    @Test
+    void run_FirstFormNoOverwrite_Successful(@TempDir Path root) throws Exception {
+        Path sourcePath = root.resolve(FILE_NAME);
+        Path destPath = root.resolve(FILE_NAME2);
+        Files.createFile(sourcePath);
+
+        MvApplication app = new MvApplication();
+        String[] args = {NO_OVERWRITE_FLAG, sourcePath.toString(), destPath.toString()};
         app.run(args, System.in, System.out);
         assertTrue(Files.exists(destPath));
     }
@@ -101,4 +113,57 @@ class MvApplicationTest {
             app.run(args, System.in, System.out);
         }, ERR_TARGET_EXISTS);
     }
+
+    @Test
+    void run_EmptyArgument_ThrowException() {
+        MvApplication app = new MvApplication();
+        String[] args = {};
+        assertThrows(MvException.class, () -> {
+            app.run(args, System.in, System.out);
+        }, ERR_TARGET_EXISTS);
+    }
+
+    @Test
+    void run_FlagOnly_ThrowException() {
+        MvApplication app = new MvApplication();
+        String[] args = {NO_OVERWRITE_FLAG};
+        assertThrows(MvException.class, () -> {
+            app.run(args, System.in, System.out);
+        }, ERR_TARGET_EXISTS);
+    }
+
+    @Test
+    void mvSrcFileToDestFile_SourceNotFile_ThrowException(@TempDir Path root) throws Exception {
+        Path srcPath = root.resolve(SUBDIRECTORY_NAME);
+        Path dstPath = root.resolve(SUBDIRECTORY_NAME + "1");
+        Files.createDirectory(srcPath);
+
+        MvApplication app = new MvApplication();
+        assertThrows(MvException.class, () -> {
+            app.mvSrcFileToDestFile(false, srcPath.toString(), dstPath.toString());
+        }, ERR_SOURCE_NOT_FILE);
+    }
+
+    @Test
+    void mvFilesToFolder_SourceDontExists_ThrowException(@TempDir Path root) throws Exception {
+        Path srcPath = root.resolve(FILE_NAME);
+        Path dstPath = root.resolve(SUBDIRECTORY_NAME);
+
+        MvApplication app = new MvApplication();
+        assertThrows(MvException.class, () -> {
+            app.mvFilesToFolder(false, srcPath.toString(), dstPath.toString());
+        }, ERR_SOURCE_NOT_FOUND);
+    }
+    @Test
+    void mvFilesToFolder_SourceIsDirectory_ThrowException(@TempDir Path root) throws Exception {
+        Path srcPath = root.resolve(SUBDIRECTORY_NAME);
+        Path dstPath = root.resolve(SUBDIRECTORY_NAME + "1");
+        Files.createDirectory(srcPath);
+
+        MvApplication app = new MvApplication();
+        assertThrows(MvException.class, () -> {
+            app.mvFilesToFolder(false, dstPath.toString(), srcPath.toString());
+        }, ERR_SOURCE_NOT_FILE);
+    }
+
 }
