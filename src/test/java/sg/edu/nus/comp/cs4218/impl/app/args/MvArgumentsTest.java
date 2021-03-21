@@ -8,10 +8,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class MvArgumentsTest {
 
-    private static String SRC_ROOT = "root";
-    private static String SUB_PATH = "subPath";
-    private static String ARG1 = "hello";
-    private static String ARG2 = "world";
+    private static final String SRC_ROOT = "root";
+    private static final String SUB_PATH = "subPath";
+    private static final String ARG1 = "hello";
+    private static final String ARG2 = "world";
 
     @Test
     void getSourcePaths_SingleSource_ReturnsStringArrayWithOneElement() {

@@ -29,7 +29,7 @@ public class TeeIntegationTest {
     private static File anotherExistingFile;
     private static File nonExistentFile;
 
-    private static final String expectedString = "hello";
+    private static String expectedString = "hello";
 
     @BeforeAll
     static void setupShell() {

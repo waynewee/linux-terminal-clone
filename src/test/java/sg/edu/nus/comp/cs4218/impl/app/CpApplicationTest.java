@@ -24,6 +24,9 @@ import static org.junit.jupiter.api.Assertions.*;
 public class CpApplicationTest {
     private static ByteArrayOutputStream outputStream;
     private static CpApplication cpApplication;
+    // Given tests from teaching stuff
+    public static final String TEMP = "temp-cp";
+    public static final Path TEMP_PATH = Paths.get(EnvironmentUtil.currentDirectory, TEMP);
 
     @BeforeAll
     static void prepareApplication() {
@@ -38,12 +41,12 @@ public class CpApplicationTest {
     @Test
     public void run_InvalidNumberOfFiles_ThrowsException() {
         // Prepare args
-        Path sourceFolder = getFolderPath("invalid_file", "sourceFolder");
-        Path sourceTestFile = Paths.get(sourceFolder.toString(), "test1.txt");
+        Path srcFolder = getFolderPath("invalid_file", "sourceFolder");
+        Path srcTestFile = Paths.get(srcFolder.toString(), "test1.txt");
 
 
         String[] args = new String[1];
-        args[0] = sourceTestFile.toString();
+        args[0] = srcTestFile.toString();
 
         // Assert right exception thrown
         assertThrows(CpException.class, () -> cpApplication.run(args, System.in, outputStream));
@@ -52,16 +55,16 @@ public class CpApplicationTest {
     @Test
     public void run_InvalidFile_ThrowsException() {
         // Prepare args
-        Path sourceFolder = getFolderPath("invalid_file", "sourceFolder");
-        Path destinationFolder = getFolderPath("invalid_file", "destinationFolder");
+        Path srcFolder = getFolderPath("invalid_file", "sourceFolder");
+        Path destFolder = getFolderPath("invalid_file", "destinationFolder");
 
-        Path sourceTestFile = Paths.get(sourceFolder.toString(), "test1.txt");
-        Path destinationTestFile = Paths.get(destinationFolder.toString(), "test1.txt");
+        Path srcTestFile = Paths.get(srcFolder.toString(), "test1.txt");
+        Path destTestFile = Paths.get(destFolder.toString(), "test1.txt");
 
 
         String[] args = new String[2];
-        args[0] = sourceTestFile.toString();
-        args[1] = destinationTestFile.toString();
+        args[0] = srcTestFile.toString();
+        args[1] = destTestFile.toString();
 
         // Assert right exception thrown
         assertThrows(CpException.class, () -> cpApplication.run(args, System.in, outputStream));
@@ -70,12 +73,12 @@ public class CpApplicationTest {
     @Test
     public void run_InvalidFolder_ThrowsException() {
         // Prepare args
-        Path sourceFolder = getFolderPath("invalid_folder", "sourceFolder");
-        Path destinationFolder = getFolderPath("invalid_folder", "destinationFolder");
+        Path srcFolder = getFolderPath("invalid_folder", "sourceFolder");
+        Path destFolder = getFolderPath("invalid_folder", "destinationFolder");
 
         String[] args = new String[2];
-        args[0] = sourceFolder.toString();
-        args[1] = destinationFolder.toString();
+        args[0] = srcFolder.toString();
+        args[1] = destFolder.toString();
 
         // Assert right exception thrown
         assertThrows(CpException.class, () -> cpApplication.run(args, System.in, outputStream));
@@ -84,106 +87,106 @@ public class CpApplicationTest {
     @Test
     public void run_ValidFile_CopiesToDestination() throws Exception {
         // Prepare args
-        Path sourceFolder = getFolderPath("valid_file", "sourceFolder");
-        Path destinationFolder = getFolderPath("valid_file", "destinationFolder");
+        Path srcFolder = getFolderPath("valid_file", "sourceFolder");
+        Path destFolder = getFolderPath("valid_file", "destinationFolder");
 
-        Path sourceTestFile = Paths.get(sourceFolder.toString(), "test1.txt");
-        Path destinationTestFile = Paths.get(destinationFolder.toString(), "test1.txt");
+        Path srcTestFile = Paths.get(srcFolder.toString(), "test1.txt");
+        Path destTestFile = Paths.get(destFolder.toString(), "test1.txt");
 
         String[] args = new String[2];
-        args[0] = sourceTestFile.toString();
-        args[1] = destinationTestFile.toString();
+        args[0] = srcTestFile.toString();
+        args[1] = destTestFile.toString();
 
         cpApplication.run(args, System.in, outputStream);
 
-        assert(Files.exists(destinationTestFile));
-        cleanUpCode(destinationTestFile);
+        assert(Files.exists(destTestFile));
+        cleanUpCode(destTestFile);
     }
 
     @Test
     public void run_ValidMultipleFiles_CopiesToDestination() throws Exception {
         // Prepare args
-        Path sourceFolder = getFolderPath("valid_multiple_files", "sourceFolder");
-        Path destinationFolder = getFolderPath("valid_multiple_files", "destinationFolder");
+        Path srcFolder = getFolderPath("valid_multiple_files", "sourceFolder");
+        Path destFolder = getFolderPath("valid_multiple_files", "destinationFolder");
 
-        Path sourceTestFile1 = Paths.get(sourceFolder.toString(), "test1.txt");
-        Path sourceTestFile2 = Paths.get(sourceFolder.toString(), "test2.txt");
-        Path sourceTestFile3 = Paths.get(sourceFolder.toString(), "test3.txt");
-        Path destinationTestFile1 = Paths.get(destinationFolder.toString(), "test1.txt");
-        Path destinationTestFile2 = Paths.get(destinationFolder.toString(), "test2.txt");
-        Path destinationTestFile3 = Paths.get(destinationFolder.toString(), "test3.txt");
+        Path srcTestFile1 = Paths.get(srcFolder.toString(), "test1.txt");
+        Path srcTestFile2 = Paths.get(srcFolder.toString(), "test2.txt");
+        Path srcTestFile3 = Paths.get(srcFolder.toString(), "test3.txt");
+        Path destTestFile1 = Paths.get(destFolder.toString(), "test1.txt");
+        Path destTestFile2 = Paths.get(destFolder.toString(), "test2.txt");
+        Path destTestFile3 = Paths.get(destFolder.toString(), "test3.txt");
 
         String[] args = new String[4];
-        args[0] = sourceTestFile1.toString();
-        args[1] = sourceTestFile2.toString();
-        args[2] = sourceTestFile3.toString();
-        args[3] = destinationFolder.toString();
+        args[0] = srcTestFile1.toString();
+        args[1] = srcTestFile2.toString();
+        args[2] = srcTestFile3.toString();
+        args[3] = destFolder.toString();
 
         cpApplication.run(args, System.in, outputStream);
 
-        assert(Files.exists(destinationTestFile1));
-        assert(Files.exists(destinationTestFile2));
-        assert(Files.exists(destinationTestFile3));
-        cleanUpCode(destinationTestFile1);
-        cleanUpCode(destinationTestFile2);
-        cleanUpCode(destinationTestFile3);
+        assert(Files.exists(destTestFile1));
+        assert(Files.exists(destTestFile2));
+        assert(Files.exists(destTestFile3));
+        cleanUpCode(destTestFile1);
+        cleanUpCode(destTestFile2);
+        cleanUpCode(destTestFile3);
     }
 
     @Test
     public void run_ValidDirectory_CopiesToDestination() throws Exception {
         // Prepare args
-        Path sourceFolder = getFolderPath("valid_directory", "sourceFolder");
-        Path destinationFolder = getFolderPath("valid_directory", "destinationFolder" + File.separator + "sourceFolder");
+        Path srcFolder = getFolderPath("valid_directory", "sourceFolder");
+        Path destFolder = getFolderPath("valid_directory", "destinationFolder" + File.separator + "sourceFolder");
 
         String[] args = new String[2];
-        args[0] = sourceFolder.toString();
-        args[1] = destinationFolder.toString();
+        args[0] = srcFolder.toString();
+        args[1] = destFolder.toString();
 
         cpApplication.run(args, System.in, outputStream);
 
-        assert(Files.exists(destinationFolder));
-        cleanUpCode(destinationFolder);
+        assert(Files.exists(destFolder));
+        cleanUpCode(destFolder);
     }
 
     @Test
     public void run_GivenRecursiveFlag_CopiesFoldersToDestinationRecursively() throws Exception {
         // Prepare args
-        Path sourceFolder = getFolderPath("recursive_valid_folder", "sourceFolder");
-        Path destinationFolder = getFolderPath("recursive_valid_folder", "destinationFolder" + File.separator + "sourceFolder");
+        Path srcFolder = getFolderPath("recursive_valid_folder", "sourceFolder");
+        Path destFolder = getFolderPath("recursive_valid_folder", "destinationFolder" + File.separator + "sourceFolder");
 
-        int fileCountInSource = getFileCount(sourceFolder);
+        int fileCountInSrc = getFileCount(srcFolder);
 
         String[] args = new String[3];
         args[0] = "-R";
-        args[1] = sourceFolder.toString();
-        args[2] = destinationFolder.toString();
+        args[1] = srcFolder.toString();
+        args[2] = destFolder.toString();
 
         cpApplication.run(args, System.in, outputStream);
 
-        int fileCountInDestination = getFileCount(destinationFolder);
+        int fileCountInDest = getFileCount(destFolder);
 
-        assertEquals(fileCountInSource, fileCountInDestination);
-        cleanUpCode(destinationFolder);
+        assertEquals(fileCountInSrc, fileCountInDest);
+        cleanUpCode(destFolder);
     }
 
     @Test
     public void run_GivenSmallLetterRecursiveFlag_CopiesFoldersToDestinationRecursively() throws Exception {
         // Prepare args
-        Path sourceFolder = getFolderPath("recursive_valid_folder", "sourceFolder");
-        Path destinationFolder = getFolderPath("recursive_valid_folder", "destinationFolder" + File.separator + "sourceFolder");
+        Path srcFolder = getFolderPath("recursive_valid_folder", "sourceFolder");
+        Path destFolder = getFolderPath("recursive_valid_folder", "destinationFolder" + File.separator + "sourceFolder");
 
-        int fileCountInSource = getFileCount(sourceFolder);
-        int fileCountInDestination = getFileCount(sourceFolder);
+        int fileCountInSrc = getFileCount(srcFolder);
+        int fileCountInDest = getFileCount(srcFolder);
 
         String[] args = new String[3];
         args[0] = "-r";
-        args[1] = sourceFolder.toString();
-        args[2] = destinationFolder.toString();
+        args[1] = srcFolder.toString();
+        args[2] = destFolder.toString();
 
         cpApplication.run(args, System.in, outputStream);
 
-        assertEquals(fileCountInSource, fileCountInDestination);
-        cleanUpCode(destinationFolder);
+        assertEquals(fileCountInSrc, fileCountInDest);
+        cleanUpCode(destFolder);
     }
 
     // Helper Functions
@@ -226,10 +229,6 @@ public class CpApplicationTest {
         }
         Files.delete(path);
     }
-
-    // Given tests from teaching stuff
-    public static final String TEMP = "temp-cp";
-    public static final Path TEMP_PATH = Paths.get(EnvironmentUtil.currentDirectory, TEMP);
 
     @BeforeEach
     void createTemp() throws IOException {
