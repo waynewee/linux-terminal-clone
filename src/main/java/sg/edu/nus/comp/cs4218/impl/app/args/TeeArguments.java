@@ -8,16 +8,7 @@ import java.util.List;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_SYNTAX;
 
 public class TeeArguments {
-    private List<String> files;
-
-    public String[] getFiles() {
-        return files.toArray(new String[0]);
-    }
-
-    public boolean isAppend() {
-        return isAppend;
-    }
-
+    private final List<String> files;
     private boolean isAppend;
 
     public TeeArguments() {
@@ -35,5 +26,13 @@ public class TeeArguments {
                 this.files.add(arg);
             }
         }
+    }
+
+    public String[] getFiles() {
+        return files.toArray(new String[0]);
+    }
+
+    public boolean isAppend() {
+        return isAppend;
     }
 }

@@ -1,6 +1,6 @@
 package sg.edu.nus.comp.cs4218.impl.parser;
 
-import sg.edu.nus.comp.cs4218.Environment;
+import sg.edu.nus.comp.cs4218.EnvironmentUtil;
 import sg.edu.nus.comp.cs4218.exception.InvalidArgsException;
 
 import java.io.IOException;
@@ -12,17 +12,17 @@ import java.util.List;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 
 public class CpArgsParser extends ArgsParser{
-    private final static char COPY_RECURSIVELY_LOWERCASE_R = 'r';
-    private final static char COPY_RECURSIVELY_UPPERCASE_R = 'R';
+    private final static char R_FLAG_LOWER = 'r';
+    private final static char R_FLAG_UPPER = 'R';
 
     public String[] sourceFiles;
-    public boolean destinationIsFolder;
+    public boolean destIsFolder;
     public String destination;
 
     public CpArgsParser() {
         super();
-        legalFlags.add(COPY_RECURSIVELY_LOWERCASE_R);
-        legalFlags.add(COPY_RECURSIVELY_UPPERCASE_R);
+        legalFlags.add(R_FLAG_LOWER);
+        legalFlags.add(R_FLAG_UPPER);
     }
 
     public void processArguments() throws InvalidArgsException, IOException {
@@ -37,12 +37,12 @@ public class CpArgsParser extends ArgsParser{
             destination = getPathOfRawFileName(nonFlagArgs.get(1));
 
             if (Files.isDirectory(Path.of(sourceFiles[0]))) {
-                destinationIsFolder = true;
+                destIsFolder = true;
                 if (!lastFilePathIsExistingFolder(nonFlagArgs)) {
                     createDestinationFolder(nonFlagArgs.get(nonFlagArgs.size() - 1));
                 }
             } else {
-                destinationIsFolder = lastFilePathIsExistingFolder(nonFlagArgs);
+                destIsFolder = lastFilePathIsExistingFolder(nonFlagArgs);
             }
         } else {
             sourceFiles = new String[nonFlagArgs.size() - 1];
@@ -51,7 +51,7 @@ public class CpArgsParser extends ArgsParser{
                 validateIsNotDirectory(nonFlagArgs.get(i));
                 sourceFiles[i] = getPathOfRawFileName(nonFlagArgs.get(i));
             }
-            destinationIsFolder = true;
+            destIsFolder = true;
             if (lastFilePathIsExistingFolder(nonFlagArgs)) {
                 destination = getPathOfRawFileName(nonFlagArgs.get(nonFlagArgs.size() - 1));
             } else {
@@ -61,31 +61,31 @@ public class CpArgsParser extends ArgsParser{
     }
 
     private void validateIsNotDirectory(String rawFileName) throws InvalidArgsException {
-        if (Files.isDirectory(Paths.get(Environment.currentDirectory, rawFileName))) {
+        if (Files.isDirectory(Paths.get(EnvironmentUtil.currentDirectory, rawFileName))) {
             throw new InvalidArgsException(ERR_TOO_MANY_FOLDER_ARGUMENTS);
         }
     }
 
     public String getPathOfRawFileName(String rawFileName) {
-        return Paths.get(Environment.currentDirectory, rawFileName).toString();
+        return Paths.get(EnvironmentUtil.currentDirectory, rawFileName).toString();
     }
 
     private void createDestinationFolder(String rawFileName) throws IOException {
-        Files.createDirectory(Paths.get(Environment.currentDirectory, rawFileName));
+        Files.createDirectory(Paths.get(EnvironmentUtil.currentDirectory, rawFileName));
     }
 
     private boolean lastFilePathIsExistingFolder(List<String> nonFlagArgs) {
         String rawFileName = nonFlagArgs.get(nonFlagArgs.size() - 1);
-        return Files.isDirectory(Paths.get(Environment.currentDirectory, rawFileName));
+        return Files.isDirectory(Paths.get(EnvironmentUtil.currentDirectory, rawFileName));
     }
 
     public void validateFileName(String rawFileName) throws InvalidArgsException {
-        if (!Files.exists(Paths.get(Environment.currentDirectory, rawFileName))) {
+        if (!Files.exists(Paths.get(EnvironmentUtil.currentDirectory, rawFileName))) {
             throw new InvalidArgsException(ERR_FILE_NOT_FOUND);
         }
     }
 
     public boolean isRecursive() {
-        return legalFlags.contains(COPY_RECURSIVELY_LOWERCASE_R) || legalFlags.contains(COPY_RECURSIVELY_UPPERCASE_R);
+        return legalFlags.contains(R_FLAG_LOWER) || legalFlags.contains(R_FLAG_UPPER);
     }
 }

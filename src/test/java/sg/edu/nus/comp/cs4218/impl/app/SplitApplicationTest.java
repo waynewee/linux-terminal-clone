@@ -4,7 +4,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import sg.edu.nus.comp.cs4218.Application;
-import sg.edu.nus.comp.cs4218.Environment;
+import sg.edu.nus.comp.cs4218.EnvironmentUtil;
 import sg.edu.nus.comp.cs4218.exception.SplitException;
 import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
@@ -58,7 +58,7 @@ class SplitApplicationTest {
         // Prepare args
         Path testsResourcesDir = getTestsResourcesDir("wrong_arguments");
         Path testFile = Paths.get("wrong_arguments.txt");
-        String path = Paths.get(Environment.currentDirectory, testsResourcesDir.toString(), testFile.toString()).toString();
+        String path = Paths.get(EnvironmentUtil.currentDirectory, testsResourcesDir.toString(), testFile.toString()).toString();
 
         String[] args = new String[2];
         args[0] = "-d";
@@ -100,7 +100,7 @@ class SplitApplicationTest {
         // Prepare args
         Path testsResourcesDir = getTestsResourcesDir("random_invalid_file");
         Path testFile = Paths.get("random_invalid_file");
-        String path = Paths.get(Environment.currentDirectory, testsResourcesDir.toString(), testFile.toString()).toString();
+        String path = Paths.get(EnvironmentUtil.currentDirectory, testsResourcesDir.toString(), testFile.toString()).toString();
 
         String[] args = new String[3];
         args[0] = "-l";
@@ -116,13 +116,13 @@ class SplitApplicationTest {
         // Prepare args
         Path testsResourcesDir = getTestsResourcesDir("filename");
         Path testFile = Paths.get("filename.txt");
-        String path = Paths.get(Environment.currentDirectory, testsResourcesDir.toString(), testFile.toString()).toString();
+        String path = Paths.get(EnvironmentUtil.currentDirectory, testsResourcesDir.toString(), testFile.toString()).toString();
 
         String[] args = new String[1];
         args[0] = path;
 
         splitApplication.run(args, System.in, outputStream);
-        String outputFilePath = Paths.get(Environment.currentDirectory, testsResourcesDir.toString(), "xaa").toString();
+        String outputFilePath = Paths.get(EnvironmentUtil.currentDirectory, testsResourcesDir.toString(), "xaa").toString();
 
         List<String> outputFileContents = Files.readAllLines(new File(outputFilePath).toPath());
         List<String> originalFileContents = Files.readAllLines(new File(path).toPath());
@@ -137,14 +137,14 @@ class SplitApplicationTest {
         // Prepare args
         Path testsResourcesDir = getTestsResourcesDir("one_thousand_lines");
         Path testFile = Paths.get("one_thousand_lines.txt");
-        String path = Paths.get(Environment.currentDirectory, testsResourcesDir.toString(), testFile.toString()).toString();
+        String path = Paths.get(EnvironmentUtil.currentDirectory, testsResourcesDir.toString(), testFile.toString()).toString();
 
         String[] args = new String[1];
         args[0] = path;
 
         splitApplication.run(args, System.in, outputStream);
-        String outputFilePath1 = Paths.get(Environment.currentDirectory, testsResourcesDir.toString(), Paths.get("xaa").toString()).toString();
-        String outputFilePath2 = Paths.get(Environment.currentDirectory, testsResourcesDir.toString(), Paths.get("xab").toString()).toString();
+        String outputFilePath1 = Paths.get(EnvironmentUtil.currentDirectory, testsResourcesDir.toString(), Paths.get("xaa").toString()).toString();
+        String outputFilePath2 = Paths.get(EnvironmentUtil.currentDirectory, testsResourcesDir.toString(), Paths.get("xab").toString()).toString();
 
         File outputFile1 = new File(outputFilePath1);
         File outputFile2 = new File(outputFilePath2);
@@ -162,7 +162,7 @@ class SplitApplicationTest {
         // Prepare args
         Path testsResourcesDir = getTestsResourcesDir("line_50_filename");
         Path testFile = Paths.get("line_50_filename.txt");
-        String path = Paths.get(Environment.currentDirectory, testsResourcesDir.toString(), testFile.toString()).toString();
+        String path = Paths.get(EnvironmentUtil.currentDirectory, testsResourcesDir.toString(), testFile.toString()).toString();
 
         String[] args = new String[3];
         args[0] = "-l";
@@ -170,8 +170,8 @@ class SplitApplicationTest {
         args[2] = path;
 
         splitApplication.run(args, System.in, outputStream);
-        String outputFilePath1 = Paths.get(Environment.currentDirectory, testsResourcesDir.toString(), Paths.get("xaa").toString()).toString();
-        String outputFilePath2 = Paths.get(Environment.currentDirectory, testsResourcesDir.toString(), Paths.get("xab").toString()).toString();
+        String outputFilePath1 = Paths.get(EnvironmentUtil.currentDirectory, testsResourcesDir.toString(), Paths.get("xaa").toString()).toString();
+        String outputFilePath2 = Paths.get(EnvironmentUtil.currentDirectory, testsResourcesDir.toString(), Paths.get("xab").toString()).toString();
 
         File outputFile1 = new File(outputFilePath1);
         File outputFile2 = new File(outputFilePath2);
@@ -190,7 +190,7 @@ class SplitApplicationTest {
         // Prepare args
         Path testsResourcesDir = getTestsResourcesDir("bytes_50_filename");
         Path testFile = Paths.get("bytes_50_filename.txt");
-        String path = Paths.get(Environment.currentDirectory, testsResourcesDir.toString(), testFile.toString()).toString();
+        String path = Paths.get(EnvironmentUtil.currentDirectory, testsResourcesDir.toString(), testFile.toString()).toString();
 
         String[] args = new String[3];
         args[0] = "-b";
@@ -198,7 +198,7 @@ class SplitApplicationTest {
         args[2] = path;
 
         splitApplication.run(args, System.in, outputStream);
-        String outputFilePath1 = Paths.get(Environment.currentDirectory, testsResourcesDir.toString(), Paths.get("xaa").toString()).toString();
+        String outputFilePath1 = Paths.get(EnvironmentUtil.currentDirectory, testsResourcesDir.toString(), Paths.get("xaa").toString()).toString();
 
         File outputFile1 = new File(outputFilePath1);
 
@@ -212,7 +212,7 @@ class SplitApplicationTest {
         // Prepare args
         Path testsResourcesDir = getTestsResourcesDir("line_bytes_filename");
         Path testFile = Paths.get("line_bytes_filename.txt");
-        String path = Paths.get(Environment.currentDirectory, testsResourcesDir.toString(), testFile.toString()).toString();
+        String path = Paths.get(EnvironmentUtil.currentDirectory, testsResourcesDir.toString(), testFile.toString()).toString();
 
         String[] args = new String[3];
         args[0] = "-l";
@@ -228,7 +228,7 @@ class SplitApplicationTest {
         // Prepare args
         Path testsResourcesDir = getTestsResourcesDir("line_1_filename");
         Path testFile = Paths.get("line_1_filename.txt");
-        String path = Paths.get(Environment.currentDirectory, testsResourcesDir.toString(), testFile.toString()).toString();
+        String path = Paths.get(EnvironmentUtil.currentDirectory, testsResourcesDir.toString(), testFile.toString()).toString();
 
         String[] args = new String[3];
         args[0] = "-l";
@@ -236,7 +236,7 @@ class SplitApplicationTest {
         args[2] = path;
 
         splitApplication.run(args, System.in, outputStream);
-        Path outputFilePath = Paths.get(Environment.currentDirectory, testsResourcesDir.toString(), "zaa");
+        Path outputFilePath = Paths.get(EnvironmentUtil.currentDirectory, testsResourcesDir.toString(), "zaa");
         assert(Files.exists(outputFilePath));
 
         removeOutputFiles(testsResourcesDir);
@@ -247,7 +247,7 @@ class SplitApplicationTest {
         // Prepare args
         Path testsResourcesDir = getTestsResourcesDir("bytes_5_filename");
         Path testFile = Paths.get("bytes_5_filename.txt");
-        String path = Paths.get(Environment.currentDirectory, testsResourcesDir.toString(), testFile.toString()).toString();
+        String path = Paths.get(EnvironmentUtil.currentDirectory, testsResourcesDir.toString(), testFile.toString()).toString();
 
         String[] args = new String[3];
         args[0] = "-b";
@@ -255,7 +255,7 @@ class SplitApplicationTest {
         args[2] = path;
 
         splitApplication.run(args, System.in, outputStream);
-        Path outputFilePath = Paths.get(Environment.currentDirectory, testsResourcesDir.toString(), "zaa");
+        Path outputFilePath = Paths.get(EnvironmentUtil.currentDirectory, testsResourcesDir.toString(), "zaa");
         assert(Files.exists(outputFilePath));
 
         removeOutputFiles(testsResourcesDir);
@@ -266,7 +266,7 @@ class SplitApplicationTest {
         // Prepare args
         Path testsResourcesDir = getTestsResourcesDir("line_5_filename_prefix");
         Path testFile = Paths.get("line_5_filename_prefix.txt");
-        String path = Paths.get(Environment.currentDirectory, testsResourcesDir.toString(), testFile.toString()).toString();
+        String path = Paths.get(EnvironmentUtil.currentDirectory, testsResourcesDir.toString(), testFile.toString()).toString();
 
         String[] args = new String[4];
         args[0] = "-l";
@@ -275,7 +275,7 @@ class SplitApplicationTest {
         args[3] = "vig";
 
         splitApplication.run(args, System.in, outputStream);
-        Path outputFilePath = Paths.get(Environment.currentDirectory, testsResourcesDir.toString(), "vigaa");
+        Path outputFilePath = Paths.get(EnvironmentUtil.currentDirectory, testsResourcesDir.toString(), "vigaa");
         assert(Files.exists(outputFilePath));
 
         removeOutputFiles(testsResourcesDir);
@@ -286,7 +286,7 @@ class SplitApplicationTest {
         // Prepare args
         Path testsResourcesDir = getTestsResourcesDir("bytes_5_filename_prefix");
         Path testFile = Paths.get("bytes_5_filename_prefix.txt");
-        String path = Paths.get(Environment.currentDirectory, testsResourcesDir.toString(), testFile.toString()).toString();
+        String path = Paths.get(EnvironmentUtil.currentDirectory, testsResourcesDir.toString(), testFile.toString()).toString();
 
         String[] args = new String[4];
         args[0] = "-b";
@@ -295,7 +295,7 @@ class SplitApplicationTest {
         args[3] = "vig";
 
         splitApplication.run(args, System.in, outputStream);
-        Path outputFilePath = Paths.get(Environment.currentDirectory, testsResourcesDir.toString(), "vigaa");
+        Path outputFilePath = Paths.get(EnvironmentUtil.currentDirectory, testsResourcesDir.toString(), "vigaa");
         assert(Files.exists(outputFilePath));
 
         removeOutputFiles(testsResourcesDir);
@@ -304,7 +304,7 @@ class SplitApplicationTest {
     @Test
     public void run_onByteFlagWithStandardInput_SplitsInputIntoFiles() throws Exception {
         // Prepare Args
-        String path = Paths.get(Environment.currentDirectory).toString();
+        String path = Paths.get(EnvironmentUtil.currentDirectory).toString();
         String[] args = new String[2];
         args[0] = "-b";
         args[1] = "5";
@@ -316,9 +316,9 @@ class SplitApplicationTest {
         splitApplication.run(args, inputStream, outputStream);
         inputStream.close();
 
-        Path outputFilePath1 = Paths.get(Environment.currentDirectory, "xaa");
-        Path outputFilePath2 = Paths.get(Environment.currentDirectory, "xab");
-        Path outputFilePath3 = Paths.get(Environment.currentDirectory, "xac");
+        Path outputFilePath1 = Paths.get(EnvironmentUtil.currentDirectory, "xaa");
+        Path outputFilePath2 = Paths.get(EnvironmentUtil.currentDirectory, "xab");
+        Path outputFilePath3 = Paths.get(EnvironmentUtil.currentDirectory, "xac");
 
         assert(Files.exists(outputFilePath1));
         assert(Files.exists(outputFilePath2));
@@ -454,7 +454,7 @@ class SplitApplicationTest {
         }
     }
     private void removeOutputFilesInCurrentDirectory() {
-        File dir = Paths.get(Environment.currentDirectory).toFile();
+        File dir = Paths.get(EnvironmentUtil.currentDirectory).toFile();
         for (File file : dir.listFiles()) {
             if (file.getName().equals("xaa") || file.getName().equals("xab") || file.getName().equals("xac")) {
                 file.delete();

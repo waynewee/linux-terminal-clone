@@ -43,13 +43,13 @@ public class CatApplication implements CatInterface {
                 result = catFileAndStdin(catArgs.isLineNumber(), stdin, catArgs.getFiles().toArray(new String[0]));
             }
         } catch (Exception e) {
-            throw new CatException(ERR_GENERAL);
+            throw new CatException(ERR_GENERAL, e);
         }
         try {
             stdout.write(result.getBytes());
             stdout.write(STRING_NEWLINE.getBytes());
         } catch (IOException e) {
-            throw new CatException(ERR_WRITE_STREAM);
+            throw new CatException(ERR_WRITE_STREAM, e);
         }
     }
 
@@ -100,7 +100,7 @@ public class CatApplication implements CatInterface {
         while (scanner.hasNextLine()) {
             String line = scanner.nextLine();
             if (isLineNumber) {
-                result.append(lineNumber).append(" ");
+                result.append(lineNumber).append(' ');
             }
             result.append(line);
             if (scanner.hasNextLine()) {

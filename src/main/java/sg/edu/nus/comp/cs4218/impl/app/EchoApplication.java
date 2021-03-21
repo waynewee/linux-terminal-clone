@@ -36,7 +36,7 @@ public class EchoApplication implements EchoInterface {
                 if (arg.charAt(0) == '"' && arg.charAt(arg.length()-1) == '"') {
                     newArg = '\'' + arg + '\'';
                 }
-                stringBuilder.append(newArg).append(" ");
+                stringBuilder.append(newArg).append(' ');
             }
             result = stringBuilder.toString();
             result = result.substring(0, result.length() - 1);
@@ -63,7 +63,7 @@ public class EchoApplication implements EchoInterface {
         try {
             stdout.write(result.getBytes());
         } catch (IOException e) {
-            throw new EchoException(ERR_IO_EXCEPTION);
+            throw new EchoException(ERR_IO_EXCEPTION, e);
         }
     }
 }

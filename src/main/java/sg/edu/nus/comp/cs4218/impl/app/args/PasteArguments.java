@@ -11,7 +11,7 @@ import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_FLAG_PREFIX;
 
 public class PasteArguments {
 
-    public static final char CHAR_SERIAL_OPTION = 's';
+    public static final char SERIAL_FLAG = 's';
     private final List<String> files;
     private boolean serial;
 
@@ -38,7 +38,7 @@ public class PasteArguments {
             }
             // `parsingFlag` is to ensure all flags come first, followed by files.
             if (parsingFlag && arg.charAt(0) == CHAR_FLAG_PREFIX) {
-                if (arg.equals(CHAR_FLAG_PREFIX + "" + CHAR_SERIAL_OPTION)) {
+                if (arg.equals(CHAR_FLAG_PREFIX + "" + SERIAL_FLAG)) {
                     this.serial = true;
                     continue;
                 }

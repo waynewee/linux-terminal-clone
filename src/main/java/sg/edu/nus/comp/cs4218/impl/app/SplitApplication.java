@@ -1,6 +1,6 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
-import sg.edu.nus.comp.cs4218.Environment;
+import sg.edu.nus.comp.cs4218.EnvironmentUtil;
 import sg.edu.nus.comp.cs4218.app.SplitInterface;
 import sg.edu.nus.comp.cs4218.exception.SplitException;
 import sg.edu.nus.comp.cs4218.impl.parser.SplitArgsParser;
@@ -41,7 +41,7 @@ public class SplitApplication implements SplitInterface {
             parser.parse(args);
             parser.processArguments();
         } catch (Exception e) {
-            throw new SplitException(e.getMessage());
+            throw new SplitException(e.getMessage(), e);
         }
 
         boolean isSplitByBytes = parser.isSplitByBytes();
@@ -130,8 +130,8 @@ public class SplitApplication implements SplitInterface {
 
     @Override
     public void splitStdinByLines(InputStream stdin, String prefix, int linesPerFile) throws Exception {
-        Scanner sc = new Scanner(System.in);
-        String directoryPath = Paths.get(Environment.currentDirectory).toString();
+        Scanner scanner = new Scanner(System.in);
+        String directoryPath = Paths.get(EnvironmentUtil.currentDirectory).toString();
         FileWriter fileWriter = new FileWriter(Paths.get(directoryPath, getOutputFileName()).toString());
 
         int counter = 0;
@@ -145,7 +145,7 @@ public class SplitApplication implements SplitInterface {
                 counter += 1;
                 String temp;
                 try {
-                    temp = sc.nextLine();
+                    temp = scanner.nextLine();
                 } catch (Exception e) {
                     break;
                 }
@@ -159,15 +159,15 @@ public class SplitApplication implements SplitInterface {
     @Override
     public void splitStdinByBytes(InputStream stdin, String prefix, String bytesPerFile) throws Exception {
         FileWriter fileWriter;
-        Scanner sc = new Scanner(System.in);
-        String directoryPath = Paths.get(Environment.currentDirectory).toString();
+        Scanner scanner = new Scanner(System.in);
+        String directoryPath = Paths.get(EnvironmentUtil.currentDirectory).toString();
 
         int splitSize = extractSplitSize(bytesPerFile);
 
         String inputString = "";
         while (true) {
             try {
-                inputString += sc.nextLine();
+                inputString += scanner.nextLine();
             } catch (Exception e) {
                 break;
             }

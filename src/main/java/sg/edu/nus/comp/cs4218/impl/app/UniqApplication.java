@@ -41,7 +41,7 @@ public class UniqApplication implements UniqInterface {
                 stdout.write(result.getBytes());
             }
         } catch (IOException e) {
-            throw new UniqException(ERR_WRITE_STREAM);
+            throw new UniqException(ERR_WRITE_STREAM, e);
         }
     }
 
@@ -59,7 +59,7 @@ public class UniqApplication implements UniqInterface {
             }
             return result;
         } catch (FileNotFoundException e){
-            throw new UniqException(ERR_FILE_NOT_FOUND);
+            throw new UniqException(ERR_FILE_NOT_FOUND, e);
         }
     }
 
@@ -86,11 +86,11 @@ public class UniqApplication implements UniqInterface {
             String previousLine = null;
             while ((currentLine = reader.readLine()) != null) {
                 if (previousLine != null) {
-                    if (!currentLine.equals(previousLine)) {
+                    if (currentLine.equals(previousLine)) {
+                        count++;
+                    } else {
                         addLine(result, isCount, isRepeated, isAllRepeated, count, previousLine);
                         count = 1;
-                    } else {
-                        count++;
                     }
                 }
                 previousLine = currentLine;
@@ -100,7 +100,7 @@ public class UniqApplication implements UniqInterface {
 
             return result.toString() + STRING_NEWLINE;
         } catch (IOException e) {
-            throw new UniqException(ERR_IO_EXCEPTION);
+            throw new UniqException(ERR_IO_EXCEPTION, e);
         }
     }
 
@@ -121,7 +121,7 @@ public class UniqApplication implements UniqInterface {
             fileWriter.write(result);
             fileWriter.close();
         } catch (IOException e) {
-            throw new UniqException(ERR_IO_EXCEPTION);
+            throw new UniqException(ERR_IO_EXCEPTION, e);
         }
 
     }

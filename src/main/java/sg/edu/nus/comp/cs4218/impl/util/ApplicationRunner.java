@@ -81,6 +81,7 @@ public class ApplicationRunner {
                 break;
             case APP_UNIQ:
                 application = new UniqApplication();
+                break;
             case APP_RM:
                 application = new RmApplication();
                 break;
@@ -95,7 +96,7 @@ public class ApplicationRunner {
         } catch (AbstractApplicationException e){
             throw e;
         } catch (Exception e){
-            throw new ShellException(ERR_GENERAL);
+            throw new ShellException(ERR_GENERAL, e);
         }
     }
 }

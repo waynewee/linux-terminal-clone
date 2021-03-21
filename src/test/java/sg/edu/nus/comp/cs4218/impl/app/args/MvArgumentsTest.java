@@ -48,9 +48,30 @@ class MvArgumentsTest {
     }
 
     @Test
-    void equals_DifferentParameter_NotEqual() {
+    void equals_DifferentSourcesSameDestinationPath_NotEqual() {
         MvArguments test = new MvArguments(new String[]{ARG1}, SRC_ROOT, true);
         MvArguments other = new MvArguments(new String[]{ARG1, ARG2}, SRC_ROOT, true);
         assertNotEquals(other, test);
+    }
+
+    @Test
+    void equals_DifferentDestinationPath_NotEqual() {
+        MvArguments test = new MvArguments(new String[]{ARG1}, SRC_ROOT, true);
+        MvArguments other = new MvArguments(new String[]{ARG1}, SUB_PATH, true);
+        assertNotEquals(other, test);
+    }
+
+    @Test
+    void equals_SamePathSameDestinationDifferentFlag_NotEqual() {
+        MvArguments test = new MvArguments(new String[]{ARG1}, SRC_ROOT, true);
+        MvArguments other = new MvArguments(new String[]{ARG1}, SRC_ROOT, false);
+        assertNotEquals(other, test);
+    }
+
+    @Test
+    void equal_DifferentObjects_NotEqual() {
+        MvArguments test = new MvArguments(new String[]{ARG1}, SRC_ROOT, true);
+        Integer other = 99999999;
+        assertNotEquals(test, other);
     }
 }
