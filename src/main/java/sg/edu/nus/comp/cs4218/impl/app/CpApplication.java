@@ -43,7 +43,7 @@ public class CpApplication implements CpInterface {
 
     @Override
     public String cpSrcFileToDestFile(Boolean isRecursive, String srcFile, String destFile) throws Exception {
-        Files.copy(Paths.get(srcFile), Paths.get(destFile));
+        Files.copy(Paths.get(srcFile), Paths.get(destFile), StandardCopyOption.REPLACE_EXISTING);
 
         return destFile;
     }

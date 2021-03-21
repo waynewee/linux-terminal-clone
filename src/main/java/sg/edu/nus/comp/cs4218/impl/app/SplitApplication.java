@@ -46,7 +46,6 @@ public class SplitApplication implements SplitInterface {
 
         boolean isSplitByBytes = parser.isSplitByBytes();
         boolean isSplitByLines = parser.isSplitByLines();
-        int splitSize = parser.getSplitSize();
         prefix = parser.getPrefix();
         suffix = parser.getSplitSuffix();
 
