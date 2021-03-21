@@ -5,6 +5,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import sg.edu.nus.comp.cs4218.Environment;
+import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
+import sg.edu.nus.comp.cs4218.exception.ShellException;
 import sg.edu.nus.comp.cs4218.impl.ShellImpl;
 
 import java.io.ByteArrayOutputStream;
@@ -135,5 +137,13 @@ public class CdLsIntegrationTest {
             testShell.parseAndEvaluate(command2, outputStream);
         });
         assertEquals(expected, outputStream.toString());
+    }
+
+    @Test
+    public void parseAndEvaluate_cdToNonExistentPathThenLs_shouldNotThrowErrors() throws AbstractApplicationException, ShellException {
+        final String cdToNonExistentPath = "cantTouchMe";
+        assertThrows(Exception.class, () -> testShell.parseAndEvaluate(cdToNonExistentPath, outputStream));
+        final String secondLsCommand = "ls -R";
+        assertDoesNotThrow(() -> testShell.parseAndEvaluate(secondLsCommand, outputStream));
     }
 }
