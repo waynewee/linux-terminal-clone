@@ -149,11 +149,7 @@ class LsApplicationTest {
 
         // Prepare args
         Path testsResourcesDir = getTestsResourcesDir("test_number_of_folders");
-<<<<<<< HEAD
-        String path = Paths.get(EnvironmentUtil.currentDirectory, testsResourcesDir.toString()).toString();
-=======
         String path = Paths.get(testsResourcesDir.toString()).toString();
->>>>>>> main
 
         String[] args = new String[2];
         args[0] = "-d";
@@ -175,11 +171,7 @@ class LsApplicationTest {
 
         // Prepare args
         Path testsResourcesDir = getTestsResourcesDir("test_order_files_sort");
-<<<<<<< HEAD
-        String path = Paths.get(EnvironmentUtil.currentDirectory, testsResourcesDir.toString()).toString();
-=======
         String path = Paths.get(testsResourcesDir.toString()).toString();
->>>>>>> main
 
         // Prepare args
         String[] args = new String[2];
@@ -199,11 +191,8 @@ class LsApplicationTest {
 
         // Prepare args
         Path testsResourcesDir = getTestsResourcesDir("test_recursive");
-<<<<<<< HEAD
-        String path = Paths.get(EnvironmentUtil.currentDirectory, testsResourcesDir.toString()).toString();
-=======
         String path = Paths.get(testsResourcesDir.toString()).toString();
->>>>>>> main
+
         String[] args = new String[2];
         args[0] = "-R";
         args[1] = path;
@@ -221,11 +210,8 @@ class LsApplicationTest {
 
         // Prepare args
         Path testsResourcesDir = getTestsResourcesDir("test_recursive_directories");
-<<<<<<< HEAD
-        String path = Paths.get(EnvironmentUtil.currentDirectory, testsResourcesDir.toString()).toString();
-=======
         String path = Paths.get(testsResourcesDir.toString()).toString();
->>>>>>> main
+
         String[] args = new String[3];
         args[0] = "-R";
         args[1] = "-d";
@@ -244,11 +230,8 @@ class LsApplicationTest {
 
         // Prepare args
         Path testsResourcesDir = getTestsResourcesDir("test_recursive_sort");
-<<<<<<< HEAD
-        String path = Paths.get(EnvironmentUtil.currentDirectory, testsResourcesDir.toString()).toString();
-=======
         String path = Paths.get(testsResourcesDir.toString()).toString();
->>>>>>> main
+
         String[] args = new String[3];
         args[0] = "-R";
         args[1] = "-X";
@@ -267,11 +250,8 @@ class LsApplicationTest {
 
         // Prepare args
         Path testsResourcesDir = getTestsResourcesDir("test_folders_sort");
-<<<<<<< HEAD
-        String path = Paths.get(EnvironmentUtil.currentDirectory, testsResourcesDir.toString()).toString();
-=======
         String path = Paths.get(testsResourcesDir.toString()).toString();
->>>>>>> main
+
         String[] args = new String[3];
         args[0] = "-d";
         args[1] = "-X";
@@ -290,11 +270,8 @@ class LsApplicationTest {
 
         // Prepare args
         Path testsResourcesDir = getTestsResourcesDir("test_folders_sort_recursive");
-<<<<<<< HEAD
-        String path = Paths.get(EnvironmentUtil.currentDirectory, testsResourcesDir.toString()).toString();
-=======
         String path = Paths.get(testsResourcesDir.toString()).toString();
->>>>>>> main
+
         String[] args = new String[4];
         args[0] = "-d";
         args[1] = "-X";

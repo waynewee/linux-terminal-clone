@@ -4,4 +4,8 @@ public class CpException extends AbstractApplicationException {
     public CpException(String  message) {
         super("cp: " + message);
     }
+
+    public CpException(String message, Throwable exception) {
+        super("cp: " + message, exception);
+    }
 }

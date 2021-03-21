@@ -15,7 +15,6 @@ import java.nio.file.StandardCopyOption;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 
 public class CpApplication implements CpInterface {
-    private CpArgsParser parser;
 
     @Override
     public void run(String[] args, InputStream stdin, OutputStream stdout) throws Exception {
@@ -27,15 +26,15 @@ public class CpApplication implements CpInterface {
             throw new CpException(ERR_NO_OSTREAM);
         }
 
-        parser = new CpArgsParser();
+        CpArgsParser parser = new CpArgsParser();
         try {
             parser.parse(args);
             parser.processArguments();
         } catch (Exception e) {
-            throw new CpException(e.getMessage());
+            throw new CpException(e.getMessage(), e);
         }
 
-        if (parser.destinationIsFolder) {
+        if (parser.destIsFolder) {
             cpFilesToFolder(parser.isRecursive(), parser.destination, parser.sourceFiles);
         } else {
             cpSrcFileToDestFile(parser.isRecursive(), parser.sourceFiles[0], parser.destination);

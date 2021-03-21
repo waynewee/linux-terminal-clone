@@ -4,7 +4,7 @@ public final class EnvironmentUtil {
 
     /**
      * Java VM does not support changing the current working directory.
-     * For this reason, we use Environment.currentDirectory instead.
+     * For this reason, we use EnvironmentUtil.currentDirectory instead.
      */
     public static volatile String currentDirectory = System.getProperty("user.dir");
 
