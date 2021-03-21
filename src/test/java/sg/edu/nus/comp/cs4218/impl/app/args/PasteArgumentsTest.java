@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import sg.edu.nus.comp.cs4218.exception.PasteException;
+import sg.edu.nus.comp.cs4218.exception.UniqException;
 
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 
@@ -53,6 +54,14 @@ class PasteArgumentsTest {
         pasteArguments.parse(INPUT_FILE, OUTPUT_FILE);
         assertEquals(INPUT_FILE, pasteArguments.getFiles().get(0));
         assertEquals(OUTPUT_FILE, pasteArguments.getFiles().get(1));
+    }
+
+    @Test
+    public void parse_ArgsNull_ThrowsNullArgsException() {
+        PasteException pasteException = assertThrows(PasteException.class,()->{
+            pasteArguments.parse(null);
+        });
+        assertEquals(new PasteException(ERR_NULL_ARGS).getMessage(), pasteException.getMessage());
     }
 
 }

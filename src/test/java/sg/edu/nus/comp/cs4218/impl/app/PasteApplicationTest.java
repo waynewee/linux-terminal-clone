@@ -8,9 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import sg.edu.nus.comp.cs4218.exception.PasteException;
 import sg.edu.nus.comp.cs4218.exception.UniqException;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.lang.reflect.Array;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -38,6 +36,8 @@ class PasteApplicationTest {
     private static final String STDIN_ABC = "a\nb\nc";
     private static final String STDIN_QWERTY = "q\nw\ne\nr\nt\ny";
     private static final String STDIN_WORDS = "Hello\nWorld\nHow's\nLife";
+
+    private static final String FLAG_SERIAL = "-s";
 
     @BeforeAll
     static void setupShell() {
@@ -83,6 +83,14 @@ class PasteApplicationTest {
                 STRING_NEWLINE +
                 "3" +
                 STRING_NEWLINE, result);
+    }
+
+    @Test
+    public void mergeFile_SerialTrueFileNotExist_ThrowsFileNotFoundException() {
+        Exception exception = assertThrows(Exception.class, ()->{
+           pasteApplication.mergeFile(true, PATH_NO_EXIST);
+        });
+        assertEquals(new PasteException(ERR_FILE_NOT_FOUND).getMessage(), exception.getMessage());
     }
 
     @Test
@@ -227,4 +235,48 @@ class PasteApplicationTest {
         assertEquals(new PasteException(ERR_NULL_STREAMS).getMessage(), exception.getMessage());
     }
 
+    @Test
+    public void run_OutputStreamNull_ThrowsNullStreamsException() {
+        String[] args = {};
+        Exception exception = assertThrows(Exception.class, ()->{
+            pasteApplication.run(args, new ByteArrayInputStream("".getBytes(StandardCharsets.UTF_8)), null);
+        });
+        assertEquals(new PasteException(ERR_NULL_STREAMS).getMessage(), exception.getMessage());
+    }
+
+    @Test
+    public void run_FilesEmpty_ReturnsMergeStdin() throws PasteException {
+        String[] args = {FLAG_SERIAL};
+        OutputStream outputStream = new ByteArrayOutputStream();
+        pasteApplication.run(args, new ByteArrayInputStream("".getBytes(StandardCharsets.UTF_8)), outputStream);
+        assertEquals(STRING_NEWLINE, outputStream.toString());
+    }
+
+    @Test
+    public void run_FilesNotEmptyInputStreamNull_ReturnsMergeFile() throws PasteException {
+        String[] args = {PATH_123};
+        OutputStream outputStream = new ByteArrayOutputStream();
+        pasteApplication.run(args, null, outputStream);
+        assertEquals("1" +
+                STRING_NEWLINE +
+                "2" +
+                STRING_NEWLINE +
+                "3" +
+                STRING_NEWLINE, outputStream.toString());
+    }
+
+    @Test
+    public void run_FilesNotEmptyInputStreamNotNull_ReturnsMergeFileAndStdin() throws PasteException {
+        String[] args = {PATH_123, "-"};
+        OutputStream outputStream = new ByteArrayOutputStream();
+        pasteApplication.run(args, new ByteArrayInputStream(STDIN_WORDS.getBytes(StandardCharsets.UTF_8)), outputStream);
+        assertEquals("1\tHello" +
+                STRING_NEWLINE +
+                "2\tWorld" +
+                STRING_NEWLINE +
+                "3\tHow's" +
+                STRING_NEWLINE +
+                "\tLife" +
+                STRING_NEWLINE, outputStream.toString());
+    }
 }

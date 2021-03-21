@@ -5,7 +5,9 @@ import org.junit.jupiter.api.Test;
 import sg.edu.nus.comp.cs4218.exception.CatException;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -25,6 +27,7 @@ class CatApplicationTest {
     private static final String FILE_NOT_EXIST = "not-exist.txt";
     private static final String FILE_NOT_EXIST_2 = "not-exist-2.txt";
     private static final String FILE_EMPTY = "empty.txt";
+    private static final String DIRECTORY = "directory";
 
     private static final String TEXT_MULTI_1_1 = "Leverage benchmark, reinvent recontextualize recontextualize folksonomies communities; social";
     private static final String TEXT_MULTI_1_2 = "Facilitate grow partnerships, initiatives best-of-breed, addelivery repurpose user-centric webservices podcasting podcasts integrated vertical, B2B innovate!";
@@ -39,11 +42,12 @@ class CatApplicationTest {
     private static final String PATH_NOT_EXIST = PATH + FILE_NOT_EXIST;
     private static final String PATH_NOT_EXIST_2 = PATH + FILE_NOT_EXIST_2;
     private static final String PATH_EMPTY = PATH + FILE_EMPTY;
+    private static final String PATH_DIRECTORY = PATH + DIRECTORY;
 
     private static final String STDIN_MULTI_1 = "Leverage benchmark, reinvent recontextualize recontextualize folksonomies communities; social\n" +
             "Facilitate grow partnerships, initiatives best-of-breed, addelivery repurpose user-centric webservices podcasting podcasts integrated vertical, B2B innovate!\n" +
             "Partnerships web services revolutionize initiatives syndicate platforms implement facilitate, reinvent incubate standards-compliant aggregate\n" +
-            "Bricks-and-clicks, \"integrateAJAX-enabled ecologies reintermediate communities, deploy; long-tail architectures,\" cross-media--dynamic capture integrateAJAX-enabled integrateAJAX-enabled infrastructures remix synergize mesh enhance end-to-end A-list\n";
+            "Bricks-and-clicks, \"integrateAJAX-enabled ecologies reintermediate communities, deploy; long-tail architectures,\" cross-media--dynamic capture integrateAJAX-enabled integrateAJAX-enabled infrastructures remix synergize mesh enhance end-to-end A-list";
     private static final String STDIN_SINGLE_1 = "Hello World";
     private static final String STDIN_SINGLE_2 = "This is a test string.";
 
@@ -363,6 +367,78 @@ class CatApplicationTest {
                 STRING_NEWLINE +
                 "8 " + TEXT_MULTI_1_4,
                  result);
+    }
+
+    @Test
+    public void catFiles_FileNull_ThrowsGeneralException() {
+        Exception exception = assertThrows(Exception.class, ()->{
+            catApplication.catFiles(true, null);
+        });
+        assertEquals(new CatException(ERR_GENERAL).getMessage(), exception.getMessage());
+    }
+
+    @Test
+    public void catFiles_FileIsDir_ReturnsIsDirException() throws Exception {
+        String result = catApplication.catFiles(true, PATH_DIRECTORY);
+        assertEquals(new CatException(ERR_IS_DIR).getMessage() + STRING_NEWLINE, result);
+    }
+
+    @Test
+    public void catFileAndStdin_FileNull_ThrowsGeneralException() {
+        Exception exception = assertThrows(Exception.class, ()->{
+            catApplication.catFileAndStdin(true, new ByteArrayInputStream(PATH_MULTI_1.getBytes(StandardCharsets.UTF_8)), null);
+        });
+        assertEquals(new CatException(ERR_GENERAL).getMessage(), exception.getMessage());
+    }
+
+    @Test
+    public void catFileAndStdin_InputStreamNull_ThrowsGeneralException() {
+        Exception exception = assertThrows(Exception.class, ()->{
+            catApplication.catFileAndStdin(true, null, PATH_SINGLE_2);
+        });
+        assertEquals(new CatException(ERR_GENERAL).getMessage(), exception.getMessage());
+    }
+
+    @Test
+    public void catFileAndStdin_FileIsDir_ReturnsIsDirException() throws Exception {
+        String result = catApplication.catFileAndStdin(true, new ByteArrayInputStream(STDIN_SINGLE_1.getBytes(StandardCharsets.UTF_8)), PATH_DIRECTORY);
+        assertEquals(new CatException(ERR_IS_DIR).getMessage() +
+                STRING_NEWLINE +
+                "1 " +
+                "Hello World", result);
+    }
+
+    @Test
+    public void run_OutputStreamNull_ThrowsNullStreamsException() {
+        String[] args = {};
+        Exception exception = assertThrows(Exception.class, ()->{
+            catApplication.run(args, new ByteArrayInputStream("".getBytes(StandardCharsets.UTF_8)), null);
+        });
+        assertEquals(new CatException(ERR_NULL_STREAMS).getMessage(), exception.getMessage());
+    }
+
+    @Test
+    public void run_FilesEmpty_ReturnsCatStdin() throws CatException {
+        String[] args = {};
+        OutputStream outputStream = new ByteArrayOutputStream();
+        catApplication.run(args, new ByteArrayInputStream("".getBytes(StandardCharsets.UTF_8)), outputStream);
+        assertEquals(STRING_NEWLINE, outputStream.toString());
+    }
+
+    @Test
+    public void run_FilesNotEmptyInputStreamNull_ReturnsCatFiles() throws CatException {
+        String[] args = {PATH_SINGLE_1};
+        OutputStream outputStream = new ByteArrayOutputStream();
+        catApplication.run(args, null, outputStream);
+        assertEquals(TEXT_SINGLE_1 + STRING_NEWLINE, outputStream.toString());
+    }
+
+    @Test
+    public void run_FilesNotEmptyInputStreamNotNull_ReturnsCatFileAndStdin() throws CatException {
+        String[] args = {PATH_SINGLE_1};
+        OutputStream outputStream = new ByteArrayOutputStream();
+        catApplication.run(args, new ByteArrayInputStream(STDIN_SINGLE_2.getBytes(StandardCharsets.UTF_8)), outputStream);
+        assertEquals(TEXT_SINGLE_1 + "This is a test string." + STRING_NEWLINE, outputStream.toString());
     }
 
 }

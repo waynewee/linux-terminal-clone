@@ -33,9 +33,6 @@ public class WcArguments {
         if (args == null) {
             throw new WcException(ERR_NULL_ARGS);
         }
-        if (args.length < 1) {
-            throw new WcException(ERR_NO_REGEX);
-        }
 
         boolean parsingFlag = true;
         // Parse arguments=

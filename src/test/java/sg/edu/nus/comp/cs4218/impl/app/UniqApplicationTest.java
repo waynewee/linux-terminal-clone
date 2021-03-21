@@ -2,6 +2,7 @@ package sg.edu.nus.comp.cs4218.impl.app;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import sg.edu.nus.comp.cs4218.exception.PasteException;
 import sg.edu.nus.comp.cs4218.exception.UniqException;
 
 import java.io.*;
@@ -61,6 +62,11 @@ class UniqApplicationTest {
             STDIN_LINE_2 +
             STRING_NEWLINE +
             STDIN_LINE_3;
+
+    private static final String FLAG_COUNT = "-c";
+    private static final String FLAG_REPEATED = "-d";
+    private static final String FLAG_ALL_REPEATED = "-D";
+
 
     @BeforeAll
     static void setupShell() {
@@ -280,6 +286,45 @@ class UniqApplicationTest {
             uniqApplication.uniqFromFile(false, false, false, PATH_NO_EXIST, null);
         });
         assertEquals(new UniqException(ERR_FILE_NOT_FOUND).getMessage(), exception.getMessage());
+    }
+
+    @Test
+    public void run_OutputStreamNull_ThrowsNullStreamsException() {
+        String[] args = {};
+        Exception exception = assertThrows(Exception.class, ()->{
+            uniqApplication.run(args, new ByteArrayInputStream("".getBytes(StandardCharsets.UTF_8)), null);
+        });
+        assertEquals(new UniqException(ERR_NULL_STREAMS).getMessage(), exception.getMessage());
+    }
+
+    @Test
+    public void run_FilesEmpty_ReturnsUniqFromStdin() throws UniqException {
+        String[] args = {FLAG_COUNT};
+        OutputStream outputStream = new ByteArrayOutputStream();
+        uniqApplication.run(args, new ByteArrayInputStream(STDIN_DUP_ADJ.getBytes(StandardCharsets.UTF_8)), outputStream);
+        assertEquals("2 This is a sentence" +
+                STRING_NEWLINE +
+                "1 This is a line" +
+                STRING_NEWLINE +
+                "3 Hello World!" +
+                STRING_NEWLINE, outputStream.toString());
+    }
+
+    @Test
+    public void run_FilesNotEmptyInputStreamNull_ReturnsMergeFile() throws UniqException {
+        String[] args = {FLAG_COUNT, PATH_DUP_ADJ};
+        OutputStream outputStream = new ByteArrayOutputStream();
+        uniqApplication.run(args, null, outputStream);
+        assertEquals("2 This file contains multiple duplicate lines" +
+                STRING_NEWLINE +
+                "1 This file does contain duplicates" +
+                STRING_NEWLINE +
+                "3 And they are adjacent" +
+                STRING_NEWLINE +
+                "2 This file does contain duplicates" +
+                STRING_NEWLINE +
+                "2 And they are adjacent" +
+                STRING_NEWLINE, outputStream.toString());
     }
 
     private String readOutputFile() throws FileNotFoundException {

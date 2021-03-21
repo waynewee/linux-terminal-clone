@@ -2,10 +2,13 @@ package sg.edu.nus.comp.cs4218.impl.app;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.GrepException;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -28,6 +31,8 @@ class GrepApplicationTest {
     private static final String FILE_NOT_EXIST = "not-exist.txt";
     private static final String FILE_EMPTY = "empty.txt";
 
+    private static final String DIRECTORY = "directory";
+
     private static final String TEXT_MULTI_1_1 = "Hi, I like apples.";
     private static final String TEXT_MULTI_1_2 = "What fruits do you like?";
     private static final String TEXT_MULTI_1_3 = "I like apples!";
@@ -46,6 +51,7 @@ class GrepApplicationTest {
     private static final String PATH_SINGLE_2 = PATH + FILE_SINGLE_2;
     private static final String PATH_NOT_EXIST = PATH + FILE_NOT_EXIST;
     private static final String PATH_EMPTY = PATH + FILE_EMPTY;
+    private static final String PATH_DIRECTORY = PATH + DIRECTORY;
 
     private static final String STDIN_MULTI_1_1 = "Dogs are my favourite colour.";
     private static final String STDIN_MULTI_1_2 = "I love cats too.";
@@ -629,4 +635,63 @@ class GrepApplicationTest {
                 STRING_NEWLINE, result);
     }
 
+    @Test
+    public void grepFromFile_FileIsDir_ReturnsIsDirException() throws Exception {
+        String result = grepApplication.grepFromFiles(PATTERN_APPLES, false, false, false, PATH_DIRECTORY);
+        assertEquals(new GrepException(DIRECTORY + ": " + ERR_IS_DIR).getMessage() + STRING_NEWLINE, result);
+    }
+
+    @Test
+    public void run_PatternExistsInputStreamNullFilesEmpty_ThrowsNoInputException() {
+        String[] args = {PATTERN_APPLES};
+        OutputStream outputStream = new ByteArrayOutputStream();
+        Exception exception = assertThrows(Exception.class, ()->{
+            grepApplication.run(args, null, outputStream);
+        });
+        assertEquals(new GrepException(ERR_NO_INPUT).getMessage(), exception.getMessage());
+    }
+
+    @Test
+    public void run_PatternNoExists_ThrowsInvalidSyntax() {
+        String[] args = {PATH_MULTI_1};
+        OutputStream outputStream = new ByteArrayOutputStream();
+        Exception exception = assertThrows(Exception.class, ()->{
+            grepApplication.run(args, new ByteArrayInputStream("".getBytes(StandardCharsets.UTF_8)), outputStream);
+        });
+        assertEquals(new GrepException(ERR_INVALID_REGEX).getMessage(), exception.getMessage());
+    }
+
+    @Test
+    public void run_FilesEmpty_ReturnsGrepFromStdin() throws Exception {
+        String[] args = {PATTERN_APPLES};
+        OutputStream outputStream = new ByteArrayOutputStream();
+        grepApplication.run(args, new ByteArrayInputStream("".getBytes(StandardCharsets.UTF_8)), outputStream);
+        assertEquals(STRING_NEWLINE, outputStream.toString());
+    }
+
+    @Test
+    public void run_FilesNotEmptyInputStreamNull_ReturnsGrepFromFiles() throws Exception {
+        String[] args = {PATTERN_APPLES, PATH_MULTI_1};
+        OutputStream outputStream = new ByteArrayOutputStream();
+        grepApplication.run(args, null, outputStream);
+        assertEquals(TEXT_MULTI_1_1 +
+                STRING_NEWLINE +
+                TEXT_MULTI_1_3 +
+                STRING_NEWLINE +
+                TEXT_MULTI_1_6 +
+                STRING_NEWLINE, outputStream.toString());
+    }
+
+    @Test
+    public void run_FilesNotEmptyInputStreamNotNull_ReturnsGrepFromFileAndStdin() throws Exception {
+        String[] args = {PATTERN_APPLES, PATH_MULTI_1};
+        OutputStream outputStream = new ByteArrayOutputStream();
+        grepApplication.run(args, new ByteArrayInputStream(STDIN_SINGLE_1.getBytes(StandardCharsets.UTF_8)), outputStream);
+        assertEquals(TEXT_MULTI_1_1 +
+                STRING_NEWLINE +
+                TEXT_MULTI_1_3 +
+                STRING_NEWLINE +
+                TEXT_MULTI_1_6 +
+                STRING_NEWLINE, outputStream.toString());
+    }
 }

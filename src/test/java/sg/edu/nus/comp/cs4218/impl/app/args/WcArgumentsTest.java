@@ -8,6 +8,7 @@ import sg.edu.nus.comp.cs4218.impl.app.args.WcArguments;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_INVALID_FLAG;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_ARGS;
 
 
 class WcArgumentsTest {
@@ -101,6 +102,14 @@ class WcArgumentsTest {
             wcArguments.parse(FLAG_INVALID, FILE);
         });
         assertEquals(wcException.getMessage(), new WcException(ERR_INVALID_FLAG).getMessage());
+    }
+
+    @Test
+    public void parse_ArgsNull_ThrowsNullArgsException() {
+        WcException wcException = assertThrows(WcException.class, ()->{
+            wcArguments.parse(null);
+        });
+        assertEquals(new WcException(ERR_NULL_ARGS).getMessage(), wcException.getMessage());
     }
 
 }
