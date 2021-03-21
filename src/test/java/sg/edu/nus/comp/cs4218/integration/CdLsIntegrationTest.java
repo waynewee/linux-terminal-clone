@@ -8,6 +8,7 @@ import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
 import sg.edu.nus.comp.cs4218.impl.ShellImpl;
+import sg.edu.nus.comp.cs4218.impl.util.StringUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.time.Duration;
@@ -45,14 +46,17 @@ public class CdLsIntegrationTest {
         });
 
         final String command2 = "ls\n";
-        String expected = "test_folders_sort\r\n" +
-                "test_folders_sort_recursive\r\n" +
-                "test_number_of_files\r\n" +
-                "test_number_of_folders\r\n" +
-                "test_order_files_sort\r\n" +
-                "test_recursive\r\n" +
-                "test_recursive_directories\r\n" +
-                "test_recursive_sort\r\n";
+        String expected = "test_folders_sort\n" +
+                "test_folders_sort_recursive\n" +
+                "test_number_of_files\n" +
+                "test_number_of_folders\n" +
+                "test_order_files_sort\n" +
+                "test_recursive\n" +
+                "test_recursive_directories\n" +
+                "test_recursive_sort\n";
+
+        expected = expected.replace("\n", StringUtils.STRING_NEWLINE);
+        expected = expected.replace("\\\\", StringUtils.fileSeparator());
 
         assertTimeoutPreemptively(Duration.ofMillis(500), () -> {
             testShell.parseAndEvaluate(command2, outputStream);
@@ -68,14 +72,17 @@ public class CdLsIntegrationTest {
         });
 
         final String command2 = "ls -d\n";
-        String expected = "test_folders_sort\r\n" +
-                "test_folders_sort_recursive\r\n" +
-                "test_number_of_files\r\n" +
-                "test_number_of_folders\r\n" +
-                "test_order_files_sort\r\n" +
-                "test_recursive\r\n" +
-                "test_recursive_directories\r\n" +
-                "test_recursive_sort\r\n";
+        String expected = "test_folders_sort\n" +
+                "test_folders_sort_recursive\n" +
+                "test_number_of_files\n" +
+                "test_number_of_folders\n" +
+                "test_order_files_sort\n" +
+                "test_recursive\n" +
+                "test_recursive_directories\n" +
+                "test_recursive_sort\n";
+
+        expected = expected.replace("\n", StringUtils.STRING_NEWLINE);
+        expected = expected.replace("\\\\", StringUtils.fileSeparator());
 
         assertTimeoutPreemptively(Duration.ofMillis(500), () -> {
             testShell.parseAndEvaluate(command2, outputStream);
@@ -90,28 +97,31 @@ public class CdLsIntegrationTest {
             testShell.parseAndEvaluate(command1, outputStream);
         });
 
-        final String command2 = "ls -R test_recursive\n";
-        String expected = "test_recursive:\r\n" +
-                "answer.txt\r\n" +
-                "vig1\r\n" +
-                "vig2\r\n" +
-                "vig3\r\n" +
-                "\r\n" +
-                "test_recursive\\vig1:\r\n" +
-                "vig1doc1.txt\r\n" +
-                "vig1doc2.txt\r\n" +
-                "vig1doc3.txt\r\n" +
-                "vig1vig1\r\n" +
-                "\r\n" +
-                "test_recursive\\vig1\\vig1vig1:\r\n" +
-                "vig1vig1doc1.txt\r\n" +
-                "\r\n" +
-                "test_recursive\\vig2:\r\n" +
-                "vig2doc1.txt\r\n" +
-                "vig2doc2.txt\r\n" +
-                "\r\n" +
-                "test_recursive\\vig3:\r\n" +
-                "vig3doc1.txt\r\n";
+        final String command2 = "ls -R test_recursive";
+        String expected = "test_recursive:\n" +
+                "answer.txt\n" +
+                "space1\n" +
+                "space2\n" +
+                "space3\n" +
+                "\n" +
+                "test_recursive\\space1:\n" +
+                "space1doc1.txt\n" +
+                "space1doc2.txt\n" +
+                "space1doc3.txt\n" +
+                "space1space1\n" +
+                "\n" +
+                "test_recursive\\space1\\space1space1:\n" +
+                "space1space1doc1.txt\n" +
+                "\n" +
+                "test_recursive\\space2:\n" +
+                "space2doc1.txt\n" +
+                "space2doc2.txt\n" +
+                "\n" +
+                "test_recursive\\space3:\n" +
+                "space3doc1.txt\n";
+
+        expected = expected.replace("\n", StringUtils.STRING_NEWLINE);
+        expected = expected.replace("\\\\", StringUtils.fileSeparator());
 
         assertTimeoutPreemptively(Duration.ofMillis(500), () -> {
             testShell.parseAndEvaluate(command2, outputStream);
@@ -126,12 +136,15 @@ public class CdLsIntegrationTest {
             testShell.parseAndEvaluate(command1, outputStream);
         });
 
-        final String command2 = "ls -X test_folders_sort_recursive\n";
-        String expected = "test_folders_sort_recursive:\r\n" +
-                "folder1\r\n" +
-                "folder2\r\n" +
-                "folder3\r\n" +
-                "guys\r\n";
+        final String command2 = "ls -X test_folders_sort_recursive";
+        String expected = "test_folders_sort_recursive:\n" +
+                "folder1\n" +
+                "folder2\n" +
+                "folder3\n" +
+                "guys\n";
+
+        expected = expected.replace("\n", StringUtils.STRING_NEWLINE);
+        expected = expected.replace("\\\\", StringUtils.fileSeparator());
 
         assertTimeoutPreemptively(Duration.ofMillis(500), () -> {
             testShell.parseAndEvaluate(command2, outputStream);
