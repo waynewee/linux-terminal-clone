@@ -5,7 +5,9 @@ import org.junit.jupiter.api.Test;
 import sg.edu.nus.comp.cs4218.exception.WcException;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -27,6 +29,7 @@ class WcApplicationTest {
     private static final String FILE_SINGLE_2 = "single-line-2.txt";
     private static final String FILE_NOT_EXIST = "not-exist.txt";
     private static final String FILE_EMPTY = "empty.txt";
+    private static final String DIRECTORY = "directory";
 
     private static final String PATH_MULTI_1 = PATH + FILE_MULTI_1;
     private static final String PATH_MULTI_2 = PATH + FILE_MULTI_2;
@@ -34,6 +37,7 @@ class WcApplicationTest {
     private static final String PATH_SINGLE_2 = PATH + FILE_SINGLE_2;
     private static final String PATH_NOT_EXIST = PATH + FILE_NOT_EXIST;
     private static final String PATH_EMPTY = PATH + FILE_EMPTY;
+    private static final String PATH_DIRECTORY = PATH + DIRECTORY;
 
     private static final String STDIN_MULTI_1 = "Leverage benchmark, reinvent recontextualize recontextualize folksonomies communities; social\n" +
             "Facilitate grow partnerships, initiatives best-of-breed, addelivery repurpose user-centric webservices podcasting podcasts integrated vertical, B2B innovate!\n" +
@@ -49,6 +53,10 @@ class WcApplicationTest {
 
     private static final String STDIN = "stdin";
     private static final String TOTAL = "total";
+
+    private static final String FLAG_BYTES = "-c";
+    private static final String FLAG_LINES = "-l";
+    private static final String FLAG_WORDS = "-w";
 
     @BeforeAll
     static void setupShell() {
@@ -497,4 +505,107 @@ class WcApplicationTest {
                 String.format(STRING_FORMAT, TOTAL)
                 , result);
     }
+
+    @Test
+    public void run_OutputStreamNull_ThrowsNullStreamsException() {
+        Exception exception = assertThrows(Exception.class, ()->{
+            String[] args = {FLAG_BYTES, FLAG_LINES, FLAG_WORDS};
+            wcApplication.run(args, new ByteArrayInputStream("".getBytes(StandardCharsets.UTF_8)), null);
+        });
+        assertEquals(new WcException(ERR_NULL_STREAMS).getMessage(), exception.getMessage());
+    }
+
+    @Test
+    public void run_InputStreamNullFilesNotEmpty_ReturnsCountFromFiles() throws WcException {
+        String[] args = {FLAG_BYTES, FLAG_LINES, FLAG_WORDS, PATH_MULTI_1, PATH_SINGLE_1};
+        OutputStream outputStream = new ByteArrayOutputStream();
+        wcApplication.run(args, null, outputStream);
+        assertEquals(STRING_NEWLINE +
+                String.format(NUMBER_FORMAT, 4) +
+                String.format(NUMBER_FORMAT, 55) +
+                String.format(NUMBER_FORMAT, 648) +
+                String.format(STRING_FORMAT, FILE_MULTI_1) +
+                STRING_NEWLINE +
+                String.format(NUMBER_FORMAT, 0) +
+                String.format(NUMBER_FORMAT, 2) +
+                String.format(NUMBER_FORMAT, 12) +
+                String.format(STRING_FORMAT, FILE_SINGLE_1) +
+                STRING_NEWLINE +
+                String.format(NUMBER_FORMAT,4) +
+                String.format(NUMBER_FORMAT, 57) +
+                String.format(NUMBER_FORMAT, 660) +
+                String.format(STRING_FORMAT, TOTAL) +
+                STRING_NEWLINE, outputStream.toString());
+    }
+
+    @Test
+    public void run_InputStreamNotNullFilesEmpty_ReturnsCountFromStdin() throws WcException {
+        String[] args = {FLAG_BYTES, FLAG_LINES, FLAG_WORDS};
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        wcApplication.run(args, new ByteArrayInputStream("".getBytes(StandardCharsets.UTF_8)), outputStream);
+        assertEquals(" 0 0 0 stdin" + STRING_NEWLINE, outputStream.toString());
+    }
+
+    @Test
+    public void run_InputStreamNotNullFilesNotEmpty_ReturnsCountFromFileAndStdin() throws WcException {
+        String[] args = {FLAG_BYTES, FLAG_LINES, FLAG_WORDS, PATH_SINGLE_1};
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        wcApplication.run(args, new ByteArrayInputStream("".getBytes(StandardCharsets.UTF_8)), outputStream);
+        assertEquals(STRING_NEWLINE +
+                String.format(NUMBER_FORMAT, 0) +
+                String.format(NUMBER_FORMAT, 2) +
+                String.format(NUMBER_FORMAT, 12) +
+                String.format(STRING_FORMAT, FILE_SINGLE_1) +
+                STRING_NEWLINE +
+                String.format(NUMBER_FORMAT, 0) +
+                String.format(NUMBER_FORMAT, 0) +
+                String.format(NUMBER_FORMAT, 0) +
+                String.format(STRING_FORMAT, STDIN) +
+                STRING_NEWLINE +
+                String.format(NUMBER_FORMAT,0) +
+                String.format(NUMBER_FORMAT, 2) +
+                String.format(NUMBER_FORMAT, 12) +
+                String.format(STRING_FORMAT, TOTAL) +
+                STRING_NEWLINE, outputStream.toString());
+    }
+
+    @Test
+    public void countFromFiles_FileNameNull_ThrowsGeneralException() {
+        Exception exception = assertThrows(Exception.class, ()->{
+           wcApplication.countFromFiles(true, true, true, null);
+        });
+        assertEquals(new WcException(ERR_GENERAL).getMessage(), exception.getMessage());
+    }
+
+    @Test
+    public void countFromFiles_FileIsDir_ReturnsDirException() throws Exception {
+        String result = wcApplication.countFromFiles(true, true, true, PATH_DIRECTORY);
+        assertEquals(new WcException(ERR_IS_DIR).getMessage(), result);
+    }
+
+    @Test
+    public void countFromFileAndStdin_FileNameNull_ThrowsGeneralException() {
+        Exception exception = assertThrows(Exception.class, ()->{
+            wcApplication.countFromFileAndStdin(true, true, true, new ByteArrayInputStream("".getBytes(StandardCharsets.UTF_8)), null);
+        });
+        assertEquals(new WcException(ERR_GENERAL).getMessage(), exception.getMessage());
+    }
+
+    @Test
+    public void countFromFileAndStdin_FileIsDir_ReturnsDirException() throws Exception {
+        String result = wcApplication.countFromFileAndStdin(true, true, true, new ByteArrayInputStream("".getBytes(StandardCharsets.UTF_8)), PATH_DIRECTORY);
+        assertEquals(STRING_NEWLINE +
+                new WcException(ERR_IS_DIR).getMessage() +
+                STRING_NEWLINE +
+                String.format(NUMBER_FORMAT, 0) +
+                String.format(NUMBER_FORMAT, 0) +
+                String.format(NUMBER_FORMAT, 0) +
+                String.format(STRING_FORMAT, STDIN) +
+                STRING_NEWLINE +
+                String.format(NUMBER_FORMAT, 0) +
+                String.format(NUMBER_FORMAT, 0) +
+                String.format(NUMBER_FORMAT, 0) +
+                String.format(STRING_FORMAT, TOTAL), result);
+    }
+
 }

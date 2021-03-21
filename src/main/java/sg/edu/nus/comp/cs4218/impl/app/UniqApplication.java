@@ -31,14 +31,10 @@ public class UniqApplication implements UniqInterface {
         UniqArguments uniqArgs = new UniqArguments();
         uniqArgs.parse(args);
         String result;
-        try {
-            if (uniqArgs.getInputFile() != null) {
-                result = uniqFromStdin(uniqArgs.isCount(), uniqArgs.isRepeated(), uniqArgs.isAllRepeated(), stdin, uniqArgs.getOutputFile());
-            } else {
-                result = uniqFromFile(uniqArgs.isCount(), uniqArgs.isRepeated(), uniqArgs.isAllRepeated(), uniqArgs.getInputFile(), uniqArgs.getOutputFile());
-            }
-        } catch (Exception e) {
-            throw new UniqException(ERR_GENERAL);
+        if (uniqArgs.getInputFile() == null) {
+            result = uniqFromStdin(uniqArgs.isCount(), uniqArgs.isRepeated(), uniqArgs.isAllRepeated(), stdin, uniqArgs.getOutputFile());
+        } else {
+            result = uniqFromFile(uniqArgs.isCount(), uniqArgs.isRepeated(), uniqArgs.isAllRepeated(), uniqArgs.getInputFile(), uniqArgs.getOutputFile());
         }
         try {
             if (uniqArgs.getOutputFile() == null) {

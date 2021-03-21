@@ -8,6 +8,7 @@ import sg.edu.nus.comp.cs4218.exception.WcException;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_INVALID_FLAG;
+import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_NULL_ARGS;
 
 
 class UniqArgumentsTest {
@@ -67,6 +68,22 @@ class UniqArgumentsTest {
         assertFalse(uniqArguments.isAllRepeated());
         assertEquals(INPUT_FILE, uniqArguments.getInputFile());
         assertNull(uniqArguments.getOutputFile());
+    }
+
+    @Test
+    public void parse_ArgsNull_ThrowsNullArgsException() {
+        UniqException uniqException = assertThrows(UniqException.class,()->{
+            uniqArguments.parse(null);
+        });
+        assertEquals(new UniqException(ERR_NULL_ARGS).getMessage(), uniqException.getMessage());
+    }
+
+    @Test
+    public void parse_FlagInvalid_ThrowsInvalidFlagException() {
+        UniqException uniqException = assertThrows(UniqException.class, ()->{
+            uniqArguments.parse(FLAG_INVALID);
+        });
+        assertEquals(new UniqException(ERR_INVALID_FLAG).getMessage(), uniqException.getMessage());
     }
 
 }

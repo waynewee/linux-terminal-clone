@@ -45,7 +45,6 @@ public class PasteApplication implements PasteInterface {
         }
         try {
             stdout.write(result.getBytes());
-            stdout.write(STRING_NEWLINE.getBytes());
         } catch (IOException e) {
             throw new PasteException(ERR_WRITE_STREAM);
         }
