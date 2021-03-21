@@ -1,5 +1,6 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,7 +24,7 @@ class SplitApplicationTest {
     private static ByteArrayOutputStream outputStream;
     private static Application splitApplication;
     private static String baseInputString1 = "heythere";
-    private static String baseInputString2 = "heythere\n";
+    private static String baseInputString2 = "heythere" + StringUtils.STRING_NEWLINE;
 
     @BeforeAll
     static void prepareApplication() {
@@ -33,6 +34,11 @@ class SplitApplicationTest {
     @BeforeEach
     void prepareOutputStream() {
         outputStream = new ByteArrayOutputStream();
+    }
+
+    @AfterAll
+    static void cleanUp() {
+        removeOutputFilesInCurrentDirectory();
     }
 
     // Null args
@@ -336,10 +342,10 @@ class SplitApplicationTest {
         // Prepare Args
         String[] args = new String[2];
         args[0] = "-l";
-        args[1] = "2";
+        args[1] = "1";
 
         // Prepare input stream
-        String inputString = baseInputString2.repeat(10);
+        String inputString = baseInputString2.repeat(2);
         ByteArrayInputStream inputStream = new ByteArrayInputStream((inputString + StringUtils.STRING_NEWLINE).getBytes());
         System.setIn(inputStream);
 
@@ -348,11 +354,9 @@ class SplitApplicationTest {
 
         Path outputFilePath1 = Paths.get(EnvironmentUtil.currentDirectory, "xaa");
         Path outputFilePath2 = Paths.get(EnvironmentUtil.currentDirectory, "xab");
-        Path outputFilePath3 = Paths.get(EnvironmentUtil.currentDirectory, "xac");
 
         assert(Files.exists(outputFilePath1));
         assert(Files.exists(outputFilePath2));
-        assert(Files.exists(outputFilePath3));
 
         // Restore System.in
         System.setIn(System.in);
@@ -453,11 +457,10 @@ class SplitApplicationTest {
             }
         }
     }
-    private void removeOutputFilesInCurrentDirectory() {
+    private static void removeOutputFilesInCurrentDirectory() {
         File dir = Paths.get(EnvironmentUtil.currentDirectory).toFile();
         for (File file : dir.listFiles()) {
-            if (file.getName().equals("xaa") || file.getName().equals("xab") || file.getName().equals("xac")
-                    || file.getName().equals("xad") || file.getName().equals("xae") || file.getName().equals("xaf")) {
+            if (file.getName().startsWith("xa")) {
                 file.delete();
             }
         }

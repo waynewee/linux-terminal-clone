@@ -15,7 +15,7 @@ class ExitApplicationTest {
 
     @Test
     @ExpectSystemExit
-    void terminateExecution_Exits() throws ExitException {
+    void terminate_Execution_Exits() throws ExitException {
         ExitApplication app = new ExitApplication();
         app.terminateExecution();
     }

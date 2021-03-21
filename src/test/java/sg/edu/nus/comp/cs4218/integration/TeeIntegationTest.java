@@ -19,16 +19,16 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class TeeIntegationTest {
     private static Shell testShell;
     private static OutputStream mockOutputStream;
-    private static final String tempFilePath = "temp.txt";
-    private static final String existingFilePath = "existing.txt";
-    private static final String anotherExistingFilePath = "anotherExisting.txt";
-    private static final String nonExistentFilePath = "nonExistent.txt";
+    private static String tempFilePath = "temp.txt";
+    private static String existingFilePath = "existing.txt";
+    private static String anotherExistingFilePath = "anotherExisting.txt";
+    private static String nonExistentFilePath = "nonExistent.txt";
     private static File tempFile;
     private static File existingFile;
     private static File anotherExistingFile;
     private static File nonExistentFile;
 
-    private static final String expectedString = "hello";
+    private static String expectedString = "hello";
 
     @BeforeAll
     static void setupShell() {
