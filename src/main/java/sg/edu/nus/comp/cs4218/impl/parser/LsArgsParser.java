@@ -1,5 +1,7 @@
 package sg.edu.nus.comp.cs4218.impl.parser;
 
+import sg.edu.nus.comp.cs4218.Environment;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -34,7 +36,7 @@ public class LsArgsParser extends ArgsParser {
     public List<String> getDirectories() {
         List<String> directories = new LinkedList<>();
         for (String string: nonFlagArgs) {
-            if (Files.isDirectory(Paths.get(string))) {
+            if (Files.isDirectory(Paths.get(Environment.currentDirectory, string))) {
                 directories.add(string);
             }
         }
@@ -44,7 +46,7 @@ public class LsArgsParser extends ArgsParser {
     public List<String> getFiles() {
         List<String> files = new LinkedList<>();
         for (String string: nonFlagArgs) {
-            if (!Files.isDirectory(Path.of(string))) {
+            if (!Files.isDirectory(Paths.get(Environment.currentDirectory, string))) {
                 files.add(string);
             }
         }
