@@ -333,34 +333,6 @@ class SplitApplicationTest {
         removeOutputFilesInCurrentDirectory();
     }
 
-//    @Test
-//    public void run_onLineFlagWithStandardInput_SplitsInputIntoFiles() throws Exception {
-//        // Prepare Args
-//        String[] args = new String[2];
-//        args[0] = "-l";
-//        args[1] = "1";
-//
-//        // Prepare input stream
-//        String inputString = baseInputString2.repeat(1);
-//        ByteArrayInputStream inputStream = new ByteArrayInputStream((inputString).getBytes());
-//        System.setIn(inputStream);
-//
-//        splitApplication.run(args, inputStream, outputStream);
-//        inputStream.close();
-//
-//        Path outputFilePath1 = Paths.get(EnvironmentUtil.currentDirectory, "xaa");
-//        Path outputFilePath2 = Paths.get(EnvironmentUtil.currentDirectory, "xab");
-//
-//        assert(Files.exists(outputFilePath1));
-//        assert(Files.exists(outputFilePath2));
-//
-//        // Restore System.in
-//        System.setIn(System.in);
-//
-//        // Remove output files in current directory
-//        removeOutputFilesInCurrentDirectory();
-//    }
-
     @Test
     public void run_onByteFlagWithBSuffixStandardInput_SplitsInputIntoFiles() throws Exception {
         // Prepare Args
