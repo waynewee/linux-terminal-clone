@@ -1,10 +1,13 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
 import sg.edu.nus.comp.cs4218.app.UniqInterface;
+import sg.edu.nus.comp.cs4218.exception.ShellException;
 import sg.edu.nus.comp.cs4218.exception.UniqException;
 import sg.edu.nus.comp.cs4218.impl.app.args.UniqArguments;
+import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
@@ -51,14 +54,14 @@ public class UniqApplication implements UniqInterface {
             throw new UniqException(ERR_NULL_STREAMS);
         }
         try {
-            File file = new File(inputFileName);
-            InputStream inputStream = new FileInputStream(file);
+            InputStream inputStream = IOUtils.openInputStream(inputFileName);
             String result = getUniqLines(isCount, isRepeated, isAllRepeated, inputStream);
             if (outputFileName != null) {
                 writeToFile(outputFileName, result);
             }
+            IOUtils.closeInputStream(inputStream);
             return result;
-        } catch (FileNotFoundException e){
+        } catch (Exception e){
             throw new UniqException(ERR_FILE_NOT_FOUND, e);
         }
     }
@@ -98,6 +101,10 @@ public class UniqApplication implements UniqInterface {
             //account for final line
             addLine(result, isCount, isRepeated, isAllRepeated, count, previousLine);
 
+            if (result.toString().equals("null")) {
+                return STRING_NEWLINE;
+            }
+
             return result.toString() + STRING_NEWLINE;
         } catch (IOException e) {
             throw new UniqException(ERR_IO_EXCEPTION, e);
@@ -120,7 +127,7 @@ public class UniqApplication implements UniqInterface {
             FileWriter fileWriter = new FileWriter(outputFile);
             fileWriter.write(result);
             fileWriter.close();
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new UniqException(ERR_IO_EXCEPTION, e);
         }
 

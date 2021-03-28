@@ -1,14 +1,20 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
+import sg.edu.nus.comp.cs4218.exception.ShellException;
 import sg.edu.nus.comp.cs4218.exception.WcException;
+import sg.edu.nus.comp.cs4218.impl.ShellImpl;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+
+import org.mockito.Mockito;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -20,6 +26,7 @@ import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.STRING_NEWLINE;
 class WcApplicationTest {
 
     private static WcApplication wcApplication;
+    private static ShellImpl testShellImpl;
 
     private static final String PATH = "src/test/resources/impl/app/WcApplicationResources/".replace('/', CHAR_FILE_SEP);
 
@@ -61,6 +68,7 @@ class WcApplicationTest {
     @BeforeAll
     static void setupShell() {
         wcApplication = new WcApplication();
+        testShellImpl = new ShellImpl();
     }
 
     @Test
@@ -606,6 +614,6 @@ class WcApplicationTest {
                 String.format(NUMBER_FORMAT, 0) +
                 String.format(NUMBER_FORMAT, 0) +
                 String.format(STRING_FORMAT, TOTAL), result);
-    }
+}
 
 }

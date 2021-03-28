@@ -2,9 +2,11 @@ package sg.edu.nus.comp.cs4218.impl.app.args;
 
 import sg.edu.nus.comp.cs4218.exception.CatException;
 import sg.edu.nus.comp.cs4218.exception.WcException;
+import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_INVALID_FLAG;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_FLAG_PREFIX;
@@ -35,7 +37,7 @@ public class CatArguments {
                 if (arg.isEmpty()) {
                     continue;
                 }
-                if (parsingFLag && arg.charAt(0) == CHAR_FLAG_PREFIX) {
+                if (!arg.equals("-")  && parsingFLag && arg.charAt(0) == CHAR_FLAG_PREFIX) {
                     if (arg.equals(CHAR_FLAG_PREFIX + "" + CHAR_LINES_OPTION)) {
                         lineNumber = true;
                         continue;
@@ -43,7 +45,8 @@ public class CatArguments {
                     throw new CatException(ERR_INVALID_FLAG);
                 } else {
                     parsingFLag = false;
-                    this.files.add(arg.trim());
+                    String filename = arg.trim();
+                    this.files.add(filename);
                 }
             }
         }
@@ -56,5 +59,9 @@ public class CatArguments {
 
     public List<String> getFiles() {
         return files;
+    }
+
+    public List<String> getNonInputFiles() {
+        return files.stream().filter( f -> !f.equals("-")).collect(Collectors.toList());
     }
 }

@@ -11,6 +11,7 @@ import java.util.List;
 
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_CLOSING_STREAMS;
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.ERR_FILE_NOT_FOUND;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_FILE_SEP;
 
 @SuppressWarnings("PMD.PreserveStackTrace")
 public final class IOUtils {

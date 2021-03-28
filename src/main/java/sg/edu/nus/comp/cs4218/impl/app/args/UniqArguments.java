@@ -1,10 +1,14 @@
 package sg.edu.nus.comp.cs4218.impl.app.args;
 
+import sg.edu.nus.comp.cs4218.EnvironmentUtil;
 import sg.edu.nus.comp.cs4218.exception.UniqException;
+import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
+import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_FILE_SEP;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_FLAG_PREFIX;
 
 
@@ -56,7 +60,8 @@ public class UniqArguments {
                 throw new UniqException(ERR_INVALID_FLAG);
             } else {
                 parsingFlag = false;
-                this.files.add(arg.trim());
+                String filename = arg.trim();
+                this.files.add(filename);
             }
         }
     }
@@ -85,5 +90,32 @@ public class UniqArguments {
             return null;
         }
         return this.files.get(1);
+    }
+
+    private String convertToAbsolutePath(String fileName) {
+        String home = System.getProperty("user.home").trim();
+        String currentDir = EnvironmentUtil.currentDirectory.trim();
+        String convertedPath = convertPathToSystemPath(fileName);
+
+        String newPath;
+        if (convertedPath.length() >= home.length() && convertedPath.substring(0, home.length()).trim().equals(home)) {
+            newPath = convertedPath;
+        } else {
+            newPath = currentDir + CHAR_FILE_SEP + convertedPath;
+        }
+        return newPath;
+    }
+
+    private String convertPathToSystemPath(String path) {
+        String convertedPath = path;
+        String pathIdentifier = "\\" + Character.toString(CHAR_FILE_SEP);
+        convertedPath = convertedPath.replaceAll("(\\\\)+", pathIdentifier);
+        convertedPath = convertedPath.replaceAll("/+", pathIdentifier);
+
+        if (convertedPath.length() != 0 && convertedPath.charAt(convertedPath.length() - 1) == CHAR_FILE_SEP) {
+            convertedPath = convertedPath.substring(0, convertedPath.length() - 1);
+        }
+
+        return convertedPath;
     }
 }

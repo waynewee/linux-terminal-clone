@@ -1,9 +1,11 @@
 package sg.edu.nus.comp.cs4218.impl.app.args;
 
 import sg.edu.nus.comp.cs4218.exception.PasteException;
+import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
 import static sg.edu.nus.comp.cs4218.impl.util.StringUtils.CHAR_FLAG_PREFIX;
@@ -37,7 +39,7 @@ public class PasteArguments {
                 continue;
             }
             // `parsingFlag` is to ensure all flags come first, followed by files.
-            if (parsingFlag && arg.charAt(0) == CHAR_FLAG_PREFIX) {
+            if (!arg.equals("-") && parsingFlag && arg.charAt(0) == CHAR_FLAG_PREFIX) {
                 if (arg.equals(CHAR_FLAG_PREFIX + "" + SERIAL_FLAG)) {
                     this.serial = true;
                     continue;
@@ -46,7 +48,8 @@ public class PasteArguments {
                 throw new PasteException(ERR_INVALID_FLAG);
             } else {
                 parsingFlag = false;
-                this.files.add(arg.trim());
+                String filename = arg.trim();
+                this.files.add(filename);
             }
         }
     }
@@ -57,5 +60,9 @@ public class PasteArguments {
 
     public List<String> getFiles() {
         return files;
+    }
+
+    public List<String> getNonInputFiles() {
+        return files.stream().filter( f -> !f.equals("-")).collect(Collectors.toList());
     }
 }

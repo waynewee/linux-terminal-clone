@@ -3,6 +3,7 @@ package sg.edu.nus.comp.cs4218.impl.app;
 import sg.edu.nus.comp.cs4218.app.PasteInterface;
 import sg.edu.nus.comp.cs4218.exception.*;
 import sg.edu.nus.comp.cs4218.impl.app.args.PasteArguments;
+import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 
 import java.io.*;
 import java.util.*;
@@ -33,12 +34,12 @@ public class PasteApplication implements PasteInterface {
         String result;
         try {
             List<String> files = pasteArguments.getFiles();
-            if (files.isEmpty()) {
-                result = mergeStdin(pasteArguments.isSerial(), stdin);
-            } else if (stdin == null) {
-                result = mergeFile(pasteArguments.isSerial(), files.toArray(new String[0]));
-            } else {
+            if (!pasteArguments.getNonInputFiles().isEmpty() && pasteArguments.getFiles().contains("-")) {
                 result = mergeFileAndStdin(pasteArguments.isSerial(), stdin, files.toArray(new String[0]));
+            } else if (pasteArguments.getNonInputFiles().isEmpty()) {
+                result = mergeStdin(pasteArguments.isSerial(), stdin);
+            } else {
+                result = mergeFile(pasteArguments.isSerial(), files.toArray(new String[0]));
             }
         } catch (Exception e) {
             throw new PasteException(ERR_GENERAL, e);
@@ -94,7 +95,8 @@ public class PasteApplication implements PasteInterface {
                 fileReaders.put(file, inputStreamReader);
             } else {
                 try {
-                    fileReaders.put(file, new BufferedReader(new FileReader(file)));
+                    File node = IOUtils.resolveFilePath(file).toFile();
+                    fileReaders.put(file, new BufferedReader(new FileReader(node)));
                 } catch (FileNotFoundException e) {
                     throw new PasteException(ERR_FILE_NOT_FOUND, e);
                 }
@@ -132,7 +134,8 @@ public class PasteApplication implements PasteInterface {
                 fileReaders.put(file, inputStreamReader);
             } else {
                 try {
-                    fileReaders.put(file, new BufferedReader(new FileReader(file)));
+                    File node = IOUtils.resolveFilePath(file).toFile();
+                    fileReaders.put(file, new BufferedReader(new FileReader(node)));
                 } catch (FileNotFoundException e) {
                     throw new PasteException(ERR_FILE_NOT_FOUND, e);
                 }

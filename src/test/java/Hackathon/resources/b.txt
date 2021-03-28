@@ -1,0 +1,3 @@
+cat
+bear
+rabbit cow

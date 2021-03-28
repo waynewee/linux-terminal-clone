@@ -28,7 +28,7 @@ public class EchoApplication implements EchoInterface {
 
         String result;
         if (args.length == 0) {
-            result = STRING_NEWLINE;
+            result = "";
         } else {
             StringBuilder stringBuilder = new StringBuilder();
             for (String arg: args) {
@@ -42,7 +42,7 @@ public class EchoApplication implements EchoInterface {
             result = result.substring(0, result.length() - 1);
         }
 
-        return result;
+        return result + STRING_NEWLINE;
     }
 
     /**
