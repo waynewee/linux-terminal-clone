@@ -50,31 +50,31 @@ class EchoApplicationTest {
     @Test
     public void constructResult_ArgumentsSingle_ReturnsArguments() throws EchoException {
         String result = echoApplication.constructResult(ARGS);
-        assertEquals(ARGS[0], result);
+        assertEquals(ARGS[0] + STRING_NEWLINE, result);
     }
 
     @Test
     public void constructResult_ArgumentsMulti_ReturnsArguments() throws EchoException {
         String result = echoApplication.constructResult(ARGS_MULTI);
-        assertEquals(ARGS_MULTI[0] + " " + ARGS_MULTI[1], result);
+        assertEquals(ARGS_MULTI[0] + " " + ARGS_MULTI[1] + STRING_NEWLINE, result);
     }
 
     @Test
     public void constructResult_ArgumentsQuoteSingle_ReturnsArguments() throws EchoException {
         String result = echoApplication.constructResult(ARGS_QUOTE);
-        assertEquals(TEXT_QUOTE, result);
+        assertEquals(TEXT_QUOTE + STRING_NEWLINE, result);
     }
 
     @Test
     public void constructResult_ArgumentsQuoteMulti_ReturnsArguments() throws EchoException {
         String result = echoApplication.constructResult(ARGS_QUOTE_MULTI);
-        assertEquals(TEXT_QUOTE_MULTI, result);
+        assertEquals(TEXT_QUOTE_MULTI + STRING_NEWLINE, result);
     }
 
     @Test
     public void constructResult_SingleSpaceArgument_ReturnsSingleSpace() throws EchoException {
         String result = echoApplication.constructResult(ARGS_SPACE);
-        assertEquals(ARGS_SPACE[0], result);
+        assertEquals(ARGS_SPACE[0] + STRING_NEWLINE, result);
     }
 
     @Test

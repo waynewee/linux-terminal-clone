@@ -210,17 +210,21 @@ public class GrepApplication implements GrepInterface {
 
         public void getCount(boolean isSingleFile, StringJoiner stringJoiner) {
             String count = Integer.toString(lines.size());
-            stringJoiner.add(file + ": " + count);
+            String filename = file;
+            if (filename == null) {
+                filename = "(standard input)";
+            }
+            stringJoiner.add(filename + ": " + count);
         }
 
         public void getLines(boolean isPrefixFileName, StringJoiner stringJoiner) {
             for (String line: lines) {
                 if (isPrefixFileName) {
-                    if (file == null) {
-                        stringJoiner.add(line);
-                    } else {
-                        stringJoiner.add(file + ": " + line);
+                    String filename = file;
+                    if (filename == null) {
+                        filename = "(standard input)";
                     }
+                    stringJoiner.add(filename + ": " + line);
                 } else {
                     stringJoiner.add(line);
                 }

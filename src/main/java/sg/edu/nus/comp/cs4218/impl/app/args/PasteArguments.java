@@ -35,11 +35,8 @@ public class PasteArguments {
         boolean parsingFlag = true;
         // Parse arguments=
         for (String arg : args) {
-            if (arg.isEmpty()) {
-                continue;
-            }
             // `parsingFlag` is to ensure all flags come first, followed by files.
-            if (!arg.equals("-") && parsingFlag && arg.charAt(0) == CHAR_FLAG_PREFIX) {
+            if (!arg.isEmpty() && !arg.equals("-") && parsingFlag && arg.charAt(0) == CHAR_FLAG_PREFIX) {
                 if (arg.equals(CHAR_FLAG_PREFIX + "" + SERIAL_FLAG)) {
                     this.serial = true;
                     continue;
@@ -48,8 +45,7 @@ public class PasteArguments {
                 throw new PasteException(ERR_INVALID_FLAG);
             } else {
                 parsingFlag = false;
-                String filename = arg.trim();
-                this.files.add(filename);
+                this.files.add(arg);
             }
         }
     }

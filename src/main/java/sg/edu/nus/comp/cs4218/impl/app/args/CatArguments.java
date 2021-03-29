@@ -34,10 +34,7 @@ public class CatArguments {
         // Parse arguments
         if (args != null && args.length > 0) {
             for (String arg : args) {
-                if (arg.isEmpty()) {
-                    continue;
-                }
-                if (!arg.equals("-")  && parsingFLag && arg.charAt(0) == CHAR_FLAG_PREFIX) {
+                if (!arg.isEmpty() && !arg.equals("-")  && parsingFLag && arg.charAt(0) == CHAR_FLAG_PREFIX) {
                     if (arg.equals(CHAR_FLAG_PREFIX + "" + CHAR_LINES_OPTION)) {
                         lineNumber = true;
                         continue;
@@ -45,8 +42,7 @@ public class CatArguments {
                     throw new CatException(ERR_INVALID_FLAG);
                 } else {
                     parsingFLag = false;
-                    String filename = arg.trim();
-                    this.files.add(filename);
+                    this.files.add(arg);
                 }
             }
         }

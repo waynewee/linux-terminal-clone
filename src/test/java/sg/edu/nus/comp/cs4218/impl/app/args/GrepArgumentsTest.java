@@ -18,8 +18,6 @@ class GrepArgumentsTest {
     private static final String FLAG_PREFIX = "-H";
     private static final String FLAG_INVALID = "-x";
 
-    private static final String PATTERN_EMPTY = "";
-
     private static GrepArguments grepArguments;
 
     @BeforeEach
@@ -43,7 +41,8 @@ class GrepArgumentsTest {
         grepArguments.parse(FLAG_CASE, FILE);
         assertTrue(grepArguments.isCaseInsensitive());
         assertFalse(grepArguments.isCountOfLinesOnly());
-        assertFalse(grepArguments.isPrefixFileName());
+        //prefix filename is always true
+        assertTrue(grepArguments.isPrefixFileName());
     }
 
     @Test
@@ -59,7 +58,8 @@ class GrepArgumentsTest {
         grepArguments.parse(FILE, FLAG_CASE, FLAG_COUNT, FLAG_PREFIX);
         assertFalse(grepArguments.isCaseInsensitive());
         assertFalse(grepArguments.isCountOfLinesOnly());
-        assertFalse(grepArguments.isPrefixFileName());
+        //prefix filename is always true
+        assertTrue(grepArguments.isPrefixFileName());
     }
 
     @Test
@@ -67,7 +67,8 @@ class GrepArgumentsTest {
         grepArguments.parse(FLAG_CASE, FILE, FLAG_COUNT, FLAG_PREFIX);
         assertTrue(grepArguments.isCaseInsensitive());
         assertFalse(grepArguments.isCountOfLinesOnly());
-        assertFalse(grepArguments.isPrefixFileName());
+        //prefix filename is always true
+        assertTrue(grepArguments.isPrefixFileName());
     }
 
     @Test
@@ -101,13 +102,5 @@ class GrepArgumentsTest {
             GrepArguments.validate(null);
         });
         assertEquals(new GrepException(ERR_NULL_ARGS).getMessage(), exception.getMessage());
-    }
-
-    @Test
-    public void validate_PatternNull_ThrowsEmptyRegexException() {
-        Exception exception = assertThrows(Exception.class, ()->{
-            GrepArguments.validate(PATTERN_EMPTY);
-        });
-        assertEquals(new GrepException(ERR_EMPTY_REGEX).getMessage(), exception.getMessage());
     }
 }

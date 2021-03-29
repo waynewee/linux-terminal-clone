@@ -78,8 +78,14 @@ public class WcApplication implements WcInterface {
         long totalBytes = 0, totalLines = 0, totalWords = 0;
         boolean displayAll = !isLines && !isWords && !isBytes;
         for (String file : fileName) {
-            File node = IOUtils.resolveFilePath(file).toFile();
-            if (!node.exists()) {
+            File node;
+            try {
+                node = IOUtils.resolveFilePath(file).toFile();
+            } catch (Exception e) {
+                result.add(new WcException(ERR_FILE_NOT_FOUND).getMessage());
+                continue;
+            }
+            if (file.isEmpty() || !node.exists()) {
                 result.add(new WcException(ERR_FILE_NOT_FOUND).getMessage());
                 continue;
             }
@@ -200,7 +206,6 @@ public class WcApplication implements WcInterface {
             totalLines += count[0];
             totalWords += count[1];
             totalBytes += count[2];
-
             StringBuilder sb = new StringBuilder(); //NOPMD
             if (isLines || displayAll) {
                 sb.append(String.format(NUMBER_FORMAT, count[0]));
@@ -215,18 +220,20 @@ public class WcApplication implements WcInterface {
             result.add(sb.toString());
         }
 
-        StringBuilder sbTotal = new StringBuilder();
-        if (isLines || displayAll) {
-            sbTotal.append(String.format(NUMBER_FORMAT, totalLines));
+        if (fileName.length > 1) {
+            StringBuilder sbTotal = new StringBuilder();
+            if (isLines || displayAll) {
+                sbTotal.append(String.format(NUMBER_FORMAT, totalLines));
+            }
+            if (isWords || displayAll) {
+                sbTotal.append(String.format(NUMBER_FORMAT_1, totalWords));
+            }
+            if (isBytes || displayAll) {
+                sbTotal.append(String.format(NUMBER_FORMAT, totalBytes));
+            }
+            sbTotal.append(" total");
+            result.add(sbTotal.toString());
         }
-        if (isWords || displayAll) {
-            sbTotal.append(String.format(NUMBER_FORMAT_1, totalWords));
-        }
-        if (isBytes || displayAll) {
-            sbTotal.append(String.format(NUMBER_FORMAT, totalBytes));
-        }
-        sbTotal.append(" total");
-        result.add(sbTotal.toString());
 
         return String.join(STRING_NEWLINE, result);
     }

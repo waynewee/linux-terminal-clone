@@ -70,7 +70,7 @@ class GrepApplicationTest {
     private static final String PATTERN_INVALID = "Test\\";
     private static final String PATTERN_VALID = "valid pattern";
 
-    private static final String STDIN = "stdin";
+    private static final String STDIN = "(standard input)";
 
     private static final String NUMBER_FORMAT = ": %d";
     private static final String STRING_FORMAT = "%s: ";
@@ -105,7 +105,7 @@ class GrepApplicationTest {
     @Test
     public void grepFromFiles_PatternInvalidCaseInsensitiveTrueLinesFalsePrefixFileNameTrueFilesNoValid_ReturnsError() throws Exception {
         String result = grepApplication.grepFromFiles(PATTERN_INVALID, true, false, true, PATH_NOT_EXIST);
-        assertEquals(new GrepException(String.format(STRING_FORMAT, FILE_NOT_EXIST) + ERR_FILE_NOT_FOUND + STRING_NEWLINE).getMessage(), result);
+        assertEquals(new GrepException(String.format(STRING_FORMAT, PATH_NOT_EXIST) + ERR_FILE_NOT_FOUND + STRING_NEWLINE).getMessage(), result);
     }
 
     @Test
@@ -133,32 +133,32 @@ class GrepApplicationTest {
     @Test
     public void grepFromFiles_PatternValidCaseInsensitiveFalseLinesFalsePrefixFileNameTrueFilesNoValid_ReturnsError() throws Exception {
         String result = grepApplication.grepFromFiles(PATTERN_INVALID, false, false, true, PATH_NOT_EXIST);
-        assertEquals(new GrepException(String.format(STRING_FORMAT, FILE_NOT_EXIST) + ERR_FILE_NOT_FOUND + STRING_NEWLINE).getMessage(), result);
+        assertEquals(new GrepException(String.format(STRING_FORMAT, PATH_NOT_EXIST) + ERR_FILE_NOT_FOUND + STRING_NEWLINE).getMessage(), result);
     }
 
     @Test
     public void grepFromFiles_PatternValidCaseInsensitiveTrueLinesTruePrefixFileNameTrueFilesNotAllValid_ReturnsErrorAndCount() throws Exception {
         String result = grepApplication.grepFromFiles(PATTERN_APPLES, true, true, true, PATH_MULTI_1, PATH_NOT_EXIST);
-        assertEquals(FILE_MULTI_1 +
+        assertEquals(PATH_MULTI_1 +
                 String.format(NUMBER_FORMAT, 4) +
                 STRING_NEWLINE +
-                new GrepException(String.format(STRING_FORMAT, FILE_NOT_EXIST) + ERR_FILE_NOT_FOUND).getMessage() +
+                new GrepException(String.format(STRING_FORMAT, PATH_NOT_EXIST) + ERR_FILE_NOT_FOUND).getMessage() +
                 STRING_NEWLINE, result);
     }
 
     @Test
     public void grepFromFiles_PatternValidCaseInsensitiveFalseLinesFalsePrefixFileNameTrueFilesAllValid_ReturnsLines() throws Exception {
         String result = grepApplication.grepFromFiles(PATTERN_APPLES, false, false, true, PATH_MULTI_1, PATH_MULTI_2);
-        assertEquals(String.format(STRING_FORMAT, FILE_MULTI_1) +
+        assertEquals(String.format(STRING_FORMAT, PATH_MULTI_1) +
                 TEXT_MULTI_1_1 +
                 STRING_NEWLINE +
-                String.format(STRING_FORMAT, FILE_MULTI_1) +
+                String.format(STRING_FORMAT, PATH_MULTI_1) +
                 TEXT_MULTI_1_3 +
                 STRING_NEWLINE +
-                String.format(STRING_FORMAT, FILE_MULTI_1) +
+                String.format(STRING_FORMAT, PATH_MULTI_1) +
                 TEXT_MULTI_1_6 +
                 STRING_NEWLINE +
-                String.format(STRING_FORMAT, FILE_MULTI_2) +
+                String.format(STRING_FORMAT, PATH_MULTI_2) +
                 TEXT_MULTI_2_3 +
                 STRING_NEWLINE, result);
     }
@@ -244,7 +244,7 @@ class GrepApplicationTest {
     @Test
     public void grepFromStdin_PatternValidCaseInsensitiveTrueLinesTruePrefixFileNameTrueInputStreamEmpty_ReturnsCount() throws Exception {
         String result = grepApplication.grepFromStdin(PATTERN_VALID, true, true, true, InputStream.nullInputStream());
-        assertEquals("0" + STRING_NEWLINE, result);
+        assertEquals("(standard input): 0" + STRING_NEWLINE, result);
     }
 
     @Test
@@ -304,22 +304,6 @@ class GrepApplicationTest {
     }
 
     @Test
-    public void grepFromFileAndStdin_PatternInvalidCaseInsensitiveFalseLinesTruePrefixFileNameTrueFilesNoneInputStreamEmpty_ThrowsInvalidRegexException() {
-        Exception exception = assertThrows(Exception.class, ()->{
-            grepApplication.grepFromFileAndStdin(PATTERN_INVALID, false, true, true, InputStream.nullInputStream());
-        });
-        assertEquals(new GrepException(ERR_INVALID_REGEX).getMessage(), exception.getMessage());
-    }
-
-    @Test
-    public void grepFromFileAndStdin_PatternInvalidCaseInsensitiveTrueLinesTruePrefixFileNameFalseFilesNoValidInputStreamValid_ThrowsInvalidRegexException() {
-        Exception exception = assertThrows(Exception.class, ()->{
-            grepApplication.grepFromFileAndStdin(PATTERN_INVALID, true, true, false, new ByteArrayInputStream(STDIN_SINGLE_2.getBytes(StandardCharsets.UTF_8)), PATH_NOT_EXIST);
-        });
-        assertEquals(new GrepException(ERR_INVALID_REGEX).getMessage(), exception.getMessage());
-    }
-
-    @Test
     public void grepFromFileAndStdin_PatternInvalidCaseInsensitiveTrueLinesFalsePrefixFileNameTrueFilesNotAllValidInputStreamNull_ThrowsNullStreamsException() {
         Exception exception = assertThrows(Exception.class, ()->{
             grepApplication.grepFromFileAndStdin(PATTERN_INVALID, true, false, true, null, PATH_NOT_EXIST, PATH_MULTI_1);
@@ -329,10 +313,10 @@ class GrepApplicationTest {
 
     @Test
     public void grepFromFileAndStdin_PatternValidCaseInsensitiveTrueLinesTruePrefixFileNameFalseFilesNotAllValidInputStreamValid_ReturnsErrorAndLines() throws Exception {
-        String result = grepApplication.grepFromFileAndStdin(PATTERN_APPLES, true, true, false, new ByteArrayInputStream(STDIN_MULTI_3.getBytes(StandardCharsets.UTF_8)), PATH_NOT_EXIST, PATH_MULTI_2);
-        assertEquals(new GrepException(String.format(STRING_FORMAT, FILE_NOT_EXIST) + ERR_FILE_NOT_FOUND).getMessage() +
+        String result = grepApplication.grepFromFileAndStdin(PATTERN_APPLES, true, true, false, new ByteArrayInputStream(STDIN_MULTI_3.getBytes(StandardCharsets.UTF_8)), PATH_NOT_EXIST, PATH_MULTI_2, "-");
+        assertEquals(new GrepException(String.format(STRING_FORMAT, PATH_NOT_EXIST) + ERR_FILE_NOT_FOUND).getMessage() +
                 STRING_NEWLINE +
-                FILE_MULTI_2 +
+                PATH_MULTI_2 +
                 String.format(NUMBER_FORMAT, 1) +
                 STRING_NEWLINE +
                 STDIN +
@@ -365,7 +349,7 @@ class GrepApplicationTest {
 
     @Test
     public void grepFromFileAndStdin_PatternValidCaseInsensitiveTrueLinesTruePrefixFileNameTrueFilesNoneInputStreamValid_ReturnsLines() throws Exception {
-        String result = grepApplication.grepFromFileAndStdin(PATTERN_APPLES, true, true, true, new ByteArrayInputStream(STDIN_MULTI_3.getBytes(StandardCharsets.UTF_8)));
+        String result = grepApplication.grepFromFileAndStdin(PATTERN_APPLES, true, true, true, new ByteArrayInputStream(STDIN_MULTI_3.getBytes(StandardCharsets.UTF_8)), "-");
         assertEquals(STDIN + String.format(NUMBER_FORMAT, 1) + STRING_NEWLINE, result);
     }
 
@@ -410,14 +394,6 @@ class GrepApplicationTest {
     }
 
     @Test
-    public void grepFromFileAndStdin_PatternInvalidCaseInsensitiveTrueLinesFalsePrefixFileNameTrueFilesNoneInputStreamValid_ThrowsInvalidRegexException() {
-        Exception exception = assertThrows(Exception.class, ()->{
-            grepApplication.grepFromFileAndStdin(PATTERN_INVALID, true, false, true, new ByteArrayInputStream(STDIN_SINGLE_2.getBytes(StandardCharsets.UTF_8)));
-        });
-        assertEquals(new GrepException(ERR_INVALID_REGEX).getMessage(), exception.getMessage());
-    }
-
-    @Test
     public void grepFromFileAndStdin_PatternInvalidCaseInsensitiveTrueLinesTruePrefixFileNameFalseFilesNoValidInputStreamNull_ThrowsNullStreamsException() {
         Exception exception = assertThrows(Exception.class, ()->{
             grepApplication.grepFromFileAndStdin(PATTERN_INVALID, true, true, false, null, PATH_NOT_EXIST);
@@ -452,52 +428,52 @@ class GrepApplicationTest {
     @Test
     public void grepFromFiles_FileEmptyLinesTrue_ReturnsCount() throws Exception {
         String result = grepApplication.grepFromFiles(PATTERN_VALID, true, true, true, PATH_EMPTY);
-        assertEquals("0" + STRING_NEWLINE, result);
+        assertEquals(PATH_EMPTY + ": 0" + STRING_NEWLINE, result);
     }
 
     @Test
     public void grepFromFiles_FileSingleLineLinesTrue_ReturnsCount() throws Exception {
         String result = grepApplication.grepFromFiles(PATTERN_HELLO, true, true, true, PATH_SINGLE_1);
-        assertEquals("1" + STRING_NEWLINE, result);
+        assertEquals(PATH_SINGLE_1 + ": 1" + STRING_NEWLINE, result);
     }
 
     @Test
     public void grepFromFiles_FileMultiLineLinesTrue_ReturnsCount() throws Exception {
         String result = grepApplication.grepFromFiles(PATTERN_APPLES, true, true, true, PATH_MULTI_2);
-        assertEquals("1" + STRING_NEWLINE, result);
+        assertEquals(PATH_MULTI_2 + ": 1" + STRING_NEWLINE, result);
     }
 
     @Test
     public void grepFromStdin_InputStreamEmptyLinesTrue_ReturnsCount() throws Exception {
         String result = grepApplication.grepFromStdin(PATTERN_VALID, true, true, true, InputStream.nullInputStream());
-        assertEquals("0" + STRING_NEWLINE, result);
+        assertEquals(STDIN + ": 0" + STRING_NEWLINE, result);
     }
 
     @Test
     public void grepFromStdin_InputStreamSingleLineLinesTrue_ReturnsCount() throws Exception {
         String result = grepApplication.grepFromStdin(PATTERN_HELLO, true, true, true, new ByteArrayInputStream(STDIN_SINGLE_1.getBytes(StandardCharsets.UTF_8)));
-        assertEquals("1" + STRING_NEWLINE, result);
+        assertEquals(STDIN + ": 1" + STRING_NEWLINE, result);
     }
 
     @Test
     public void grepFromStdin_InputStreamMultiLineLinesTrue_ReturnsCount() throws Exception {
         String result = grepApplication.grepFromStdin(PATTERN_DOG, true, true, true, new ByteArrayInputStream(STDIN_MULTI_1.getBytes(StandardCharsets.UTF_8)));
-        assertEquals("2" + STRING_NEWLINE, result);
+        assertEquals(STDIN + ": 2" + STRING_NEWLINE, result);
     }
 
     @Test
     public void grepFromFiles_FileMultiLinesTrue_ReturnsCount() throws Exception {
         String result = grepApplication.grepFromFiles(PATTERN_APPLES, true, true, true, PATH_MULTI_1, PATH_MULTI_2);
-        assertEquals(FILE_MULTI_1 + String.format(NUMBER_FORMAT, 4) +
+        assertEquals(PATH_MULTI_1 + String.format(NUMBER_FORMAT, 4) +
                 STRING_NEWLINE +
-                FILE_MULTI_2 + String.format(NUMBER_FORMAT, 1) +
+                PATH_MULTI_2 + String.format(NUMBER_FORMAT, 1) +
                 STRING_NEWLINE, result);
     }
 
     @Test
     public void grepFromFileAndStdin_FileMultiInputStreamMultiLineLinesTrue_ReturnsCount() throws Exception {
-        String result = grepApplication.grepFromFileAndStdin(PATTERN_APPLES, true, true, true, new ByteArrayInputStream(STDIN_MULTI_3.getBytes(StandardCharsets.UTF_8)), PATH_MULTI_1);
-        assertEquals(FILE_MULTI_1 + String.format(NUMBER_FORMAT, 4) +
+        String result = grepApplication.grepFromFileAndStdin(PATTERN_APPLES, true, true, true, new ByteArrayInputStream(STDIN_MULTI_3.getBytes(StandardCharsets.UTF_8)), PATH_MULTI_1, "-");
+        assertEquals(PATH_MULTI_1 + String.format(NUMBER_FORMAT, 4) +
                 STRING_NEWLINE +
                 STDIN + String.format(NUMBER_FORMAT, 1) +
                 STRING_NEWLINE, result);
@@ -513,13 +489,13 @@ class GrepApplicationTest {
     @Test
     public void grepFromFiles_FileSingleLineLinesFalse_ReturnsLines() throws Exception {
         String result = grepApplication.grepFromFiles(PATTERN_HELLO, true, false, true, PATH_SINGLE_1);
-        assertEquals(String.format(STRING_FORMAT, FILE_SINGLE_1) + TEXT_SINGLE_1 + STRING_NEWLINE, result);
+        assertEquals(String.format(STRING_FORMAT, PATH_SINGLE_1) + TEXT_SINGLE_1 + STRING_NEWLINE, result);
     }
 
     @Test
     public void grepFromFiles_FileMultiLineLinesFalse_ReturnsLines() throws Exception {
         String result = grepApplication.grepFromFiles(PATTERN_APPLES, true, false, true, PATH_MULTI_2);
-        assertEquals(String.format(STRING_FORMAT, FILE_MULTI_2) + TEXT_MULTI_2_3 + STRING_NEWLINE, result);
+        assertEquals(String.format(STRING_FORMAT, PATH_MULTI_2) + TEXT_MULTI_2_3 + STRING_NEWLINE, result);
     }
 
     @Test
@@ -548,39 +524,39 @@ class GrepApplicationTest {
     @Test
     public void grepFromFiles_FileMultiLinesFalse_ReturnsLines() throws Exception {
         String result = grepApplication.grepFromFiles(PATTERN_APPLES, true, false, true, PATH_MULTI_1, PATH_MULTI_2);
-        assertEquals(String.format(STRING_FORMAT, FILE_MULTI_1) +
+        assertEquals(String.format(STRING_FORMAT, PATH_MULTI_1) +
                 TEXT_MULTI_1_1 +
                 STRING_NEWLINE +
-                String.format(STRING_FORMAT, FILE_MULTI_1) +
+                String.format(STRING_FORMAT, PATH_MULTI_1) +
                 TEXT_MULTI_1_3 +
                 STRING_NEWLINE +
-                String.format(STRING_FORMAT, FILE_MULTI_1) +
+                String.format(STRING_FORMAT, PATH_MULTI_1) +
                 TEXT_MULTI_1_4 +
                 STRING_NEWLINE +
-                String.format(STRING_FORMAT, FILE_MULTI_1) +
+                String.format(STRING_FORMAT, PATH_MULTI_1) +
                 TEXT_MULTI_1_6 +
                 STRING_NEWLINE +
-                String.format(STRING_FORMAT, FILE_MULTI_2) +
+                String.format(STRING_FORMAT, PATH_MULTI_2) +
                 TEXT_MULTI_2_3 +
                 STRING_NEWLINE, result);
     }
 
     @Test
     public void grepFromFileAndStdin_FileMultiInputStreamMultiLineLinesFalse_ReturnsLines() throws Exception {
-        String result = grepApplication.grepFromFileAndStdin(PATTERN_APPLES, true, false, true, new ByteArrayInputStream(STDIN_MULTI_3.getBytes(StandardCharsets.UTF_8)), PATH_MULTI_1);
-        assertEquals(String.format(STRING_FORMAT, FILE_MULTI_1) +
+        String result = grepApplication.grepFromFileAndStdin(PATTERN_APPLES, true, false, true, new ByteArrayInputStream(STDIN_MULTI_3.getBytes(StandardCharsets.UTF_8)), PATH_MULTI_1, "-");
+        assertEquals(String.format(STRING_FORMAT, PATH_MULTI_1) +
                 TEXT_MULTI_1_1 +
                 STRING_NEWLINE +
-                String.format(STRING_FORMAT, FILE_MULTI_1) +
+                String.format(STRING_FORMAT, PATH_MULTI_1) +
                 TEXT_MULTI_1_3 +
                 STRING_NEWLINE +
-                String.format(STRING_FORMAT, FILE_MULTI_1) +
+                String.format(STRING_FORMAT, PATH_MULTI_1) +
                 TEXT_MULTI_1_4 +
                 STRING_NEWLINE +
-                String.format(STRING_FORMAT, FILE_MULTI_1) +
+                String.format(STRING_FORMAT, PATH_MULTI_1) +
                 TEXT_MULTI_1_6 +
                 STRING_NEWLINE +
-                String.format(STRING_FORMAT, STDIN) +
+                String.format(STRING_FORMAT, "(standard input)") +
                 STDIN_MULTI_3_2 +
                 STRING_NEWLINE, result);
     }
@@ -588,21 +564,21 @@ class GrepApplicationTest {
     @Test
     public void grepFromFiles_PatternNotFoundLinesFalse_ReturnsZero() throws Exception {
         String result = grepApplication.grepFromFiles(PATTERN_DOG, true, true, true, PATH_MULTI_1);
-        assertEquals("0" + STRING_NEWLINE, result);
+        assertEquals(PATH_MULTI_1 + ": 0" + STRING_NEWLINE, result);
     }
 
     @Test
     public void grepFromStdin_PatternNotFoundLinesFalse_ReturnsZero() throws Exception {
         String result = grepApplication.grepFromStdin(PATTERN_APPLES, true, true, true, new ByteArrayInputStream(STDIN_SINGLE_1.getBytes(StandardCharsets.UTF_8)));
-        assertEquals("0" + STRING_NEWLINE, result);
+        assertEquals("(standard input): 0" + STRING_NEWLINE, result);
     }
 
     @Test
     public void grepFromFileAndStdin_PatternNotFoundLinesFalse_ReturnsZero() throws Exception {
-        String result = grepApplication.grepFromFileAndStdin(PATTERN_DOG, true, true, true, new ByteArrayInputStream(STDIN_SINGLE_1.getBytes(StandardCharsets.UTF_8)), PATH_MULTI_1);
-        assertEquals(FILE_MULTI_1 + String.format(NUMBER_FORMAT, 0) +
+        String result = grepApplication.grepFromFileAndStdin(PATTERN_DOG, true, true, true, new ByteArrayInputStream(STDIN_SINGLE_1.getBytes(StandardCharsets.UTF_8)), PATH_MULTI_1, "-");
+        assertEquals(PATH_MULTI_1 + String.format(NUMBER_FORMAT, 0) +
                 STRING_NEWLINE +
-                STDIN + String.format(NUMBER_FORMAT, 0) + STRING_NEWLINE, result);
+                "(standard input)" + String.format(NUMBER_FORMAT, 0) + STRING_NEWLINE, result);
     }
 
     @Test
@@ -620,13 +596,13 @@ class GrepApplicationTest {
     @Test
     public void grepFromFileAndStdin_CaseInsensitiveFalseLinesFalse_ReturnsLines() throws Exception {
         String result = grepApplication.grepFromFileAndStdin(PATTERN_APPLES, false, false, true, new ByteArrayInputStream(STDIN_MULTI_3.getBytes(StandardCharsets.UTF_8)), PATH_MULTI_1);
-        assertEquals(String.format(STRING_FORMAT, FILE_MULTI_1) +
+        assertEquals(String.format(STRING_FORMAT, PATH_MULTI_1) +
                 TEXT_MULTI_1_1 +
                 STRING_NEWLINE +
-                String.format(STRING_FORMAT, FILE_MULTI_1) +
+                String.format(STRING_FORMAT, PATH_MULTI_1) +
                 TEXT_MULTI_1_3 +
                 STRING_NEWLINE +
-                String.format(STRING_FORMAT, FILE_MULTI_1) +
+                String.format(STRING_FORMAT, PATH_MULTI_1) +
                 TEXT_MULTI_1_6 +
                 STRING_NEWLINE, result);
     }
@@ -635,7 +611,7 @@ class GrepApplicationTest {
     public void grepFromFile_FileIsDir_ReturnsIsDirException() throws Exception {
         String filename = PATH_DIRECTORY;
         String result = grepApplication.grepFromFiles(PATTERN_APPLES, false, false, false, filename);
-        assertEquals(new GrepException(DIRECTORY + ": " + ERR_IS_DIR).getMessage() + STRING_NEWLINE, result);
+        assertEquals(new GrepException(PATH_DIRECTORY + ": " + ERR_IS_DIR).getMessage() + STRING_NEWLINE, result);
     }
 
     @Test
@@ -671,10 +647,14 @@ class GrepApplicationTest {
         String[] args = {PATTERN_APPLES, PATH_MULTI_1};
         OutputStream outputStream = new ByteArrayOutputStream();
         grepApplication.run(args, null, outputStream);
-        assertEquals(TEXT_MULTI_1_1 +
+        assertEquals(
+                PATH_MULTI_1 + ": " +
+                TEXT_MULTI_1_1 +
                 STRING_NEWLINE +
+                PATH_MULTI_1 + ": " +
                 TEXT_MULTI_1_3 +
                 STRING_NEWLINE +
+                PATH_MULTI_1 + ": " +
                 TEXT_MULTI_1_6 +
                 STRING_NEWLINE, outputStream.toString());
     }
@@ -684,10 +664,14 @@ class GrepApplicationTest {
         String[] args = {PATTERN_APPLES, PATH_MULTI_1};
         OutputStream outputStream = new ByteArrayOutputStream();
         grepApplication.run(args, new ByteArrayInputStream(STDIN_SINGLE_1.getBytes(StandardCharsets.UTF_8)), outputStream);
-        assertEquals(TEXT_MULTI_1_1 +
+        assertEquals(
+        PATH_MULTI_1+ ": " +
+                TEXT_MULTI_1_1 +
                 STRING_NEWLINE +
+                PATH_MULTI_1+ ": " +
                 TEXT_MULTI_1_3 +
                 STRING_NEWLINE +
+                PATH_MULTI_1+ ": " +
                 TEXT_MULTI_1_6 +
                 STRING_NEWLINE, outputStream.toString());
     }

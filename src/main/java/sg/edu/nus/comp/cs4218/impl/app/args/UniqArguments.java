@@ -37,13 +37,9 @@ public class UniqArguments {
         }
 
         boolean parsingFlag = true;
-        // Parse arguments=
         for (String arg : args) {
-            if (arg.isEmpty()) {
-                continue;
-            }
             // `parsingFlag` is to ensure all flags come first, followed by files.
-            if (parsingFlag && arg.charAt(0) == CHAR_FLAG_PREFIX && arg.length() > 1) {
+            if (!arg.isEmpty() && parsingFlag && arg.charAt(0) == CHAR_FLAG_PREFIX && arg.length() > 1) {
                 if (arg.equals(CHAR_FLAG_PREFIX + "" + COUNT_FLAG)) {
                     this.count = true;
                     continue;
@@ -57,11 +53,34 @@ public class UniqArguments {
                     continue;
                 }
 
+                boolean isValid = true;
+
+                for (int i = 1; i < arg.toCharArray().length; i++) {
+                    char argChar = arg.toCharArray()[i];
+                    if (argChar == COUNT_FLAG) {
+                        this.count = true;
+                        continue;
+                    }
+                    if (argChar == ALL_DUPLICATE_FLAG) {
+                        this.allRepeated = true;
+                        continue;
+                    }
+                    if (argChar == DUPLICATE_FLAG) {
+                        this.repeated = true;
+                        continue;
+                    }
+
+                    isValid = false;
+                }
+
+                if (isValid) {
+                    continue;
+                }
+
                 throw new UniqException(ERR_INVALID_FLAG);
             } else {
                 parsingFlag = false;
-                String filename = arg.trim();
-                this.files.add(filename);
+                this.files.add(arg);
             }
         }
     }

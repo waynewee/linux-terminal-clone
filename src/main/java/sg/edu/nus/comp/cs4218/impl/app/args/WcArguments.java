@@ -39,11 +39,8 @@ public class WcArguments {
         boolean parsingFlag = true;
         // Parse arguments=
         for (String arg : args) {
-            if (arg.isEmpty()) {
-                continue;
-            }
             // `parsingFlag` is to ensure all flags come first, followed by files.
-            if (!arg.equals("-") && parsingFlag && arg.charAt(0) == CHAR_FLAG_PREFIX) {
+            if (!arg.isEmpty() && !arg.equals("-") && parsingFlag && arg.charAt(0) == CHAR_FLAG_PREFIX) {
                 if (arg.equals(CHAR_FLAG_PREFIX + "" + BYTES_FLAG)) {
                     this.bytes = true;
                     continue;
@@ -84,8 +81,7 @@ public class WcArguments {
                 throw new WcException(ERR_INVALID_FLAG);
             } else {
                 parsingFlag = false;
-                String filename = arg.trim();
-                this.files.add(filename);
+                this.files.add(arg);
             }
         }
     }

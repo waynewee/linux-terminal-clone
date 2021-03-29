@@ -104,8 +104,7 @@ public class GrepArguments {
                 if (arg.isEmpty()) {
                     continue;
                 }
-                String filename = arg;
-                this.files.add(filename);
+                this.files.add(arg);
             }
         }
         validate(this.pattern);

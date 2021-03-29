@@ -69,8 +69,7 @@ class CatApplicationTest {
                 PATH_NOT_EXIST_2);
         assertEquals( new CatException(ERR_FILE_NOT_FOUND).getMessage() +
                 STRING_NEWLINE +
-                new CatException(ERR_FILE_NOT_FOUND).getMessage()
-                + STRING_NEWLINE, result);
+                new CatException(ERR_FILE_NOT_FOUND).getMessage(), result);
     }
 
     @Test
@@ -81,7 +80,9 @@ class CatApplicationTest {
                 PATH_SINGLE_2);
         assertEquals(new CatException(ERR_FILE_NOT_FOUND).getMessage() +
                 STRING_NEWLINE +
-                "1 " + TEXT_SINGLE_1 + TEXT_SINGLE_2, result);
+                "1 " + TEXT_SINGLE_1 +
+                STRING_NEWLINE +
+                "2 " + TEXT_SINGLE_2, result);
     }
 
     @Test
@@ -89,7 +90,9 @@ class CatApplicationTest {
         String result = catApplication.catFiles(true,
                 PATH_SINGLE_1,
                 PATH_SINGLE_2);
-        assertEquals("1 " + TEXT_SINGLE_1 + TEXT_SINGLE_2, result);
+        assertEquals("1 " + TEXT_SINGLE_1 +
+                STRING_NEWLINE +
+                "2 " + TEXT_SINGLE_2, result);
     }
 
     @Test
@@ -105,8 +108,7 @@ class CatApplicationTest {
                 PATH_NOT_EXIST_2);
         assertEquals(new CatException(ERR_FILE_NOT_FOUND).getMessage() +
                 STRING_NEWLINE +
-                new CatException(ERR_FILE_NOT_FOUND).getMessage() +
-                STRING_NEWLINE, result);
+                new CatException(ERR_FILE_NOT_FOUND).getMessage(), result);
     }
 
     @Test
@@ -118,6 +120,7 @@ class CatApplicationTest {
         assertEquals(new CatException(ERR_FILE_NOT_FOUND).getMessage() +
                 STRING_NEWLINE +
                 TEXT_SINGLE_1 +
+                STRING_NEWLINE +
                 TEXT_SINGLE_2, result);
     }
 
@@ -126,7 +129,7 @@ class CatApplicationTest {
         String result = catApplication.catFiles(false,
                 PATH_SINGLE_1,
                 PATH_SINGLE_2);
-        assertEquals(TEXT_SINGLE_1 + TEXT_SINGLE_2, result);
+        assertEquals(TEXT_SINGLE_1 + STRING_NEWLINE + TEXT_SINGLE_2, result);
     }
 
     @Test
@@ -191,17 +194,22 @@ class CatApplicationTest {
                 new ByteArrayInputStream(STDIN_SINGLE_2.getBytes(StandardCharsets.UTF_8)),
                 PATH_SINGLE_1,
                 PATH_NOT_EXIST,
-                PATH_SINGLE_2);
+                PATH_SINGLE_2,
+                "-");
         assertEquals(new CatException(ERR_FILE_NOT_FOUND).getMessage() +
                 STRING_NEWLINE +
-                "1 " + TEXT_SINGLE_1 + TEXT_SINGLE_2 + STDIN_SINGLE_2, result);
+                "1 " + TEXT_SINGLE_1 +
+                STRING_NEWLINE +
+                "2 " + TEXT_SINGLE_2 +
+                STRING_NEWLINE +
+                "3 " + STDIN_SINGLE_2, result);
     }
 
     @Test
     public void catFileAndStdin_LinesFalseFilesNoValidInputStreamValid_ReturnsErrorAndLines() throws Exception {
         String result = catApplication.catFileAndStdin(false,
                 new ByteArrayInputStream(STDIN_SINGLE_2.getBytes(StandardCharsets.UTF_8)),
-                PATH_NOT_EXIST);
+                PATH_NOT_EXIST, "-");
         assertEquals(new CatException(ERR_FILE_NOT_FOUND).getMessage() +
                 STRING_NEWLINE +
                 STDIN_SINGLE_2, result);
@@ -217,6 +225,7 @@ class CatApplicationTest {
         assertEquals(new CatException(ERR_FILE_NOT_FOUND).getMessage() +
                 STRING_NEWLINE +
                 TEXT_SINGLE_1 +
+                STRING_NEWLINE +
                 TEXT_SINGLE_2, result);
     }
 
@@ -226,7 +235,7 @@ class CatApplicationTest {
                 InputStream.nullInputStream(),
                 PATH_SINGLE_1,
                 PATH_SINGLE_2);
-        assertEquals(TEXT_SINGLE_1 + TEXT_SINGLE_2, result);
+        assertEquals(TEXT_SINGLE_1 + STRING_NEWLINE + TEXT_SINGLE_2, result);
     }
 
     @Test
@@ -246,21 +255,21 @@ class CatApplicationTest {
     }
 
     @Test
-    public void catFileAndStdin_LinesTrueFilesNoneInputStreamValid_ReturnsLines() throws Exception {
+    public void catFileAndStdin_LinesTrueFilesNoneInputStreamValid_ReturnsEmpty() throws Exception {
         String result = catApplication.catFileAndStdin(true, new ByteArrayInputStream(STDIN_SINGLE_2.getBytes(StandardCharsets.UTF_8)));
-        assertEquals("1 " + STDIN_SINGLE_2, result);
+        assertEquals("", result);
     }
 
     @Test
     public void catFileAndStdin_LinesTrueFilesNoValidInputStreamEmpty_ReturnsError() throws Exception {
         String result = catApplication.catFileAndStdin(true, InputStream.nullInputStream(), PATH_NOT_EXIST);
-        assertEquals(new CatException(ERR_FILE_NOT_FOUND).getMessage() + STRING_NEWLINE, result);
+        assertEquals(new CatException(ERR_FILE_NOT_FOUND).getMessage(), result);
     }
 
     @Test
     public void catFileAndStdin_LinesFalseFilesAllValidInputStreamValid_ReturnsLines() throws Exception {
-        String result = catApplication.catFileAndStdin(false, new ByteArrayInputStream(STDIN_SINGLE_1.getBytes(StandardCharsets.UTF_8)), PATH_SINGLE_1, PATH_SINGLE_2);
-        assertEquals(TEXT_SINGLE_1 + TEXT_SINGLE_2 + STDIN_SINGLE_1, result);
+        String result = catApplication.catFileAndStdin(false, new ByteArrayInputStream(STDIN_SINGLE_1.getBytes(StandardCharsets.UTF_8)), PATH_SINGLE_1, "-", PATH_SINGLE_2);
+        assertEquals(TEXT_SINGLE_1 + STRING_NEWLINE + STDIN_SINGLE_1 + STRING_NEWLINE + TEXT_SINGLE_2, result);
     }
 
     @Test
@@ -272,7 +281,7 @@ class CatApplicationTest {
     @Test
     public void catFileAndStdin_LinesFalseFilesNoValidInputStreamEmpty_ReturnsError() throws Exception {
         String result = catApplication.catFileAndStdin(false, InputStream.nullInputStream(), PATH_NOT_EXIST);
-        assertEquals(new CatException(ERR_FILE_NOT_FOUND).getMessage() + STRING_NEWLINE, result);
+        assertEquals(new CatException(ERR_FILE_NOT_FOUND).getMessage(), result);
     }
 
     @Test
@@ -350,7 +359,7 @@ class CatApplicationTest {
 
     @Test
     public void catFileAndStdin_FilesMultipleInputStream_ReturnsNumberedMultiple() throws Exception {
-        String result = catApplication.catFileAndStdin(true, new ByteArrayInputStream(STDIN_MULTI_1.getBytes(StandardCharsets.UTF_8)), PATH_MULTI_1, PATH_SINGLE_2);
+        String result = catApplication.catFileAndStdin(true, new ByteArrayInputStream(STDIN_MULTI_1.getBytes(StandardCharsets.UTF_8)), PATH_MULTI_1, PATH_SINGLE_2, "-");
         assertEquals("1 " + TEXT_MULTI_1_1 +
                 STRING_NEWLINE +
                 "2 " + TEXT_MULTI_1_2 +
@@ -359,13 +368,15 @@ class CatApplicationTest {
                 STRING_NEWLINE +
                 "4 " + TEXT_MULTI_1_4 +
                 STRING_NEWLINE +
-                "5 " + TEXT_SINGLE_2 + TEXT_MULTI_1_1 +
+                "5 " + TEXT_SINGLE_2 +
                 STRING_NEWLINE +
-                "6 " + TEXT_MULTI_1_2 +
+                "6 " + TEXT_MULTI_1_1 +
                 STRING_NEWLINE +
-                "7 " + TEXT_MULTI_1_3 +
+                "7 " + TEXT_MULTI_1_2 +
                 STRING_NEWLINE +
-                "8 " + TEXT_MULTI_1_4,
+                "8 " + TEXT_MULTI_1_3 +
+                STRING_NEWLINE +
+                "9 " + TEXT_MULTI_1_4,
                  result);
     }
 
@@ -380,7 +391,7 @@ class CatApplicationTest {
     @Test
     public void catFiles_FileIsDir_ReturnsIsDirException() throws Exception {
         String result = catApplication.catFiles(true, PATH_DIRECTORY);
-        assertEquals(new CatException(ERR_IS_DIR).getMessage() + STRING_NEWLINE, result);
+        assertEquals(new CatException(ERR_IS_DIR).getMessage(), result);
     }
 
     @Test
@@ -401,7 +412,7 @@ class CatApplicationTest {
 
     @Test
     public void catFileAndStdin_FileIsDir_ReturnsIsDirException() throws Exception {
-        String result = catApplication.catFileAndStdin(true, new ByteArrayInputStream(STDIN_SINGLE_1.getBytes(StandardCharsets.UTF_8)), PATH_DIRECTORY);
+        String result = catApplication.catFileAndStdin(true, new ByteArrayInputStream(STDIN_SINGLE_1.getBytes(StandardCharsets.UTF_8)), PATH_DIRECTORY, "-");
         assertEquals(new CatException(ERR_IS_DIR).getMessage() +
                 STRING_NEWLINE +
                 "1 " +
@@ -435,10 +446,10 @@ class CatApplicationTest {
 
     @Test
     public void run_FilesNotEmptyInputStreamNotNull_ReturnsCatFileAndStdin() throws CatException {
-        String[] args = {PATH_SINGLE_1};
+        String[] args = {PATH_SINGLE_1, "-"};
         OutputStream outputStream = new ByteArrayOutputStream();
         catApplication.run(args, new ByteArrayInputStream(STDIN_SINGLE_2.getBytes(StandardCharsets.UTF_8)), outputStream);
-        assertEquals(TEXT_SINGLE_1 + "This is a test string." + STRING_NEWLINE, outputStream.toString());
+        assertEquals(TEXT_SINGLE_1 + STRING_NEWLINE + "This is a test string." + STRING_NEWLINE, outputStream.toString());
     }
 
 }

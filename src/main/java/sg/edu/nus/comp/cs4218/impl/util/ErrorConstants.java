@@ -64,6 +64,9 @@ public final class ErrorConstants {
     // 'cp' related
     public static final String ERR_TOO_MANY_FOLDER_ARGUMENTS = "Too many folder arguments";
 
+    // 'uniq' related
+    public static final String ERR_UNIQ_MEANINGLESS = "Printing all duplicated lines and repeat counts is meaningless";
+
     // General constants
     public static final String ERR_INVALID_APP = "Invalid sg.edu.nus.comp.cs4218.app";
     public static final String ERR_NOT_SUPPORTED = "Not supported yet";

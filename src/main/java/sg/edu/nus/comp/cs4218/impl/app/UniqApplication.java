@@ -3,11 +3,13 @@ package sg.edu.nus.comp.cs4218.impl.app;
 import sg.edu.nus.comp.cs4218.app.UniqInterface;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
 import sg.edu.nus.comp.cs4218.exception.UniqException;
+import sg.edu.nus.comp.cs4218.exception.WcException;
 import sg.edu.nus.comp.cs4218.impl.app.args.UniqArguments;
 import sg.edu.nus.comp.cs4218.impl.util.IOUtils;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.*;
 
 import static sg.edu.nus.comp.cs4218.impl.util.ErrorConstants.*;
@@ -33,6 +35,9 @@ public class UniqApplication implements UniqInterface {
         }
         UniqArguments uniqArgs = new UniqArguments();
         uniqArgs.parse(args);
+        if (uniqArgs.isAllRepeated() && uniqArgs.isCount()) {
+            throw new UniqException(ERR_UNIQ_MEANINGLESS);
+        }
         String result;
         if (uniqArgs.getInputFile() == null) {
             result = uniqFromStdin(uniqArgs.isCount(), uniqArgs.isRepeated(), uniqArgs.isAllRepeated(), stdin, uniqArgs.getOutputFile());
@@ -53,6 +58,18 @@ public class UniqApplication implements UniqInterface {
         if (inputFileName == null) {
             throw new UniqException(ERR_NULL_STREAMS);
         }
+        File node;
+        try {
+            node = IOUtils.resolveFilePath(inputFileName).toFile();
+        } catch (Exception e) {
+            throw new UniqException(ERR_FILE_NOT_FOUND);
+        }
+        if (inputFileName.isEmpty() || !node.exists()) {
+            throw new UniqException(ERR_FILE_NOT_FOUND);
+        }
+        if (node.isDirectory()) {
+            throw new UniqException(ERR_IS_DIR);
+        }
         try {
             InputStream inputStream = IOUtils.openInputStream(inputFileName);
             String result = getUniqLines(isCount, isRepeated, isAllRepeated, inputStream);
@@ -62,7 +79,7 @@ public class UniqApplication implements UniqInterface {
             IOUtils.closeInputStream(inputStream);
             return result;
         } catch (Exception e){
-            throw new UniqException(ERR_FILE_NOT_FOUND, e);
+            throw new UniqException(e.getMessage());
         }
     }
 
@@ -124,11 +141,12 @@ public class UniqApplication implements UniqInterface {
 
     private void writeToFile(String outputFile, String result) throws UniqException {
         try {
-            FileWriter fileWriter = new FileWriter(outputFile);
+            String relativeFilePath = IOUtils.resolveFilePath(outputFile).toAbsolutePath().toString();
+            FileWriter fileWriter = new FileWriter(relativeFilePath);
             fileWriter.write(result);
             fileWriter.close();
         } catch (Exception e) {
-            throw new UniqException(ERR_IO_EXCEPTION, e);
+            throw new UniqException(e.getMessage());
         }
 
     }
